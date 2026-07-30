@@ -1,4 +1,4 @@
-package dev.whole30journal.feature.dayentry.domain
+package dev.whole30journal.feature.dayentry.domain.model
 
 data class Meal(
     val id: String,

@@ -1,5 +1,6 @@
-package dev.whole30journal.feature.dayentry.domain
+package dev.whole30journal.feature.dayentry.domain.repository
 
+import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import kotlinx.coroutines.flow.Flow
 
 interface DayEntryRepository {

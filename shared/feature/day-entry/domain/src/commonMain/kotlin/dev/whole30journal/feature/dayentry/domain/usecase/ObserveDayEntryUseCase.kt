@@ -1,5 +1,7 @@
-package dev.whole30journal.feature.dayentry.domain
+package dev.whole30journal.feature.dayentry.domain.usecase
 
+import dev.whole30journal.feature.dayentry.domain.model.DayEntry
+import dev.whole30journal.feature.dayentry.domain.repository.DayEntryRepository
 import kotlinx.coroutines.flow.Flow
 
 class ObserveDayEntryUseCase(

@@ -8,11 +8,11 @@ import dev.whole30journal.core.database.DayEntryEntity
 import dev.whole30journal.core.database.MealEntity
 import dev.whole30journal.core.database.MetricEntity
 import dev.whole30journal.core.database.Whole30Database
-import dev.whole30journal.feature.dayentry.domain.Achievement
-import dev.whole30journal.feature.dayentry.domain.DayEntry
-import dev.whole30journal.feature.dayentry.domain.DayEntryRepository
-import dev.whole30journal.feature.dayentry.domain.Meal
-import dev.whole30journal.feature.dayentry.domain.Metric
+import dev.whole30journal.feature.dayentry.domain.model.Achievement
+import dev.whole30journal.feature.dayentry.domain.model.DayEntry
+import dev.whole30journal.feature.dayentry.domain.model.Meal
+import dev.whole30journal.feature.dayentry.domain.model.Metric
+import dev.whole30journal.feature.dayentry.domain.repository.DayEntryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 
 /** SQLDelight-backed [DayEntryRepository] - a day entry is stored as one row in `DayEntryEntity`
  * plus its child metric/meal/achievement rows, all keyed by [DayEntry.dayNumber]. */
-internal class SqlDelightDayEntryRepository(
+internal class DayEntryRepositoryImpl(
     private val database: Whole30Database,
 ) : DayEntryRepository {
 
