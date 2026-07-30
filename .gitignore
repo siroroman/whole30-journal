@@ -1,0 +1,27 @@
+# Gradle / Kotlin
+.gradle/
+.kotlin/
+build/
+*/build/
+local.properties
+
+# Android
+*.apk
+*.ap_
+*.dex
+captures/
+
+# Xcode
+iosApp/iosApp.xcodeproj/
+iosApp/*.xcworkspace/
+DerivedData/
+*.xcuserstate
+*.xcuserdatad/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# macOS
+.DS_Store

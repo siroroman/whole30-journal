@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="example_button_get_cat_fact">Ďalší fakt</string>
+    <string name="example_error_load_failed">Fakt o mačke sa nepodarilo načítať</string>
+</resources>

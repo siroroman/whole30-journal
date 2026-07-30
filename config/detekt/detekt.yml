@@ -1,0 +1,80 @@
+formatting:
+  MaximumLineLength:
+    active: false # Disabled in favor of ktlint rule
+  ArgumentListWrapping:
+    maxLineLength: 150
+  ParameterWrapping:
+    maxLineLength: 150
+  ParameterListWrapping:
+    maxLineLength: 150
+  Wrapping:
+    maxLineLength: 150
+  PropertyWrapping:
+    maxLineLength: 150
+  PackageName:
+    active: false
+style:
+  MaxLineLength:
+    maxLineLength: 150
+  UnusedPrivateMember:
+    ignoreAnnotated: [ 'Preview' ]
+  MagicNumber:
+    active: false
+    ignorePropertyDeclaration: true
+    ignoreLocalVariableDeclaration: true
+  ForbiddenComment:
+    active: false
+  ReturnCount:
+    active: false
+  DestructuringDeclarationWithTooManyEntries:
+    active: false
+
+complexity:
+  LongParameterList:
+    active: false
+  TooManyFunctions:
+    active: false
+  ComplexCondition:
+    active: false
+  CyclomaticComplexMethod:
+    active: false
+  LongMethod:
+    active: false
+
+exceptions:
+  SwallowedException:
+    active: false
+  TooGenericExceptionCaught:
+    active: false
+naming:
+  FunctionNaming:
+    active: false
+  PackageNaming:
+    active: false
+performance:
+  SpreadOperator:
+    active: false
+
+compose:
+  ReusedModifierInstance:
+    active: true
+  UnnecessaryEventHandlerParameter:
+    active: true
+  ComposableEventParameterNaming:
+    active: true
+  ComposableParametersOrdering:
+    active: true
+  ModifierHeightWithText:
+    active: true
+  MissingModifierDefaultValue:
+    active: true
+  PublicComposablePreview:
+    active: true
+  TopLevelComposableFunctions:
+    active: true
+    allowInObjects: false
+  ComposableFunctionName:
+    active: true
+  ConditionCouldBeLifted:
+    active: true
+    ignoreCallsWithArgumentNames: [ 'modifier', 'contentAlignment' ]
