@@ -1,2 +1,0 @@
--- No tables yet - add feature-specific .sq files under this package as schema is needed.
--- This file's presence is what makes the SQLDelight plugin generate `Whole30Database`.

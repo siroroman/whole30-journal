@@ -2,6 +2,7 @@
 
 package dev.whole30journal.umbrella.di
 
+import dev.whole30journal.core.database.di.iosDatabaseModule
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ObjCClass
 import kotlinx.cinterop.getOriginalKotlinClass
@@ -21,7 +22,7 @@ object KoinIOS {
 
     fun initKoinIos(doOnStartup: () -> Unit) {
         koinApp = koinApplication {
-            modules(appModules)
+            modules(appModules + iosDatabaseModule)
         }
         doOnStartup()
     }

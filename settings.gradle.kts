@@ -29,5 +29,9 @@ include(":shared:core:ui-uistate")
 include(":shared:core:network")
 include(":shared:core:database")
 
+// Feature: day-entry (domain + data only - no presentation layer yet)
+include(":shared:feature:day-entry:domain")
+include(":shared:feature:day-entry:data")
+
 // Umbrella - combines everything into one XCFramework for iOS
 include(":shared:umbrella")

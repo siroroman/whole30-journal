@@ -1,0 +1,24 @@
+CREATE TABLE MealEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    dayNumber INTEGER NOT NULL,
+    label TEXT NOT NULL,
+    description TEXT NOT NULL,
+    photoToken TEXT,
+    lovedIt INTEGER NOT NULL,
+    sortOrder INTEGER NOT NULL,
+    FOREIGN KEY (dayNumber) REFERENCES DayEntryEntity(dayNumber)
+);
+
+selectByDayNumber:
+SELECT *
+FROM MealEntity
+WHERE dayNumber = ?
+ORDER BY sortOrder;
+
+upsert:
+INSERT OR REPLACE INTO MealEntity (id, dayNumber, label, description, photoToken, lovedIt, sortOrder)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+deleteByDayNumber:
+DELETE FROM MealEntity
+WHERE dayNumber = ?;

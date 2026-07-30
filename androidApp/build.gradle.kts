@@ -51,6 +51,8 @@ tasks.withType<Detekt>().configureEach {
 dependencies {
     // Umbrella re-exports ui-uistate and every shared feature module as `api`
     implementation(projects.shared.umbrella)
+    // Needed directly (not re-exported by umbrella) to wire androidDatabaseModule into startKoin{}
+    implementation(projects.shared.core.database)
 
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
@@ -59,6 +61,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
 
     implementation(libs.koin.core)
+    implementation(libs.koin.android)
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
 

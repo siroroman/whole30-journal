@@ -1,0 +1,23 @@
+CREATE TABLE MetricEntity (
+    dayNumber INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    iconName TEXT NOT NULL,
+    value INTEGER,
+    maxValue INTEGER NOT NULL,
+    note TEXT NOT NULL,
+    PRIMARY KEY (dayNumber, title),
+    FOREIGN KEY (dayNumber) REFERENCES DayEntryEntity(dayNumber)
+);
+
+selectByDayNumber:
+SELECT *
+FROM MetricEntity
+WHERE dayNumber = ?;
+
+upsert:
+INSERT OR REPLACE INTO MetricEntity (dayNumber, title, iconName, value, maxValue, note)
+VALUES (?, ?, ?, ?, ?, ?);
+
+deleteByDayNumber:
+DELETE FROM MetricEntity
+WHERE dayNumber = ?;
