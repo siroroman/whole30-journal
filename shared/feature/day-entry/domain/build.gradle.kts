@@ -5,6 +5,7 @@ plugins {
 
 kotlin {
     androidTarget()
+    jvm() // test-only - see shared:core:database's build.gradle.kts
     iosArm64()
     iosSimulatorArm64()
 

@@ -5,6 +5,7 @@ plugins {
 
 kotlin {
     androidTarget()
+    jvm() // repository tests run here via SQLDelight's JDBC driver - see jvmTest
     iosArm64()
     iosSimulatorArm64()
 
@@ -15,6 +16,11 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.koin.core)
+        }
+        jvmTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.sqldelight.sqlite.driver)
         }
     }
 }

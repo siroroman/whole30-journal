@@ -1,8 +1,6 @@
 package dev.whole30journal.feature.dayentry.data
 
 import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import dev.whole30journal.core.database.AchievementEntity
 import dev.whole30journal.core.database.DayEntryEntity
 import dev.whole30journal.core.database.MealEntity
@@ -15,7 +13,9 @@ import dev.whole30journal.feature.dayentry.domain.model.Metric
 import dev.whole30journal.feature.dayentry.domain.repository.DayEntryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.withContext
 
 /** SQLDelight-backed [DayEntryRepository] - a day entry is stored as one row in `DayEntryEntity`
@@ -24,21 +24,34 @@ internal class DayEntryRepositoryImpl(
     private val database: Whole30Database,
 ) : DayEntryRepository {
 
+    // The underlying SQLite connection isn't safe for concurrent multi-threaded use, so every read
+    // and write is confined to one logical thread - otherwise a reactive re-read triggered by a
+    // Query.Listener notification could interleave with an in-flight saveDayEntry transaction on a
+    // different Dispatchers.Default thread and observe a torn, partially-written row.
+    private val dbDispatcher = Dispatchers.Default.limitedParallelism(1)
+
     override suspend fun getDayEntry(dayNumber: Long): Result<DayEntry?> = runCatching {
-        withContext(Dispatchers.Default) { loadDayEntry(dayNumber) }
+        withContext(dbDispatcher) { loadDayEntry(dayNumber) }
     }
 
-    override fun observeDayEntry(dayNumber: Long): Flow<DayEntry?> = combine(
-        database.dayEntryQueries.selectByDayNumber(dayNumber).asFlow().mapToOneOrNull(Dispatchers.Default),
-        database.metricQueries.selectByDayNumber(dayNumber).asFlow().mapToList(Dispatchers.Default),
-        database.mealQueries.selectByDayNumber(dayNumber).asFlow().mapToList(Dispatchers.Default),
-        database.achievementQueries.selectByDayNumber(dayNumber).asFlow().mapToList(Dispatchers.Default),
-    ) { entry, metrics, meals, achievements ->
-        entry?.toDomain(metrics = metrics, meals = meals, achievements = achievements)
+    // A save touches all 4 tables in one transaction; combine()-ing 4 independently-invalidated
+    // per-table flows would let a collector observe a torn intermediate state (e.g. the day row
+    // updated but children flows still on their last-cached value). Merging into a single "something
+    // changed" signal and re-reading everything fresh on each tick keeps every emission consistent.
+    override fun observeDayEntry(dayNumber: Long): Flow<DayEntry?> {
+        val invalidations = merge(
+            database.dayEntryQueries.selectByDayNumber(dayNumber).asFlow().map { },
+            database.metricQueries.selectByDayNumber(dayNumber).asFlow().map { },
+            database.mealQueries.selectByDayNumber(dayNumber).asFlow().map { },
+            database.achievementQueries.selectByDayNumber(dayNumber).asFlow().map { },
+        )
+        return invalidations
+            .map { withContext(dbDispatcher) { loadDayEntry(dayNumber) } }
+            .distinctUntilChanged()
     }
 
     override suspend fun saveDayEntry(dayEntry: DayEntry): Result<Unit> = runCatching {
-        withContext(Dispatchers.Default) {
+        withContext(dbDispatcher) {
             database.dayEntryQueries.transaction {
                 database.dayEntryQueries.upsert(
                     dayNumber = dayEntry.dayNumber,

@@ -9,6 +9,9 @@ plugins {
 
 kotlin {
     androidTarget()
+    // JVM target exists solely so repository tests (shared/feature/*/data's jvmTest) can run fast
+    // on the host via SQLDelight's JDBC driver - not shipped in any app, see DatabaseDriverFactory.jvm.kt.
+    jvm()
     iosArm64()
     iosSimulatorArm64()
 
@@ -32,6 +35,9 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
+        }
+        jvmMain.dependencies {
+            implementation(libs.sqldelight.sqlite.driver)
         }
     }
 }
