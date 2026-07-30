@@ -5,8 +5,8 @@ Guidance for AI coding agents working in this repository.
 ## Project Overview
 
 A Kotlin Multiplatform starter app providing the shared ViewModel foundation and the iOS/Koin
-bridge for two code-sharing modes between Android and iOS. One example feature (`example`, shared
-Compose Multiplatform UI) is checked in, scaffolded by the boilerplate script below — see
+bridge for two code-sharing modes between Android and iOS. No example feature is checked in — use
+the boilerplate script below to scaffold one — see
 [ARCHITECTURE.md](ARCHITECTURE.md) for a full walkthrough of both patterns with code, and
 [README.md](README.md) for the pitch.
 
@@ -44,11 +44,11 @@ reference project, not a production multi-market app (see "Deliberate Simplifica
   `UiActionAware`), `expect/actual BaseViewModel`, `StateFlowViewModel`. See ARCHITECTURE.md.
 - `shared:umbrella` — combines all shared feature modules into the `SharedKit` XCFramework for
   iOS; hosts `KoinIOS` (Koin bootstrap for iOS) and `appModules` (the one list of Koin modules both
-  platforms start from — currently just `example`'s domain/data/presentation modules).
+  platforms start from — currently just `networkModule`, until a feature is scaffolded).
 - `androidApp` — Jetpack Compose app; starts Koin in `Whole30JournalApp` (`Application.onCreate`).
-  `App.kt` renders `ExampleRoute`, the example feature's shared-UI screen.
-- `iosApp` — SwiftUI app; `ContentView.swift` renders `ExampleView`, the example feature's
-  shared-UI screen. See "iOS ↔ KMP Integration" below for the surviving bridge infrastructure
+  `App.kt` currently renders an empty `Scaffold` — no feature is wired in yet.
+- `iosApp` — SwiftUI app; `ContentView.swift` currently renders a placeholder — no feature is wired
+  in yet. See "iOS ↔ KMP Integration" below for the surviving bridge infrastructure
   (`KoinStarter.swift`/`KoinResolver.swift`, `Core/ComposeViewController.swift`).
 
 ## Shared ViewModel Pattern (the core mechanic)
@@ -74,9 +74,8 @@ Multiplatform Resources, the official JetBrains library - no extra dependency be
 in use). Rule of thumb: `stringResource()` from a composable (`ui/*Screen.kt`), the suspend
 `getString()` from a plain suspend function (`applyUiAction` and whatever it calls) - both resolve
 to a plain `String` before it reaches `UiData`/`UiEvent`, so the same pattern works unmodified for
-Pattern B's native SwiftUI. `example`'s presentation module is the reference implementation; see
-[ARCHITECTURE.md](ARCHITECTURE.md) for the full walkthrough. The boilerplate script scaffolds the
-same shape (default locale only) for new features.
+Pattern B's native SwiftUI. See [ARCHITECTURE.md](ARCHITECTURE.md) for the full walkthrough. The
+boilerplate script scaffolds the same shape (default locale only) for new features.
 
 ## iOS ↔ KMP Integration
 
@@ -87,7 +86,7 @@ same shape (default locale only) for new features.
   under the hood). Deliberately independent of any feature module, so it never needs to know about
   specific ViewModel types.
 - No per-feature factory wrapper — call `KoinResolver.get(SomeViewModel.self)` directly where the
-  ViewModel is needed; see ARCHITECTURE.md and `ContentView.swift`.
+  ViewModel is needed; see ARCHITECTURE.md.
 - `ComposeViewController` (`UIViewControllerRepresentable`, `iosApp/iosApp/Core/`) wraps a Kotlin
   `ComposeUIViewController { ... }` factory for embedding shared Compose screens. Native SwiftUI
   screens instead observe `viewModel.state` / `viewModel.outputEvents` directly via SKIE's
@@ -141,9 +140,8 @@ generate` to pick up the new Swift-facing files if you add any under `iosApp/ios
 This repo intentionally omits things a production KMP app would have — don't add them unless
 explicitly asked:
 
-- Only one example feature checked in (`example`, demonstrating Pattern A from ARCHITECTURE.md) —
-  don't scaffold a second one just to have it; use the script above when a task actually calls for
-  a new feature.
+- No example feature checked in — don't scaffold one just to have it; use the script above when a
+  task actually calls for a new feature.
 - No Ktor — a generated feature's fake in-memory repository stands in for a real backend; keep
   domain/presentation depending only on the repository interface so swapping it in later doesn't
   touch other layers.

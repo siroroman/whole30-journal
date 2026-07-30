@@ -28,10 +28,5 @@ include(":androidApp")
 include(":shared:core:ui-uistate")
 include(":shared:core:network")
 
-// Feature: example (shared Compose Multiplatform UI + shared VM)
-include(":shared:feature:example:domain")
-include(":shared:feature:example:data")
-include(":shared:feature:example:presentation")
-
 // Umbrella - combines everything into one XCFramework for iOS
 include(":shared:umbrella")

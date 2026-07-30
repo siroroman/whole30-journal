@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="example_button_get_cat_fact">Get Another Fact</string>
-    <string name="example_error_load_failed">Could not load cat fact</string>
-</resources>

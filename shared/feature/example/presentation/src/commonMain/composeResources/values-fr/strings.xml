@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="example_button_get_cat_fact">Un autre fait</string>
-    <string name="example_error_load_failed">Impossible de charger le fait sur les chats</string>
-</resources>

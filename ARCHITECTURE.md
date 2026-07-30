@@ -1,9 +1,8 @@
 # Architecture
 
 This project demonstrates two ways to share code between Android and iOS on top of the same
-Kotlin Multiplatform ViewModel foundation. `example` (`shared/feature/example`) is the one example
-feature checked in, showing Pattern A end-to-end; Pattern B has no checked-in example, so this doc
-is still the full reference for both. Use
+Kotlin Multiplatform ViewModel foundation. Neither pattern has a checked-in example feature - this
+doc is the full reference for both. Use
 [`scripts/create_kmp_feature_boilerplate.sh`](scripts/create_kmp_feature_boilerplate.sh) to
 scaffold a new feature shaped like the examples below (see [AGENTS.md](AGENTS.md)).
 
@@ -132,22 +131,20 @@ Resources](https://kotlinlang.org/docs/multiplatform/compose-multiplatform-resou
 live in `<feature>/presentation/src/commonMain/composeResources/values/strings.xml` (default
 locale), with `values-<lang>/strings.xml` siblings for each additional locale (e.g.
 `values-es/strings.xml`). Each module generates its own `Res` object under an explicit package,
-rather than relying on an undocumented default - `example`'s presentation module sets this in
-`build.gradle.kts`:
+rather than relying on an undocumented default - set this in the feature's `build.gradle.kts`:
 ```kotlin
 compose.resources {
-    packageOfResClass = "dev.whole30journal.feature.example.presentation.generated.resources"
+    packageOfResClass = "dev.whole30journal.feature.<name>.presentation.generated.resources"
 }
 ```
 
 **Which resolution function to use depends on whether the call site is composable** - this ties
 directly back to the `getState()`/`applyUiAction` split above:
 - **Composable call sites** (`ui/*Screen.kt`, or a custom `getState()` override) use
-  `stringResource(Res.string.x)` - see the "Get Another Fact" button in `ExampleScreen.kt`.
+  `stringResource(Res.string.x)`.
 - **Plain suspend call sites** (`applyUiAction` and anything it calls, e.g. a ViewModel's private
   `load...()` helper) use the suspend `getString(Res.string.x)` instead, since `stringResource` is
-  `@Composable`-only - see `ExampleViewModel.kt`'s `loadCatFact()`, which resolves the error message
-  to a plain `String` before constructing `UiEvent.ShowError`.
+  `@Composable`-only.
 
 This is also the answer for Pattern B: a Pattern B ViewModel resolves strings exactly the same way
 (suspend `getString()` inside `applyUiAction`), so native SwiftUI observing `viewModel.state`
@@ -169,13 +166,15 @@ needed.
   it never needs to know about specific ViewModel types.
 
 Call `KoinResolver.get(SomeViewModel.self)` directly at the point a ViewModel is needed - no
-per-feature factory wrapper, `KoinResolver` is already the whole indirection. See `ContentView.swift`:
+per-feature factory wrapper, `KoinResolver` is already the whole indirection:
 ```swift
-struct ContentView: View {
-    @State private var exampleViewModel = KoinResolver.get(ExampleViewModel.self)
+struct SomeView: View {
+    @State private var viewModel = KoinResolver.get(SomeViewModel.self)
 
     var body: some View {
-        ExampleView(viewModel: exampleViewModel)
+        ComposeViewController {
+            SomeScreenViewController(viewModel: viewModel)
+        }
     }
 }
 ```

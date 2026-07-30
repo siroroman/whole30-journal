@@ -30,17 +30,12 @@ kotlin {
             // namespace) - third-party deps like Koin/coroutines stay linked-in but un-exported,
             // same as Rohlik's umbrella module.
             export(projects.shared.core.uiUistate)
-            export(projects.shared.feature.example.domain)
-            export(projects.shared.feature.example.presentation)
         }
     }
 
     sourceSets {
         commonMain.dependencies {
             api(projects.shared.core.uiUistate)
-            api(projects.shared.feature.example.domain)
-            api(projects.shared.feature.example.presentation)
-            implementation(projects.shared.feature.example.data)
             implementation(projects.shared.core.network)
 
             implementation(libs.koin.core)
