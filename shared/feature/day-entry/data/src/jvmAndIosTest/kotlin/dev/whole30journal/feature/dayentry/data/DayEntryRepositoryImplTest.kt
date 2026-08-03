@@ -1,7 +1,6 @@
 package dev.whole30journal.feature.dayentry.data
 
 import app.cash.sqldelight.db.SqlDriver
-import dev.whole30journal.core.database.DatabaseDriverFactory
 import dev.whole30journal.core.database.Whole30Database
 import dev.whole30journal.feature.dayentry.domain.model.Achievement
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
@@ -17,11 +16,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Runs against a real in-memory SQLite DB (via [DatabaseDriverFactory]'s JVM actual) rather than
- * mocks, since the behaviour worth verifying here is the SQL/mapping/transaction logic itself. */
+/** Runs against a real in-memory SQLite DB (via [createTestDriver]) rather than mocks, since the
+ * behaviour worth verifying here is the SQL/mapping/transaction logic itself. Runs on the JVM and
+ * iOS targets - see jvmAndIosTest in build.gradle.kts. */
 class DayEntryRepositoryImplTest {
 
-    private val driver: SqlDriver = DatabaseDriverFactory().createDriver()
+    private val driver: SqlDriver = createTestDriver()
     private val repository = DayEntryRepositoryImpl(Whole30Database(driver))
 
     @AfterTest
@@ -59,7 +59,7 @@ class DayEntryRepositoryImplTest {
     }
 
     @Test
-    fun `saveDayEntry replaces previously saved metrics, meals, and achievements`() = runTest {
+    fun `saveDayEntry replaces previously saved metrics meals and achievements`() = runTest {
         val original = sampleDayEntry(dayNumber = 1L)
         repository.saveDayEntry(original).getOrThrow()
 
