@@ -33,3 +33,9 @@ android {
         minSdk = libs.versions.sdk.min.get().toInt()
     }
 }
+
+tasks.withType<Test>().configureEach {
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+}
