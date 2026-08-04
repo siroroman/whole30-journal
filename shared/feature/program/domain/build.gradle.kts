@@ -18,6 +18,10 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.koin.core)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.test)
+        }
     }
 }
 
@@ -43,4 +47,12 @@ tasks.withType<Detekt>().configureEach {
 dependencies {
     detektPlugins(libs.detekt.formatting)
     detektPlugins(libs.detekt.rules.compose)
+}
+
+// AbstractTestTask (not Test) so this also covers the Kotlin/Native iosArm64Test /
+// iosSimulatorArm64Test tasks, which don't extend the JVM-specific Test task type.
+tasks.withType<AbstractTestTask>().configureEach {
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
