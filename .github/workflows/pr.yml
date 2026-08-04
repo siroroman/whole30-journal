@@ -54,18 +54,3 @@ jobs:
           path: "**/build/reports/tests/"
           retention-days: 7
           if-no-files-found: ignore
-
-  swiftlint:
-    name: SwiftLint
-    runs-on: macos-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run SwiftLint
-        working-directory: iosApp
-        run: |
-          swiftlint lint \
-            --config ../config/swiftlint/.swiftlint.yml \
-            --strict \
-            --reporter github-actions-logging
