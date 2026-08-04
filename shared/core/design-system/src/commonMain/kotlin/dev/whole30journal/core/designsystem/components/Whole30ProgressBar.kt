@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.whole30journal.core.designsystem.theme.Whole30Theme
 
-/** Linear program-progress indicator, e.g. "Day 1 . Day 12 . 40% . Day 30" at the top of Overview. */
 @Composable
 fun Whole30ProgressBar(
     value: Int,

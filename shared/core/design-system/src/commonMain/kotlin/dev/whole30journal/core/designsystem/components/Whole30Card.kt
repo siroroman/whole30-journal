@@ -16,7 +16,6 @@ import dev.whole30journal.core.designsystem.theme.Whole30Shapes
 import dev.whole30journal.core.designsystem.theme.Whole30Spacing
 import dev.whole30journal.core.designsystem.theme.Whole30Theme
 
-/** The base content surface - flat fill, no shadow. Separation comes from fill contrast, not elevation. */
 @Composable
 fun Whole30Card(
     modifier: Modifier = Modifier,

@@ -25,10 +25,6 @@ import androidx.compose.ui.unit.em
 import dev.whole30journal.core.designsystem.theme.Whole30Theme
 import dev.whole30journal.core.designsystem.theme.scoreColor
 
-/**
- * Circular 1-10 score indicator. Arc color follows the score-severity ramp, never the accent
- * color directly. Used at 150dp for the daily Overall score and 48-56dp for metric rows.
- */
 @Composable
 fun Whole30ProgressRing(
     score: Int?,

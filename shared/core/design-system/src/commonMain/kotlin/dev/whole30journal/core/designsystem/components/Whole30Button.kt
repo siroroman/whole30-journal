@@ -30,7 +30,6 @@ enum class Whole30ButtonSize { Small, Medium }
 
 private const val DISABLED_ALPHA = 0.45f
 
-/** Primary is the only filled surface in this system - use it once per screen. */
 @Composable
 fun Whole30Button(
     onClick: () -> Unit,

@@ -30,7 +30,6 @@ import dev.whole30journal.core.designsystem.theme.scoreColor
 
 private val DotGap = 5.dp
 
-/** Tap-to-rate row of [max] dots, used on the Entry screen for Energy / Mood / Sleep / Cravings. */
 @Composable
 fun Whole30ScoreDots(
     score: Int?,
@@ -41,17 +40,11 @@ fun Whole30ScoreDots(
 ) {
     val colors = Whole30Theme.colors
     val filledColor = colors.scoreColor(score)
-    // Sized via BoxWithConstraints rather than RowScope.weight(): Modifier.weight()'s inline body
-    // leaks an internal Compose Foundation property in a way Kotlin 2.4.0 now rejects at compile
-    // time (a real toolchain incompatibility, not specific to this component).
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
             .alpha(if (enabled) 1f else 0.45f),
     ) {
-        // The touch target spans each dot's full share of the row (visual dot + its gap), not
-        // just the visual circle, so taps land reliably even though max=10 rules out a true
-        // 48dp-wide target per dot on typical phone widths.
         val cellWidth = maxWidth / max
         val dotSize = cellWidth - DotGap
         Row(modifier = Modifier.fillMaxWidth()) {
