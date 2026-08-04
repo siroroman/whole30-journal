@@ -1,7 +1,6 @@
 package dev.whole30journal.feature.dayentry.data
 
 import app.cash.sqldelight.db.SqlDriver
-import dev.whole30journal.core.database.DatabaseDriverFactory
 import dev.whole30journal.core.database.Whole30Database
 import dev.whole30journal.feature.dayentry.domain.model.Achievement
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
@@ -17,11 +16,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Runs against a real in-memory SQLite DB (via [DatabaseDriverFactory]'s JVM actual) rather than
- * mocks, since the behaviour worth verifying here is the SQL/mapping/transaction logic itself. */
+/** Runs against a real in-memory SQLite DB (via [createTestDriver]) rather than mocks, since the
+ * behaviour worth verifying here is the SQL/mapping/transaction logic itself. Runs on the JVM and
+ * iOS targets - see jvmAndIosTest in build.gradle.kts. */
 class DayEntryRepositoryImplTest {
 
-    private val driver: SqlDriver = DatabaseDriverFactory().createDriver()
+    private val driver: SqlDriver = createTestDriver()
     private val repository = DayEntryRepositoryImpl(Whole30Database(driver))
 
     @AfterTest
@@ -59,7 +59,7 @@ class DayEntryRepositoryImplTest {
     }
 
     @Test
-    fun `saveDayEntry replaces previously saved metrics, meals, and achievements`() = runTest {
+    fun `saveDayEntry replaces previously saved metrics meals and achievements`() = runTest {
         val original = sampleDayEntry(dayNumber = 1L)
         repository.saveDayEntry(original).getOrThrow()
 
@@ -77,27 +77,57 @@ class DayEntryRepositoryImplTest {
 
     @Test
     fun `observeDayEntry reflects the current state whenever it's collected`() = runTest {
-        assertNull(repository.observeDayEntry(1L).first())
+        assertNull(repository.observeDayEntry(1L).first().getOrThrow())
 
         val entry = sampleDayEntry(dayNumber = 1L)
         repository.saveDayEntry(entry).getOrThrow()
 
-        assertEquals(entry, repository.observeDayEntry(1L).first())
+        assertEquals(entry, repository.observeDayEntry(1L).first().getOrThrow())
     }
 
     @Test
     fun `observeDayEntry pushes a new emission when saveDayEntry changes the row`() = runTest {
-        val emissions = Channel<DayEntry?>(Channel.UNLIMITED)
+        val emissions = Channel<Result<DayEntry?>>(Channel.UNLIMITED)
         val job = launch { repository.observeDayEntry(1L).collect { emissions.send(it) } }
 
-        assertNull(emissions.receive())
+        assertNull(emissions.receive().getOrThrow())
 
         val entry = sampleDayEntry(dayNumber = 1L)
         repository.saveDayEntry(entry).getOrThrow()
 
-        assertEquals(entry, emissions.receive())
+        assertEquals(entry, emissions.receive().getOrThrow())
 
         job.cancel()
+    }
+
+    @Test
+    fun `concurrent saves and reads never observe a torn intermediate state`() = runTest {
+        val versionA = sampleDayEntry(dayNumber = 1L)
+        val versionB = versionA.copy(
+            notes = "Version B",
+            metrics = versionA.metrics.map { it.copy(note = "B") },
+            meals = versionA.meals.map { it.copy(label = "${it.label} B") },
+            achievements = versionA.achievements.map { it.copy(text = "${it.text} B") },
+        )
+        fun isConsistent(entry: DayEntry?) = entry == null || entry == versionA || entry == versionB
+
+        val observed = mutableListOf<DayEntry?>()
+        val observeJob = launch {
+            repository.observeDayEntry(1L).collect { observed.add(it.getOrThrow()) }
+        }
+
+        val saveJob = launch {
+            repeat(30) { i -> repository.saveDayEntry(if (i % 2 == 0) versionA else versionB).getOrThrow() }
+        }
+        val readJob = launch {
+            repeat(30) { assertTrue(isConsistent(repository.getDayEntry(1L).getOrThrow())) }
+        }
+        saveJob.join()
+        readJob.join()
+        observeJob.cancel()
+
+        assertTrue(observed.isNotEmpty())
+        observed.forEach { assertTrue(isConsistent(it)) }
     }
 }
 
@@ -113,7 +143,6 @@ private fun sampleDayEntry(dayNumber: Long) = DayEntry(
     meals = listOf(
         Meal(
             id = "meal-$dayNumber-1",
-            dayNumber = dayNumber,
             label = "Breakfast",
             description = "Eggs and avocado",
             photoToken = null,
@@ -122,7 +151,6 @@ private fun sampleDayEntry(dayNumber: Long) = DayEntry(
         ),
         Meal(
             id = "meal-$dayNumber-2",
-            dayNumber = dayNumber,
             label = "Lunch",
             description = "Chicken salad",
             photoToken = "token-abc",
@@ -131,6 +159,6 @@ private fun sampleDayEntry(dayNumber: Long) = DayEntry(
         ),
     ),
     achievements = listOf(
-        Achievement(id = "ach-$dayNumber-1", dayNumber = dayNumber, text = "No sugar cravings", sortOrder = 0L),
+        Achievement(id = "ach-$dayNumber-1", text = "No sugar cravings", sortOrder = 0L),
     ),
 )

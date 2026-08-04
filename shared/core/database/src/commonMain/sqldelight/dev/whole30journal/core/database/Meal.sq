@@ -13,7 +13,7 @@ selectByDayNumber:
 SELECT *
 FROM MealEntity
 WHERE dayNumber = ?
-ORDER BY sortOrder;
+ORDER BY sortOrder, id;
 
 upsert:
 INSERT OR REPLACE INTO MealEntity (id, dayNumber, label, description, photoToken, lovedIt, sortOrder)

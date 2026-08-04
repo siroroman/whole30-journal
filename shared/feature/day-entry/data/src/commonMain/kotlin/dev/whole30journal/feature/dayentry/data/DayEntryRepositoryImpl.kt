@@ -6,16 +6,21 @@ import dev.whole30journal.core.database.DayEntryEntity
 import dev.whole30journal.core.database.MealEntity
 import dev.whole30journal.core.database.MetricEntity
 import dev.whole30journal.core.database.Whole30Database
+import dev.whole30journal.core.database.databaseDispatcher as dbDispatcher
 import dev.whole30journal.feature.dayentry.domain.model.Achievement
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import dev.whole30journal.feature.dayentry.domain.model.Meal
 import dev.whole30journal.feature.dayentry.domain.model.Metric
 import dev.whole30journal.feature.dayentry.domain.repository.DayEntryRepository
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 
 /** SQLDelight-backed [DayEntryRepository] - a day entry is stored as one row in `DayEntryEntity`
@@ -24,13 +29,7 @@ internal class DayEntryRepositoryImpl(
     private val database: Whole30Database,
 ) : DayEntryRepository {
 
-    // The underlying SQLite connection isn't safe for concurrent multi-threaded use, so every read
-    // and write is confined to one logical thread - otherwise a reactive re-read triggered by a
-    // Query.Listener notification could interleave with an in-flight saveDayEntry transaction on a
-    // different Dispatchers.Default thread and observe a torn, partially-written row.
-    private val dbDispatcher = Dispatchers.Default.limitedParallelism(1)
-
-    override suspend fun getDayEntry(dayNumber: Long): Result<DayEntry?> = runCatching {
+    override suspend fun getDayEntry(dayNumber: Long): Result<DayEntry?> = runCatchingCancellable {
         withContext(dbDispatcher) { loadDayEntry(dayNumber) }
     }
 
@@ -38,21 +37,42 @@ internal class DayEntryRepositoryImpl(
     // per-table flows would let a collector observe a torn intermediate state (e.g. the day row
     // updated but children flows still on their last-cached value). Merging into a single "something
     // changed" signal and re-reading everything fresh on each tick keeps every emission consistent.
-    override fun observeDayEntry(dayNumber: Long): Flow<DayEntry?> {
+    override fun observeDayEntry(dayNumber: Long): Flow<Result<DayEntry?>> {
+        // Each asFlow() source emits once immediately on subscribe, so merging all 4 raw would fire
+        // 4 redundant initial reloads; drop() that synthetic first emission from each and add back
+        // exactly one via onStart. conflate() then collapses a save's 4 near-simultaneous per-table
+        // invalidations (all fired at commit) into a single reload instead of 4.
         val invalidations = merge(
-            database.dayEntryQueries.selectByDayNumber(dayNumber).asFlow().map { },
-            database.metricQueries.selectByDayNumber(dayNumber).asFlow().map { },
-            database.mealQueries.selectByDayNumber(dayNumber).asFlow().map { },
-            database.achievementQueries.selectByDayNumber(dayNumber).asFlow().map { },
-        )
+            database.dayEntryQueries.selectByDayNumber(dayNumber).asFlow().map { }.drop(1),
+            database.metricQueries.selectByDayNumber(dayNumber).asFlow().map { }.drop(1),
+            database.mealQueries.selectByDayNumber(dayNumber).asFlow().map { }.drop(1),
+            database.achievementQueries.selectByDayNumber(dayNumber).asFlow().map { }.drop(1),
+        ).onStart { emit(Unit) }
         return invalidations
+            .conflate()
             .map { withContext(dbDispatcher) { loadDayEntry(dayNumber) } }
             .distinctUntilChanged()
+            .map { Result.success(it) }
+            .catch { e ->
+                if (e is CancellationException) throw e
+                emit(Result.failure(e))
+            }
     }
 
-    override suspend fun saveDayEntry(dayEntry: DayEntry): Result<Unit> = runCatching {
+    override suspend fun saveDayEntry(dayEntry: DayEntry): Result<Unit> = runCatchingCancellable {
+        require(dayEntry.metrics.map { it.title }.distinct().size == dayEntry.metrics.size) {
+            "Duplicate metric titles are not allowed within a single day entry: " +
+                dayEntry.metrics.map { it.title }
+        }
         withContext(dbDispatcher) {
             database.dayEntryQueries.transaction {
+                // Children are deleted before the parent row is replaced (not after) so that an
+                // INSERT OR REPLACE on DayEntryEntity - which SQLite resolves via an internal
+                // delete-then-insert - never has to delete a row still referenced by a FOREIGN KEY.
+                database.metricQueries.deleteByDayNumber(dayEntry.dayNumber)
+                database.mealQueries.deleteByDayNumber(dayEntry.dayNumber)
+                database.achievementQueries.deleteByDayNumber(dayEntry.dayNumber)
+
                 database.dayEntryQueries.upsert(
                     dayNumber = dayEntry.dayNumber,
                     date = dayEntry.date,
@@ -60,7 +80,6 @@ internal class DayEntryRepositoryImpl(
                     isComplete = dayEntry.isComplete.toLong(),
                 )
 
-                database.metricQueries.deleteByDayNumber(dayEntry.dayNumber)
                 dayEntry.metrics.forEach { metric ->
                     database.metricQueries.upsert(
                         dayNumber = dayEntry.dayNumber,
@@ -72,7 +91,6 @@ internal class DayEntryRepositoryImpl(
                     )
                 }
 
-                database.mealQueries.deleteByDayNumber(dayEntry.dayNumber)
                 dayEntry.meals.forEach { meal ->
                     database.mealQueries.upsert(
                         id = meal.id,
@@ -85,7 +103,6 @@ internal class DayEntryRepositoryImpl(
                     )
                 }
 
-                database.achievementQueries.deleteByDayNumber(dayEntry.dayNumber)
                 dayEntry.achievements.forEach { achievement ->
                     database.achievementQueries.upsert(
                         id = achievement.id,
@@ -132,7 +149,6 @@ private fun MetricEntity.toDomain() = Metric(
 
 private fun MealEntity.toDomain() = Meal(
     id = id,
-    dayNumber = dayNumber,
     label = label,
     description = description,
     photoToken = photoToken,
@@ -142,7 +158,6 @@ private fun MealEntity.toDomain() = Meal(
 
 private fun AchievementEntity.toDomain() = Achievement(
     id = id,
-    dayNumber = dayNumber,
     text = text,
     sortOrder = sortOrder,
 )
@@ -151,3 +166,8 @@ private fun AchievementEntity.toDomain() = Achievement(
 // are stored as plain INTEGER (0/1) and converted at this mapping boundary instead.
 private fun Boolean.toLong(): Long = if (this) 1L else 0L
 private fun Long.toBoolean(): Boolean = this != 0L
+
+// runCatching alone would catch and box CancellationException into a Result.failure instead of
+// letting it propagate, breaking structured-concurrency cancellation - this rethrows it instead.
+private inline fun <T> runCatchingCancellable(block: () -> T): Result<T> =
+    runCatching(block).onFailure { if (it is CancellationException) throw it }

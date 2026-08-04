@@ -12,7 +12,8 @@ CREATE TABLE MetricEntity (
 selectByDayNumber:
 SELECT *
 FROM MetricEntity
-WHERE dayNumber = ?;
+WHERE dayNumber = ?
+ORDER BY title;
 
 upsert:
 INSERT OR REPLACE INTO MetricEntity (dayNumber, title, iconName, value, maxValue, note)

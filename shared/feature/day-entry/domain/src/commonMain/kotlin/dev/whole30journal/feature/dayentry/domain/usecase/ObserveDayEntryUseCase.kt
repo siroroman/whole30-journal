@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 class ObserveDayEntryUseCase(
     private val repository: DayEntryRepository
 ) {
-    operator fun invoke(dayNumber: Long): Flow<DayEntry?> = repository.observeDayEntry(dayNumber)
+    operator fun invoke(dayNumber: Long): Flow<Result<DayEntry?>> = repository.observeDayEntry(dayNumber)
 }

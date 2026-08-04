@@ -2,8 +2,8 @@ package dev.whole30journal.umbrella.di
 
 import dev.whole30journal.core.database.di.databaseModule
 import dev.whole30journal.core.network.di.networkModule
-import dev.whole30journal.feature.dayentry.data.di.dayentryDataModule
-import dev.whole30journal.feature.dayentry.domain.di.dayentryDomainModule
+import dev.whole30journal.feature.dayentry.data.di.dayEntryDataModule
+import dev.whole30journal.feature.dayentry.domain.di.dayEntryDomainModule
 import org.koin.core.module.Module
 
 /** All Koin modules the app needs, combined once so Android and iOS bootstrap identically. Each
@@ -12,6 +12,6 @@ import org.koin.core.module.Module
 val appModules: List<Module> = listOf(
     networkModule,
     databaseModule,
-    dayentryDomainModule,
-    dayentryDataModule,
+    dayEntryDomainModule,
+    dayEntryDataModule,
 )
