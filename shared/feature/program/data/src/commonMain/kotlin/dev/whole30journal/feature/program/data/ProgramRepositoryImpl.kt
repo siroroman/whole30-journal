@@ -2,6 +2,7 @@ package dev.whole30journal.feature.program.data
 
 import app.cash.sqldelight.coroutines.asFlow
 import dev.whole30journal.core.database.Whole30Database
+import dev.whole30journal.core.database.runCatchingCancellable
 import dev.whole30journal.feature.program.domain.model.Program
 import dev.whole30journal.feature.program.domain.repository.ProgramRepository
 import kotlinx.coroutines.CancellationException
@@ -23,8 +24,9 @@ import kotlinx.datetime.todayIn
 import dev.whole30journal.core.database.databaseDispatcher as dbDispatcher
 
 /** SQLDelight-backed [ProgramRepository] - the program config is a single-row `ProgramEntity`.
- * [Program.endDate]/[Program.currentDayNumber] are derived from it plus [clock] at read time
- * rather than stored, so they're never stale from whatever day they happened to be written on. */
+ * [Program.endDate]/[Program.currentDayNumber] are derived from it plus [clock] at read time rather
+ * than stored, so a fresh call to [getProgram] is never stale from whatever day the row happened to
+ * be written on. [observeProgram] only recomputes on a row write though - see its own doc. */
 internal class ProgramRepositoryImpl(
     private val database: Whole30Database,
     private val clock: Clock = Clock.System,
@@ -34,6 +36,8 @@ internal class ProgramRepositoryImpl(
         withContext(dbDispatcher) { loadProgram() }
     }
 
+    // currentDayNumber is only recomputed when ProgramEntity is written to, not on a timer - a
+    // long-lived collector won't see it tick over at midnight on its own, only on the next write.
     override fun observeProgram(): Flow<Result<Program?>> {
         // select() emits once immediately on subscribe; drop() that synthetic first emission and
         // add back exactly one via onStart, matching DayEntryRepositoryImpl's observe pattern.
@@ -58,12 +62,23 @@ internal class ProgramRepositoryImpl(
                     database.programQueries.deleteAll()
                     database.programQueries.insert(startDate = startDate.toString(), durationDays = durationDays)
 
-                    // ...but seeding day entries only fills in the ones that don't exist yet, so
-                    // reconfiguring never wipes a day that already has real user data behind it.
+                    // ...but seeding day entries only refreshes each day's date and fills in a fresh
+                    // row where one is still missing, so reconfiguring never wipes a day that already
+                    // has real user data (notes, completion, or child rows) behind it - it just keeps
+                    // that day's date in sync with whichever program now owns dayNumber.
                     for (dayNumber in 1..durationDays) {
-                        val date = startDate.plus(dayNumber - 1, DateTimeUnit.DAY)
-                        database.dayEntryQueries.insertEmptyIfAbsent(dayNumber = dayNumber, date = date.toString())
+                        val date = startDate.plus(dayNumber - 1, DateTimeUnit.DAY).toString()
+                        database.dayEntryQueries.updateDate(date = date, dayNumber = dayNumber)
+                        database.dayEntryQueries.insertIfAbsent(dayNumber = dayNumber, date = date)
                     }
+
+                    // Day numbers beyond the new duration belonged to a previous, longer-or-differently
+                    // -dated configuration and no longer correspond to any day of the current program -
+                    // clean them up (children first, parent last) instead of leaving them orphaned.
+                    database.metricQueries.deleteAfterDayNumber(durationDays)
+                    database.mealQueries.deleteAfterDayNumber(durationDays)
+                    database.achievementQueries.deleteAfterDayNumber(durationDays)
+                    database.dayEntryQueries.deleteAfterDayNumber(durationDays)
                 }
             }
             buildProgram(startDate, durationDays, today = clock.todayIn(TimeZone.currentSystemDefault()))
@@ -91,8 +106,3 @@ private fun buildProgram(startDate: LocalDate, durationDays: Long, today: LocalD
         currentDayNumber = currentDayNumber,
     )
 }
-
-// runCatching alone would catch and box CancellationException into a Result.failure instead of
-// letting it propagate, breaking structured-concurrency cancellation - this rethrows it instead.
-private inline fun <T> runCatchingCancellable(block: () -> T): Result<T> =
-    runCatching(block).onFailure { if (it is CancellationException) throw it }

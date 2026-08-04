@@ -6,6 +6,7 @@ import dev.whole30journal.core.database.DayEntryEntity
 import dev.whole30journal.core.database.MealEntity
 import dev.whole30journal.core.database.MetricEntity
 import dev.whole30journal.core.database.Whole30Database
+import dev.whole30journal.core.database.runCatchingCancellable
 import dev.whole30journal.feature.dayentry.domain.model.Achievement
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import dev.whole30journal.feature.dayentry.domain.model.Meal
@@ -166,8 +167,3 @@ private fun AchievementEntity.toDomain() = Achievement(
 // are stored as plain INTEGER (0/1) and converted at this mapping boundary instead.
 private fun Boolean.toLong(): Long = if (this) 1L else 0L
 private fun Long.toBoolean(): Boolean = this != 0L
-
-// runCatching alone would catch and box CancellationException into a Result.failure instead of
-// letting it propagate, breaking structured-concurrency cancellation - this rethrows it instead.
-private inline fun <T> runCatchingCancellable(block: () -> T): Result<T> =
-    runCatching(block).onFailure { if (it is CancellationException) throw it }

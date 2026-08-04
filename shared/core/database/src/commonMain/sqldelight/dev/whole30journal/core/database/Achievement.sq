@@ -19,3 +19,7 @@ VALUES (?, ?, ?, ?);
 deleteByDayNumber:
 DELETE FROM AchievementEntity
 WHERE dayNumber = ?;
+
+deleteAfterDayNumber:
+DELETE FROM AchievementEntity
+WHERE dayNumber > ?;

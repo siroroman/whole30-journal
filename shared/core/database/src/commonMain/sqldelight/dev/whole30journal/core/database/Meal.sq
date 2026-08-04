@@ -22,3 +22,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?);
 deleteByDayNumber:
 DELETE FROM MealEntity
 WHERE dayNumber = ?;
+
+deleteAfterDayNumber:
+DELETE FROM MealEntity
+WHERE dayNumber > ?;

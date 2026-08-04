@@ -100,6 +100,60 @@ class ProgramRepositoryImplTest {
     }
 
     @Test
+    fun `reconfiguring with a different startDate refreshes the date of a day entry left over from before`() = runTest {
+        val repository = repository(today = LocalDate(2026, 8, 4))
+        repository.configureProgram(LocalDate(2026, 7, 1), durationDays = 10L).getOrThrow()
+
+        repository.configureProgram(LocalDate(2026, 8, 4), durationDays = 30L).getOrThrow()
+
+        val entry = database.dayEntryQueries.selectByDayNumber(1L).executeAsOneOrNull()
+        assertEquals("2026-08-04", entry?.date)
+    }
+
+    @Test
+    fun `reconfiguring with a different startDate still preserves notes on a day that already has real data`() = runTest {
+        database.dayEntryQueries.upsert(dayNumber = 1L, date = "2026-07-01", notes = "Already logged", isComplete = 1L)
+        val repository = repository(today = LocalDate(2026, 8, 4))
+
+        repository.configureProgram(LocalDate(2026, 8, 4), durationDays = 30L).getOrThrow()
+
+        val entry = database.dayEntryQueries.selectByDayNumber(1L).executeAsOneOrNull()
+        assertEquals("2026-08-04", entry?.date)
+        assertEquals("Already logged", entry?.notes)
+        assertEquals(1L, entry?.isComplete)
+    }
+
+    @Test
+    fun `reconfiguring with a shorter durationDays removes day entries beyond the new range`() = runTest {
+        val repository = repository(today = LocalDate(2026, 8, 4))
+        repository.configureProgram(LocalDate(2026, 7, 1), durationDays = 30L).getOrThrow()
+
+        repository.configureProgram(LocalDate(2026, 8, 4), durationDays = 10L).getOrThrow()
+
+        assertNull(database.dayEntryQueries.selectByDayNumber(11L).executeAsOneOrNull())
+        assertNull(database.dayEntryQueries.selectByDayNumber(30L).executeAsOneOrNull())
+    }
+
+    @Test
+    fun `reconfiguring with a shorter durationDays also removes child rows beyond the new range`() = runTest {
+        val repository = repository(today = LocalDate(2026, 8, 4))
+        repository.configureProgram(LocalDate(2026, 7, 1), durationDays = 30L).getOrThrow()
+        database.mealQueries.upsert(
+            id = "meal-25",
+            dayNumber = 25L,
+            label = "Lunch",
+            description = "Salad",
+            photoToken = null,
+            lovedIt = 0L,
+            sortOrder = 0L,
+        )
+
+        repository.configureProgram(LocalDate(2026, 8, 4), durationDays = 10L).getOrThrow()
+
+        assertTrue(database.mealQueries.selectByDayNumber(25L).executeAsList().isEmpty())
+    }
+
+    @Test
     fun `currentDayNumber is 1 on the start date`() = runTest {
         val repository = repository(today = LocalDate(2026, 8, 4))
 
