@@ -1,9 +1,16 @@
+import io.gitlab.arturbosch.detekt.Detekt
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.detekt)
 }
 
 kotlin {
+    // Restores the standard source-set edges (e.g. iosSimulatorArm64Test -> iosTest) that adding
+    // the custom jvmAndIosTest dependsOn edges below would otherwise silently disable project-wide.
+    applyDefaultHierarchyTemplate()
+
     androidTarget()
     jvm() // repository tests run here via SQLDelight's JDBC driver - see jvmTest
     // linkerOpts: SQLDelight's native-driver (sqliter) needs libsqlite3 linked explicitly for
@@ -40,10 +47,6 @@ kotlin {
         iosTest.dependencies {
             implementation(libs.sqldelight.native.driver)
         }
-        // The default hierarchy template creates iosTest but doesn't attach it as a parent of
-        // the per-architecture leaf test source sets - wire that up explicitly.
-        val iosArm64Test by getting { dependsOn(iosTest.get()) }
-        val iosSimulatorArm64Test by getting { dependsOn(iosTest.get()) }
     }
 }
 
@@ -54,6 +57,21 @@ android {
     defaultConfig {
         minSdk = libs.versions.sdk.min.get().toInt()
     }
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    source.setFrom(kotlin.sourceSets.flatMap { it.kotlin.srcDirs }.filterNot { "/build/" in it.path })
+}
+
+tasks.withType<Detekt>().configureEach {
+    jvmTarget = "17"
+}
+
+dependencies {
+    detektPlugins(libs.detekt.formatting)
+    detektPlugins(libs.detekt.rules.compose)
 }
 
 // AbstractTestTask (not Test) so this also covers the Kotlin/Native iosArm64Test /
