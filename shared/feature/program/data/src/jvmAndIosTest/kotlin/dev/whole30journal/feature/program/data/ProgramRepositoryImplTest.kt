@@ -176,7 +176,7 @@ class ProgramRepositoryImplTest {
     }
 
     @Test
-    fun `shortening an existing program's durationDays discards the day entries it trims off, even with real data`() = runTest {
+    fun `shortening an existing program's durationDays discards the day entries it trims off even with real data`() = runTest {
         val repository = repository(today = LocalDate(2026, 8, 4))
         val startDate = LocalDate(2026, 8, 4)
         repository.configureProgram(startDate, durationDays = 30L).getOrThrow()
