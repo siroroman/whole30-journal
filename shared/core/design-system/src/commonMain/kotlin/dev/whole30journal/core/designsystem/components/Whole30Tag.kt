@@ -12,8 +12,6 @@ import androidx.compose.ui.unit.dp
 import dev.whole30journal.core.designsystem.theme.Whole30Shapes
 import dev.whole30journal.core.designsystem.theme.Whole30Theme
 
-enum class Whole30TagTone { Accent, Neutral }
-
 @Composable
 fun Whole30Tag(
     text: String,
