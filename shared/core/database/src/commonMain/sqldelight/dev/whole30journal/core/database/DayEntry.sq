@@ -14,12 +14,6 @@ upsert:
 INSERT OR REPLACE INTO DayEntryEntity (dayNumber, date, notes, isComplete)
 VALUES (?, ?, ?, ?);
 
--- Used together to seed/re-seed a program's day entries: updateDate keeps dayNumber's calendar
--- date in sync with whichever program currently owns it (a no-op if the row doesn't exist yet),
--- then insertIfAbsent (OR IGNORE) fills in a fresh empty row only if it's still missing - so a day
--- that already has real user data (notes, completion, or child metric/meal/achievement rows) behind
--- it never gets clobbered. Two statements instead of SQLite's ON CONFLICT DO UPDATE because that
--- upsert syntax needs SQLite 3.24+, which isn't guaranteed on this project's minSdk 26 devices.
 updateDate:
 UPDATE DayEntryEntity
 SET date = ?
@@ -29,8 +23,6 @@ insertIfAbsent:
 INSERT OR IGNORE INTO DayEntryEntity (dayNumber, date, notes, isComplete)
 VALUES (?, ?, '', 0);
 
--- Cleans up day numbers left over from a previous, longer-or-differently-dated program
--- configuration that the current one no longer covers.
 deleteAfterDayNumber:
 DELETE FROM DayEntryEntity
 WHERE dayNumber > ?;

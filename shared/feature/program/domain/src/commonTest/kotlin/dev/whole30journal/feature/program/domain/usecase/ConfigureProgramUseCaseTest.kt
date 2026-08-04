@@ -12,9 +12,6 @@ import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/** [ProgramRepository] is faked here rather than hit for real (unlike ProgramRepositoryImplTest in
- * program:data, which runs against a real DB) - this only needs to verify the use case's own
- * defaulting logic, not persistence. */
 class ConfigureProgramUseCaseTest {
 
     @Test

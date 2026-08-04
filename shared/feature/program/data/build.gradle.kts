@@ -7,14 +7,10 @@ plugins {
 }
 
 kotlin {
-    // Restores the standard source-set edges (e.g. iosSimulatorArm64Test -> iosTest) that adding
-    // the custom jvmAndIosTest dependsOn edges below would otherwise silently disable project-wide.
     applyDefaultHierarchyTemplate()
 
     androidTarget()
-    jvm() // repository tests run here via SQLDelight's JDBC driver - see jvmTest
-    // linkerOpts: SQLDelight's native-driver (sqliter) needs libsqlite3 linked explicitly for
-    // standalone test binaries - app binaries get it for free via Xcode's own linking.
+    jvm()
     iosArm64 {
         binaries.getTest("DEBUG").linkerOpts += "-lsqlite3"
     }
@@ -31,8 +27,6 @@ kotlin {
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.koin.core)
         }
-        // Shared between jvmTest and iosTest only (not androidUnitTest, since Android's
-        // DatabaseDriverFactory actual needs a Context that common test code can't supply).
         val jvmAndIosTest by creating {
             dependsOn(commonTest.get())
             dependencies {
@@ -75,8 +69,6 @@ dependencies {
     detektPlugins(libs.detekt.rules.compose)
 }
 
-// AbstractTestTask (not Test) so this also covers the Kotlin/Native iosArm64Test /
-// iosSimulatorArm64Test tasks, which don't extend the JVM-specific Test task type.
 tasks.withType<AbstractTestTask>().configureEach {
     testLogging {
         events("passed", "skipped", "failed")

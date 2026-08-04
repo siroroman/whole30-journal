@@ -7,7 +7,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
-/** No configuration UI exists yet, so both parameters default to a standard round starting today. */
 class ConfigureProgramUseCase(
     private val repository: ProgramRepository,
     private val clock: Clock = Clock.System,

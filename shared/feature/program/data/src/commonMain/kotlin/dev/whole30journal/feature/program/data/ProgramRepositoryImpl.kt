@@ -23,10 +23,6 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import dev.whole30journal.core.database.databaseDispatcher as dbDispatcher
 
-/** SQLDelight-backed [ProgramRepository] - the program config is a single-row `ProgramEntity`.
- * [Program.endDate]/[Program.currentDayNumber] are derived from it plus [clock] at read time rather
- * than stored, so a fresh call to [getProgram] is never stale from whatever day the row happened to
- * be written on. [observeProgram] only recomputes on a row write though - see its own doc. */
 internal class ProgramRepositoryImpl(
     private val database: Whole30Database,
     private val clock: Clock = Clock.System,
@@ -36,11 +32,7 @@ internal class ProgramRepositoryImpl(
         withContext(dbDispatcher) { loadProgram() }
     }
 
-    // currentDayNumber is only recomputed when ProgramEntity is written to, not on a timer - a
-    // long-lived collector won't see it tick over at midnight on its own, only on the next write.
     override fun observeProgram(): Flow<Result<Program?>> {
-        // select() emits once immediately on subscribe; drop() that synthetic first emission and
-        // add back exactly one via onStart, matching DayEntryRepositoryImpl's observe pattern.
         val invalidations = database.programQueries.select().asFlow().map { }.drop(1).onStart { emit(Unit) }
         return invalidations
             .conflate()
@@ -58,23 +50,15 @@ internal class ProgramRepositoryImpl(
             require(durationDays > 0) { "durationDays must be positive, was $durationDays" }
             withContext(dbDispatcher) {
                 database.programQueries.transaction {
-                    // The program config itself is a full replace (there's only ever one)...
                     database.programQueries.deleteAll()
                     database.programQueries.insert(startDate = startDate.toString(), durationDays = durationDays)
 
-                    // ...but seeding day entries only refreshes each day's date and fills in a fresh
-                    // row where one is still missing, so reconfiguring never wipes a day that already
-                    // has real user data (notes, completion, or child rows) behind it - it just keeps
-                    // that day's date in sync with whichever program now owns dayNumber.
                     for (dayNumber in 1..durationDays) {
                         val date = startDate.plus(dayNumber - 1, DateTimeUnit.DAY).toString()
                         database.dayEntryQueries.updateDate(date = date, dayNumber = dayNumber)
                         database.dayEntryQueries.insertIfAbsent(dayNumber = dayNumber, date = date)
                     }
 
-                    // Day numbers beyond the new duration belonged to a previous, longer-or-differently
-                    // -dated configuration and no longer correspond to any day of the current program -
-                    // clean them up (children first, parent last) instead of leaving them orphaned.
                     database.metricQueries.deleteAfterDayNumber(durationDays)
                     database.mealQueries.deleteAfterDayNumber(durationDays)
                     database.achievementQueries.deleteAfterDayNumber(durationDays)
@@ -94,8 +78,6 @@ internal class ProgramRepositoryImpl(
     }
 }
 
-// currentDayNumber is clamped to [1, durationDays] so it's always a valid day-entry index, even
-// before the program has started or after its last day has passed.
 private fun buildProgram(startDate: LocalDate, durationDays: Long, today: LocalDate): Program {
     val endDate = startDate.plus(durationDays - 1, DateTimeUnit.DAY)
     val currentDayNumber = (startDate.daysUntil(today) + 1).toLong().coerceIn(1L, durationDays)
