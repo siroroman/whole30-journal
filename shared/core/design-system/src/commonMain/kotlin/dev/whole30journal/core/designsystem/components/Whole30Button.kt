@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
@@ -50,7 +52,10 @@ fun Whole30Button(
     }
     val buttonModifier = if (fullWidth) modifier.fillMaxWidth() else modifier
     val label: @Composable RowScope.() -> Unit = {
-        icon?.invoke()
+        if (icon != null) {
+            icon()
+            Spacer(modifier = Modifier.width(Whole30Spacing.space3))
+        }
         ProvideTextStyle(textStyle) { content() }
     }
 

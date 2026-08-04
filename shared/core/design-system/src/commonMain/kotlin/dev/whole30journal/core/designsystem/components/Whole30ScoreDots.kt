@@ -8,13 +8,20 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.whole30journal.core.designsystem.theme.Whole30Shapes
@@ -42,23 +49,41 @@ fun Whole30ScoreDots(
             .fillMaxWidth()
             .alpha(if (enabled) 1f else 0.45f),
     ) {
-        val dotSize = (maxWidth - DotGap * (max - 1)) / max
-        Row(horizontalArrangement = Arrangement.spacedBy(DotGap)) {
+        // The touch target spans each dot's full share of the row (visual dot + its gap), not
+        // just the visual circle, so taps land reliably even though max=10 rules out a true
+        // 48dp-wide target per dot on typical phone widths.
+        val cellWidth = maxWidth / max
+        val dotSize = cellWidth - DotGap
+        Row(modifier = Modifier.fillMaxWidth()) {
             for (dotValue in 1..max) {
                 val filled = score != null && dotValue <= score
                 Box(
                     modifier = Modifier
-                        .size(dotSize)
-                        .clip(Whole30Shapes.pill)
-                        .background(if (filled) filledColor else colors.track)
+                        .width(cellWidth)
+                        .heightIn(min = 48.dp)
                         .then(
                             if (enabled && onScoreChange != null) {
-                                Modifier.clickable { onScoreChange(dotValue) }
+                                Modifier.clickable(
+                                    onClickLabel = "Set to $dotValue",
+                                    role = Role.Button,
+                                ) { onScoreChange(dotValue) }
                             } else {
                                 Modifier
                             },
-                        ),
-                )
+                        )
+                        .semantics {
+                            contentDescription = "$dotValue of $max"
+                            stateDescription = if (filled) "Filled" else "Empty"
+                        },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(dotSize)
+                            .clip(Whole30Shapes.pill)
+                            .background(if (filled) filledColor else colors.track),
+                    )
+                }
             }
         }
     }
