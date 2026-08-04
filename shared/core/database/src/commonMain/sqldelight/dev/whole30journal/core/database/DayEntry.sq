@@ -13,3 +13,16 @@ WHERE dayNumber = ?;
 upsert:
 INSERT OR REPLACE INTO DayEntryEntity (dayNumber, date, notes, isComplete)
 VALUES (?, ?, ?, ?);
+
+updateDate:
+UPDATE DayEntryEntity
+SET date = ?
+WHERE dayNumber = ?;
+
+insertIfAbsent:
+INSERT OR IGNORE INTO DayEntryEntity (dayNumber, date, notes, isComplete)
+VALUES (?, ?, '', 0);
+
+deleteAfterDayNumber:
+DELETE FROM DayEntryEntity
+WHERE dayNumber > ?;

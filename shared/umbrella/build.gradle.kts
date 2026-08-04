@@ -31,6 +31,7 @@ kotlin {
             // same as Rohlik's umbrella module.
             export(projects.shared.core.uiUistate)
             export(projects.shared.feature.dayEntry.domain)
+            export(projects.shared.feature.program.domain)
         }
     }
 
@@ -41,6 +42,8 @@ kotlin {
             implementation(projects.shared.core.database)
             api(projects.shared.feature.dayEntry.domain)
             implementation(projects.shared.feature.dayEntry.data)
+            api(projects.shared.feature.program.domain)
+            implementation(projects.shared.feature.program.data)
 
             implementation(libs.koin.core)
         }

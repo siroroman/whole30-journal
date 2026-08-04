@@ -22,3 +22,7 @@ VALUES (?, ?, ?, ?, ?, ?);
 deleteByDayNumber:
 DELETE FROM MetricEntity
 WHERE dayNumber = ?;
+
+deleteAfterDayNumber:
+DELETE FROM MetricEntity
+WHERE dayNumber > ?;

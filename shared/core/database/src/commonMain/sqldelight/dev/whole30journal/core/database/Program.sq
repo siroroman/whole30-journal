@@ -1,0 +1,16 @@
+CREATE TABLE ProgramEntity (
+    startDate TEXT NOT NULL,
+    durationDays INTEGER NOT NULL
+);
+
+select:
+SELECT *
+FROM ProgramEntity
+LIMIT 1;
+
+deleteAll:
+DELETE FROM ProgramEntity;
+
+insert:
+INSERT INTO ProgramEntity (startDate, durationDays)
+VALUES (?, ?);

@@ -144,7 +144,7 @@ private fun sampleDayEntry(dayNumber: Long) = DayEntry(
         Meal(
             id = "meal-$dayNumber-1",
             label = "Breakfast",
-            description = "Eggs and avocado",
+            mealDescription = "Eggs and avocado",
             photoToken = null,
             lovedIt = true,
             sortOrder = 0L,
@@ -152,7 +152,7 @@ private fun sampleDayEntry(dayNumber: Long) = DayEntry(
         Meal(
             id = "meal-$dayNumber-2",
             label = "Lunch",
-            description = "Chicken salad",
+            mealDescription = "Chicken salad",
             photoToken = "token-abc",
             lovedIt = false,
             sortOrder = 1L,

@@ -6,7 +6,7 @@ import dev.whole30journal.core.database.DayEntryEntity
 import dev.whole30journal.core.database.MealEntity
 import dev.whole30journal.core.database.MetricEntity
 import dev.whole30journal.core.database.Whole30Database
-import dev.whole30journal.core.database.databaseDispatcher as dbDispatcher
+import dev.whole30journal.core.database.runCatchingCancellable
 import dev.whole30journal.feature.dayentry.domain.model.Achievement
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import dev.whole30journal.feature.dayentry.domain.model.Meal
@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
+import dev.whole30journal.core.database.databaseDispatcher as dbDispatcher
 
 /** SQLDelight-backed [DayEntryRepository] - a day entry is stored as one row in `DayEntryEntity`
  * plus its child metric/meal/achievement rows, all keyed by [DayEntry.dayNumber]. */
@@ -96,7 +97,7 @@ internal class DayEntryRepositoryImpl(
                         id = meal.id,
                         dayNumber = dayEntry.dayNumber,
                         label = meal.label,
-                        description = meal.description,
+                        description = meal.mealDescription,
                         photoToken = meal.photoToken,
                         lovedIt = meal.lovedIt.toLong(),
                         sortOrder = meal.sortOrder,
@@ -150,7 +151,7 @@ private fun MetricEntity.toDomain() = Metric(
 private fun MealEntity.toDomain() = Meal(
     id = id,
     label = label,
-    description = description,
+    mealDescription = description,
     photoToken = photoToken,
     lovedIt = lovedIt.toBoolean(),
     sortOrder = sortOrder,
@@ -166,8 +167,3 @@ private fun AchievementEntity.toDomain() = Achievement(
 // are stored as plain INTEGER (0/1) and converted at this mapping boundary instead.
 private fun Boolean.toLong(): Long = if (this) 1L else 0L
 private fun Long.toBoolean(): Boolean = this != 0L
-
-// runCatching alone would catch and box CancellationException into a Result.failure instead of
-// letting it propagate, breaking structured-concurrency cancellation - this rethrows it instead.
-private inline fun <T> runCatchingCancellable(block: () -> T): Result<T> =
-    runCatching(block).onFailure { if (it is CancellationException) throw it }
