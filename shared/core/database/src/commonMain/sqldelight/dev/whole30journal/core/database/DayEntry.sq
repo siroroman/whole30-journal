@@ -13,3 +13,9 @@ WHERE dayNumber = ?;
 upsert:
 INSERT OR REPLACE INTO DayEntryEntity (dayNumber, date, notes, isComplete)
 VALUES (?, ?, ?, ?);
+
+-- OR IGNORE: used to seed a program's day entries without clobbering one that already has
+-- real user data (notes, completion, or child metric/meal/achievement rows) behind it.
+insertEmptyIfAbsent:
+INSERT OR IGNORE INTO DayEntryEntity (dayNumber, date, notes, isComplete)
+VALUES (?, ?, '', 0);
