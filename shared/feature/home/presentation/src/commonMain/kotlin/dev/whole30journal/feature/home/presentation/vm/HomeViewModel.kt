@@ -1,7 +1,10 @@
 package dev.whole30journal.feature.home.presentation.vm
 
+import androidx.lifecycle.viewModelScope
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.core.uistate.vm.StateFlowViewModel
+import dev.whole30journal.feature.home.presentation.usecase.FormatDayLabelUseCase
+import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -11,20 +14,48 @@ import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-class HomeViewModel :
-    StateFlowViewModel<HomeContract.UiData, HomeContract.UiAction, HomeContract.UiEvent, HomeContract.OutputEvent>(
-        initialState = UiStateAware.UiState(isLoading = false, uiData = buildHardcodedUiData())
-    ) {
+class HomeViewModel(
+    private val formatDayLabelUseCase: FormatDayLabelUseCase = FormatDayLabelUseCase(),
+) : StateFlowViewModel<HomeContract.UiData, HomeContract.UiAction, HomeContract.UiEvent, HomeContract.OutputEvent>(
+    initialState = UiStateAware.UiState(isLoading = false, uiData = buildHardcodedUiData())
+) {
+
+    init {
+        viewModelScope.launch { refreshDateLabels(currentUiData.selectedDay) }
+    }
 
     override suspend fun applyUiAction(uiAction: HomeContract.UiAction) {
         when (uiAction) {
-            is HomeContract.UiAction.OnDayClick ->
-                updateUiData { copy(selectedDay = uiAction.dayNumber) }
+            is HomeContract.UiAction.OnDayClick -> selectDay(uiAction.dayNumber)
             is HomeContract.UiAction.OnEditDayClick,
             is HomeContract.UiAction.OnViewDayDetailsClick,
             -> Unit // No Detail/Entry screen exists yet - documents intent for future navigation.
             is HomeContract.UiAction.OnTrendMetricSelected ->
                 updateUiData { copy(selectedTrendMetric = uiAction.metric) }
+        }
+    }
+
+    private suspend fun selectDay(dayNumber: Int) {
+        val label = formatDayLabelUseCase(dateForDay(dayNumber), TODAY, FormatDayLabelUseCase.Style.Long)
+        updateUiData { copy(selectedDay = dayNumber, selectedDayLabel = label) }
+    }
+
+    private suspend fun refreshDateLabels(selectedDay: Int) {
+        val selectedDayLabel = formatDayLabelUseCase(dateForDay(selectedDay), TODAY, FormatDayLabelUseCase.Style.Long)
+        val progressStartLabel = formatDayLabelUseCase(dateForDay(1), TODAY, FormatDayLabelUseCase.Style.Short)
+        val progressEndLabel = formatDayLabelUseCase(dateForDay(TOTAL_DAYS), TODAY, FormatDayLabelUseCase.Style.Short)
+        val trendAxisLabels = HomeContract.TrendAxisLabels(
+            start = progressStartLabel,
+            middle = formatDayLabelUseCase(dateForDay(TOTAL_DAYS / 2), TODAY, FormatDayLabelUseCase.Style.Short),
+            end = progressEndLabel,
+        )
+        updateUiData {
+            copy(
+                selectedDayLabel = selectedDayLabel,
+                progressStartLabel = progressStartLabel,
+                progressEndLabel = progressEndLabel,
+                trendAxisLabels = trendAxisLabels,
+            )
         }
     }
 }
@@ -37,6 +68,8 @@ private const val MISSING_ENTRY_DAY = 5
 @OptIn(ExperimentalTime::class)
 private val TODAY: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
 private val PROGRAM_START_DATE: LocalDate = TODAY.plus(-(CURRENT_DAY - 1), DateTimeUnit.DAY)
+
+private fun dateForDay(dayNumber: Int): LocalDate = PROGRAM_START_DATE.plus(dayNumber - 1, DateTimeUnit.DAY)
 
 private val OVERALL_VALUES = listOf(3, 4, 3, 5, 5, 6, 6, 7, 7, 8, 8, 8)
 private val ENERGY_VALUES = listOf(3, 3, 2, 4, 5, 6, 6, 7, 7, 8, 8, 8)
@@ -55,11 +88,9 @@ private fun weekdayAbbreviation(dayOfWeek: DayOfWeek): String = when (dayOfWeek)
 }
 
 private fun buildDayCells(): List<HomeContract.DayCell> = (1..TOTAL_DAYS).map { day ->
-    val date = PROGRAM_START_DATE.plus(day - 1, DateTimeUnit.DAY)
     HomeContract.DayCell(
         dayNumber = day,
-        date = date,
-        weekdayAbbreviation = weekdayAbbreviation(date.dayOfWeek),
+        weekdayAbbreviation = weekdayAbbreviation(dateForDay(day).dayOfWeek),
         isFilled = day <= CURRENT_DAY && day != MISSING_ENTRY_DAY,
         isToday = day == CURRENT_DAY,
     )
@@ -91,7 +122,6 @@ private fun buildHardcodedUiData(): HomeContract.UiData = HomeContract.UiData(
     currentDay = CURRENT_DAY,
     totalDays = TOTAL_DAYS,
     progressPercent = PROGRESS_PERCENT,
-    today = TODAY,
     days = buildDayCells(),
     selectedDay = 1,
     metricsByDay = buildMetricsByDay(),
