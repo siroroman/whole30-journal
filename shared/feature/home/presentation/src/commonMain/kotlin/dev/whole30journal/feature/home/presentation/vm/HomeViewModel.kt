@@ -6,7 +6,6 @@ import dev.whole30journal.core.uistate.vm.StateFlowViewModel
 import dev.whole30journal.core.utils.DateFormatter
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
@@ -17,7 +16,7 @@ import kotlin.time.ExperimentalTime
 class HomeViewModel(
     private val dateFormatter: DateFormatter = DateFormatter(),
 ) : StateFlowViewModel<HomeContract.UiData, HomeContract.UiAction, HomeContract.UiEvent, HomeContract.OutputEvent>(
-    initialState = UiStateAware.UiState(isLoading = false, uiData = buildHardcodedUiData())
+    initialState = UiStateAware.UiState(isLoading = false, uiData = buildHardcodedUiData(dateFormatter))
 ) {
 
     init {
@@ -77,20 +76,10 @@ private val MOOD_VALUES = listOf(4, 4, 3, 5, 6, 6, 7, 7, 8, 8, 8, 8)
 private val SLEEP_VALUES = listOf(4, 5, 4, 6, 6, 7, 7, 8, 7, 8, 8, 8)
 private val CRAVINGS_VALUES = listOf(2, 3, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8)
 
-private fun weekdayAbbreviation(dayOfWeek: DayOfWeek): String = when (dayOfWeek) {
-    DayOfWeek.MONDAY -> "MO"
-    DayOfWeek.TUESDAY -> "TU"
-    DayOfWeek.WEDNESDAY -> "WE"
-    DayOfWeek.THURSDAY -> "TH"
-    DayOfWeek.FRIDAY -> "FR"
-    DayOfWeek.SATURDAY -> "SA"
-    DayOfWeek.SUNDAY -> "SU"
-}
-
-private fun buildDayCells(): List<HomeContract.DayCell> = (1..TOTAL_DAYS).map { day ->
+private fun buildDayCells(dateFormatter: DateFormatter): List<HomeContract.DayCell> = (1..TOTAL_DAYS).map { day ->
     HomeContract.DayCell(
         dayNumber = day,
-        weekdayAbbreviation = weekdayAbbreviation(dateForDay(day).dayOfWeek),
+        weekdayAbbreviation = dateFormatter.weekdayAbbreviation(dateForDay(day).dayOfWeek),
         isFilled = day <= CURRENT_DAY && day != MISSING_ENTRY_DAY,
         isToday = day == CURRENT_DAY,
     )
@@ -118,11 +107,11 @@ private fun buildMetricsByDay(): Map<Int, HomeContract.DayMetrics> =
         )
     }
 
-private fun buildHardcodedUiData(): HomeContract.UiData = HomeContract.UiData(
+private fun buildHardcodedUiData(dateFormatter: DateFormatter): HomeContract.UiData = HomeContract.UiData(
     currentDay = CURRENT_DAY,
     totalDays = TOTAL_DAYS,
     progressPercent = PROGRESS_PERCENT,
-    days = buildDayCells(),
+    days = buildDayCells(dateFormatter),
     selectedDay = 1,
     metricsByDay = buildMetricsByDay(),
     trendSeries = buildTrendSeries(),
