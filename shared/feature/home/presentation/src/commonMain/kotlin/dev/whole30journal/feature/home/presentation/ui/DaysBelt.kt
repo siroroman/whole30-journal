@@ -12,10 +12,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +43,18 @@ fun DayStrip(
     onDayClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val listState = rememberLazyListState()
+    var hasScrolledToToday by remember { mutableStateOf(false) }
+
+    LaunchedEffect(days) {
+        if (hasScrolledToToday || days.isEmpty()) return@LaunchedEffect
+        hasScrolledToToday = true
+        val todayIndex = days.indexOfFirst { it.isToday }
+        if (todayIndex >= 0) {
+            listState.scrollToItem((todayIndex - LEADING_DAYS_BEFORE_TODAY).coerceAtLeast(0))
+        }
+    }
+
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5)) {
         Text(
             text = stringResource(Res.string.home_days_title),
@@ -44,6 +62,7 @@ fun DayStrip(
             color = Whole30Theme.colors.text,
         )
         LazyRow(
+            state = listState,
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3),
         ) {
@@ -57,6 +76,8 @@ fun DayStrip(
         }
     }
 }
+
+private const val LEADING_DAYS_BEFORE_TODAY = 2
 
 @Composable
 private fun DayCellItem(day: HomeContract.DayCell, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
