@@ -57,7 +57,6 @@ import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
 import dev.whole30journal.feature.home.presentation.generated.resources.home_day_future_message
 import dev.whole30journal.feature.home.presentation.generated.resources.home_day_no_entry_message
-import dev.whole30journal.feature.home.presentation.generated.resources.home_day_title
 import dev.whole30journal.feature.home.presentation.generated.resources.home_days_title
 import dev.whole30journal.feature.home.presentation.generated.resources.home_edit_today_content_description
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_cravings
@@ -77,8 +76,16 @@ import dev.whole30journal.feature.home.presentation.ui.icons.MoodIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.SleepIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.ViewDetailsIcon
 import dev.whole30journal.feature.home.presentation.vm.HomeContract
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun HomeScreen(
@@ -128,9 +135,9 @@ private fun HomeContent(
             value = uiData.currentDay,
             modifier = Modifier.fillMaxWidth(),
             max = uiData.totalDays,
-            labelLeft = "Day 1",
-            labelCenter = "Day ${uiData.currentDay} · ${uiData.progressPercent}%",
-            labelRight = "Day ${uiData.totalDays}",
+            labelLeft = dayLabel(uiData.days.firstOrNull()?.date ?: uiData.today, uiData.today),
+            labelCenter = "${stringResource(Res.string.home_today_label)} · ${uiData.progressPercent}%",
+            labelRight = dayLabel(uiData.days.lastOrNull()?.date ?: uiData.today, uiData.today),
         )
         DayStrip(
             days = uiData.days,
@@ -139,6 +146,8 @@ private fun HomeContent(
         )
         DayOverviewCard(
             selectedDay = uiData.selectedDay,
+            selectedDate = uiData.days.getOrNull(uiData.selectedDay - 1)?.date ?: uiData.today,
+            today = uiData.today,
             currentDay = uiData.currentDay,
             totalDays = uiData.totalDays,
             metrics = uiData.metricsByDay[uiData.selectedDay],
@@ -148,7 +157,8 @@ private fun HomeContent(
         TrendsSection(
             selectedMetric = uiData.selectedTrendMetric,
             series = uiData.trendSeries[uiData.selectedTrendMetric].orEmpty(),
-            totalDays = uiData.totalDays,
+            days = uiData.days,
+            today = uiData.today,
             onMetricSelect = { onUiAction(HomeContract.UiAction.OnTrendMetricSelected(it)) },
         )
     }
@@ -263,6 +273,8 @@ private fun DayCellItem(day: HomeContract.DayCell, isSelected: Boolean, onClick:
 @Composable
 private fun DayOverviewCard(
     selectedDay: Int,
+    selectedDate: LocalDate,
+    today: LocalDate,
     currentDay: Int,
     totalDays: Int,
     metrics: HomeContract.DayMetrics?,
@@ -271,7 +283,6 @@ private fun DayOverviewCard(
     modifier: Modifier = Modifier,
 ) {
     val colors = Whole30Theme.colors
-    val isToday = selectedDay == currentDay
     val isFuture = selectedDay > currentDay
     Whole30Card(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -284,11 +295,7 @@ private fun DayOverviewCard(
                 horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3),
             ) {
                 Text(
-                    text = if (isToday) {
-                        stringResource(Res.string.home_today_label)
-                    } else {
-                        stringResource(Res.string.home_day_title, selectedDay)
-                    },
+                    text = dayLabel(selectedDate, today),
                     style = Whole30Theme.typography.textBase.copy(fontWeight = FontWeight.Bold),
                     color = colors.textSecondary,
                 )
@@ -446,7 +453,8 @@ private fun MetricCell(label: String, value: Int?, modifier: Modifier = Modifier
 private fun TrendsSection(
     selectedMetric: HomeContract.TrendMetric,
     series: List<HomeContract.TrendPoint>,
-    totalDays: Int,
+    days: List<HomeContract.DayCell>,
+    today: LocalDate,
     onMetricSelect: (HomeContract.TrendMetric) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -458,7 +466,7 @@ private fun TrendsSection(
         )
         Whole30Card(modifier = Modifier.fillMaxWidth()) {
             TrendMetricSelector(selected = selectedMetric, onSelect = onMetricSelect)
-            TrendBarChart(series = series, totalDays = totalDays, modifier = Modifier.fillMaxWidth())
+            TrendBarChart(series = series, days = days, today = today, modifier = Modifier.fillMaxWidth())
         }
     }
 }
@@ -526,11 +534,17 @@ private fun trendMetricLabel(metric: HomeContract.TrendMetric): String = when (m
 }
 
 @Composable
-private fun TrendBarChart(series: List<HomeContract.TrendPoint>, totalDays: Int, modifier: Modifier = Modifier) {
+private fun TrendBarChart(
+    series: List<HomeContract.TrendPoint>,
+    days: List<HomeContract.DayCell>,
+    today: LocalDate,
+    modifier: Modifier = Modifier,
+) {
     val colors = Whole30Theme.colors
     val textMeasurer = rememberTextMeasurer()
     val labelStyle = Whole30Theme.typography.text2xs.copy(color = colors.textTertiary)
     val maxValue = 10f
+    val totalDays = days.size
     val animatedSeries = series.map { point ->
         point.dayNumber to key(point.dayNumber) {
             animateFloatAsState(targetValue = point.value.toFloat(), label = "trendBarValue")
@@ -578,26 +592,60 @@ private fun TrendBarChart(series: List<HomeContract.TrendPoint>, totalDays: Int,
                 drawPath(path = barPath, color = colors.scoreColor(value.roundToInt()))
             }
         }
+        val middleDay = days.getOrNull(totalDays / 2 - 1)
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "Day 1", style = Whole30Theme.typography.text2xs, color = colors.textTertiary)
-            Text(text = "Day 15", style = Whole30Theme.typography.text2xs, color = colors.textTertiary)
-            Text(text = "Day $totalDays", style = Whole30Theme.typography.text2xs, color = colors.textTertiary)
+            Text(
+                text = dayLabel(days.firstOrNull()?.date ?: today, today),
+                style = Whole30Theme.typography.text2xs,
+                color = colors.textTertiary,
+            )
+            if (middleDay != null) {
+                Text(text = dayLabel(middleDay.date, today), style = Whole30Theme.typography.text2xs, color = colors.textTertiary)
+            }
+            Text(
+                text = dayLabel(days.lastOrNull()?.date ?: today, today),
+                style = Whole30Theme.typography.text2xs,
+                color = colors.textTertiary,
+            )
         }
     }
 }
 
+@Composable
+private fun dayLabel(date: LocalDate, today: LocalDate): String =
+    if (date == today) {
+        stringResource(Res.string.home_today_label)
+    } else {
+        "${fullWeekdayName(date.dayOfWeek)} ${date.day}.${date.month.ordinal + 1}.${date.year}"
+    }
+
+private fun fullWeekdayName(dayOfWeek: DayOfWeek): String = when (dayOfWeek) {
+    DayOfWeek.MONDAY -> "Monday"
+    DayOfWeek.TUESDAY -> "Tuesday"
+    DayOfWeek.WEDNESDAY -> "Wednesday"
+    DayOfWeek.THURSDAY -> "Thursday"
+    DayOfWeek.FRIDAY -> "Friday"
+    DayOfWeek.SATURDAY -> "Saturday"
+    DayOfWeek.SUNDAY -> "Sunday"
+}
+
+@OptIn(ExperimentalTime::class)
 private fun previewUiData(): HomeContract.UiData {
     val weekdays = listOf("S", "M", "T", "W", "T", "F", "S")
     val currentDay = 12
     val totalDays = 30
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val startDate = today.plus(-(currentDay - 1), DateTimeUnit.DAY)
     val trendValues = listOf(6, 7, 5, 8, 7, 9, 6, 8, 7, 9, 8, 9)
     return HomeContract.UiData(
         currentDay = currentDay,
         totalDays = totalDays,
         progressPercent = 40,
+        today = today,
         days = (1..totalDays).map { day ->
             HomeContract.DayCell(
                 dayNumber = day,
+                date = startDate.plus(day - 1, DateTimeUnit.DAY),
                 weekdayAbbreviation = weekdays[(day - 1) % weekdays.size],
                 isFilled = day <= currentDay,
                 isToday = day == currentDay,

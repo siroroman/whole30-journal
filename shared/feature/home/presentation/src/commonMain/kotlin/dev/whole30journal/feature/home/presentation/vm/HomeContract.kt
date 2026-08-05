@@ -3,6 +3,7 @@ package dev.whole30journal.feature.home.presentation.vm
 import androidx.compose.runtime.Immutable
 import dev.whole30journal.core.uistate.UiActionAware
 import dev.whole30journal.core.uistate.UiStateAware
+import kotlinx.datetime.LocalDate
 
 object HomeContract {
 
@@ -11,6 +12,7 @@ object HomeContract {
     @Immutable
     data class DayCell(
         val dayNumber: Int,
+        val date: LocalDate,
         val weekdayAbbreviation: String,
         val isFilled: Boolean,
         val isToday: Boolean,
@@ -33,6 +35,7 @@ object HomeContract {
         val currentDay: Int = 0,
         val totalDays: Int = 30,
         val progressPercent: Int = 0,
+        val today: LocalDate = LocalDate(1970, 1, 1),
         val days: List<DayCell> = emptyList(),
         val selectedDay: Int = 0,
         val metricsByDay: Map<Int, DayMetrics> = emptyMap(),

@@ -26,6 +26,7 @@ kotlin {
             implementation(libs.compose.components.resources)
 
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.koin.core)
             implementation(libs.koin.core.viewmodel)
