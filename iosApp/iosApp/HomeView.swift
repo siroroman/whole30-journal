@@ -8,5 +8,6 @@ struct HomeView: View {
         ComposeViewController {
             HomeScreenViewController(viewModel: viewModel)
         }
+        .ignoresSafeArea()
     }
 }
