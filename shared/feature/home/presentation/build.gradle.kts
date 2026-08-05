@@ -22,6 +22,7 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
+            implementation(libs.compose.ui.tooling.preview)
             implementation(libs.compose.components.resources)
 
             implementation(libs.kotlinx.coroutines.core)
@@ -59,6 +60,8 @@ tasks.withType<Detekt>().configureEach {
 }
 
 dependencies {
+    debugImplementation(libs.compose.ui.tooling)
+
     detektPlugins(libs.detekt.formatting)
     detektPlugins(libs.detekt.rules.compose)
 }

@@ -40,6 +40,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.whole30journal.core.designsystem.components.Whole30Card
 import dev.whole30journal.core.designsystem.components.Whole30ProgressBar
@@ -486,4 +487,51 @@ private fun TrendBarChart(series: List<HomeContract.TrendPoint>, totalDays: Int,
             Text(text = "Day $totalDays", style = Whole30Theme.typography.text2xs, color = colors.textTertiary)
         }
     }
+}
+
+private fun previewUiData(): HomeContract.UiData {
+    val weekdays = listOf("S", "M", "T", "W", "T", "F", "S")
+    val currentDay = 12
+    val totalDays = 30
+    val trendValues = listOf(6, 7, 5, 8, 7, 9, 6, 8, 7, 9, 8, 9)
+    return HomeContract.UiData(
+        currentDay = currentDay,
+        totalDays = totalDays,
+        progressPercent = 40,
+        days = (1..totalDays).map { day ->
+            HomeContract.DayCell(
+                dayNumber = day,
+                weekdayAbbreviation = weekdays[(day - 1) % weekdays.size],
+                isFilled = day <= currentDay,
+                isToday = day == currentDay,
+            )
+        },
+        today = HomeContract.TodayMetrics(overall = 8, energy = 7, mood = 8, sleep = 6, cravings = 3),
+        selectedTrendMetric = HomeContract.TrendMetric.Overall,
+        trendSeries = HomeContract.TrendMetric.entries.associateWith { metric ->
+            trendValues.mapIndexed { index, value -> HomeContract.TrendPoint(dayNumber = index + 1, value = value) }
+        },
+    )
+}
+
+private const val UI_MODE_NIGHT_YES = 0x20
+
+@Preview
+@Composable
+private fun HomeScreenPreview() {
+    HomeScreen(
+        state = UiStateAware.UiState(isLoading = false, uiData = previewUiData()),
+        onUiAction = {},
+        onUiEventConsume = {},
+    )
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun HomeScreenPreviewDark() {
+    HomeScreen(
+        state = UiStateAware.UiState(isLoading = false, uiData = previewUiData()),
+        onUiAction = {},
+        onUiEventConsume = {},
+    )
 }
