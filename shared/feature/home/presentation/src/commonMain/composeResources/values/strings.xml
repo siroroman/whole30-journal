@@ -2,8 +2,9 @@
 <resources>
     <string name="home_wordmark">Whole30</string>
     <string name="home_today_label">Today</string>
-    <string name="home_edit_today_content_description">Edit today\'s entry</string>
-    <string name="home_view_today_details_content_description">View today\'s details</string>
+    <string name="home_day_title">Day %1$d</string>
+    <string name="home_edit_today_content_description">Edit entry</string>
+    <string name="home_view_today_details_content_description">View details</string>
     <string name="home_metric_overall">Overall</string>
     <string name="home_metric_energy">Energy</string>
     <string name="home_metric_mood">Mood</string>
@@ -11,4 +12,6 @@
     <string name="home_metric_cravings">Cravings</string>
     <string name="home_trends_title">Trends</string>
     <string name="home_days_title">Days</string>
+    <string name="home_day_future_message">This day hasn\'t happened yet</string>
+    <string name="home_day_no_entry_message">No entry logged for this day yet</string>
 </resources>

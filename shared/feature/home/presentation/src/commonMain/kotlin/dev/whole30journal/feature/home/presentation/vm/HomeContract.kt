@@ -17,7 +17,7 @@ object HomeContract {
     )
 
     @Immutable
-    data class TodayMetrics(
+    data class DayMetrics(
         val overall: Int?,
         val energy: Int?,
         val mood: Int?,
@@ -34,15 +34,16 @@ object HomeContract {
         val totalDays: Int = 30,
         val progressPercent: Int = 0,
         val days: List<DayCell> = emptyList(),
-        val today: TodayMetrics = TodayMetrics(null, null, null, null, null),
+        val selectedDay: Int = 0,
+        val metricsByDay: Map<Int, DayMetrics> = emptyMap(),
         val selectedTrendMetric: TrendMetric = TrendMetric.Overall,
         val trendSeries: Map<TrendMetric, List<TrendPoint>> = emptyMap(),
     ) : UiStateAware.UiData
 
     sealed interface UiAction : UiActionAware.UiAction {
         data class OnDayClick(val dayNumber: Int) : UiAction
-        data object OnEditTodayClick : UiAction
-        data object OnViewTodayDetailsClick : UiAction
+        data class OnEditDayClick(val dayNumber: Int) : UiAction
+        data class OnViewDayDetailsClick(val dayNumber: Int) : UiAction
         data class OnTrendMetricSelected(val metric: TrendMetric) : UiAction
     }
 

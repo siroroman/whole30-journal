@@ -55,6 +55,9 @@ import dev.whole30journal.core.designsystem.theme.Whole30Theme
 import dev.whole30journal.core.designsystem.theme.scoreColor
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
+import dev.whole30journal.feature.home.presentation.generated.resources.home_day_future_message
+import dev.whole30journal.feature.home.presentation.generated.resources.home_day_no_entry_message
+import dev.whole30journal.feature.home.presentation.generated.resources.home_day_title
 import dev.whole30journal.feature.home.presentation.generated.resources.home_days_title
 import dev.whole30journal.feature.home.presentation.generated.resources.home_edit_today_content_description
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_cravings
@@ -129,11 +132,18 @@ private fun HomeContent(
             labelCenter = "Day ${uiData.currentDay} · ${uiData.progressPercent}%",
             labelRight = "Day ${uiData.totalDays}",
         )
-        DayStrip(days = uiData.days, onDayClick = { onUiAction(HomeContract.UiAction.OnDayClick(it)) })
-        TodayCard(
-            today = uiData.today,
-            onEditClick = { onUiAction(HomeContract.UiAction.OnEditTodayClick) },
-            onViewDetailsClick = { onUiAction(HomeContract.UiAction.OnViewTodayDetailsClick) },
+        DayStrip(
+            days = uiData.days,
+            selectedDay = uiData.selectedDay,
+            onDayClick = { onUiAction(HomeContract.UiAction.OnDayClick(it)) },
+        )
+        DayOverviewCard(
+            selectedDay = uiData.selectedDay,
+            currentDay = uiData.currentDay,
+            totalDays = uiData.totalDays,
+            metrics = uiData.metricsByDay[uiData.selectedDay],
+            onEditClick = { onUiAction(HomeContract.UiAction.OnEditDayClick(uiData.selectedDay)) },
+            onViewDetailsClick = { onUiAction(HomeContract.UiAction.OnViewDayDetailsClick(uiData.selectedDay)) },
         )
         TrendsSection(
             selectedMetric = uiData.selectedTrendMetric,
@@ -182,7 +192,12 @@ private fun HomeHeader(currentDay: Int, totalDays: Int, modifier: Modifier = Mod
 }
 
 @Composable
-private fun DayStrip(days: List<HomeContract.DayCell>, onDayClick: (Int) -> Unit, modifier: Modifier = Modifier) {
+private fun DayStrip(
+    days: List<HomeContract.DayCell>,
+    selectedDay: Int,
+    onDayClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5)) {
         Text(
             text = stringResource(Res.string.home_days_title),
@@ -194,26 +209,41 @@ private fun DayStrip(days: List<HomeContract.DayCell>, onDayClick: (Int) -> Unit
             horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3),
         ) {
             items(items = days, key = { it.dayNumber }) { day ->
-                DayCellItem(day = day, onClick = { onDayClick(day.dayNumber) })
+                DayCellItem(
+                    day = day,
+                    isSelected = day.dayNumber == selectedDay,
+                    onClick = { onDayClick(day.dayNumber) },
+                )
             }
         }
     }
 }
 
 @Composable
-private fun DayCellItem(day: HomeContract.DayCell, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun DayCellItem(day: HomeContract.DayCell, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val colors = Whole30Theme.colors
-    val backgroundColor = if (day.isToday) colors.accentTint else Color.Transparent
+    val backgroundColor = if (isSelected) colors.accent else Color.Transparent
     val (weekdayColor, numberColor) = when {
-        day.isToday -> colors.accent to colors.accent
+        isSelected -> colors.accentOn to colors.accentOn
         day.isFilled -> colors.textSecondary to colors.text
         else -> colors.textTertiary to colors.textTertiary
+    }
+    val dotColor = when {
+        isSelected && day.isFilled -> colors.accentOn
+        day.isFilled -> colors.accent
+        else -> Color.Transparent
+    }
+    val todayBorderModifier = if (day.isToday && !isSelected) {
+        Modifier.border(width = 1.dp, color = colors.accent, shape = Whole30Shapes.lg)
+    } else {
+        Modifier
     }
     Column(
         modifier = modifier
             .width(46.dp)
             .clip(Whole30Shapes.lg)
             .background(backgroundColor)
+            .then(todayBorderModifier)
             .clickable(onClick = onClick)
             .padding(vertical = Whole30Spacing.space3),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -225,64 +255,112 @@ private fun DayCellItem(day: HomeContract.DayCell, onClick: () -> Unit, modifier
             modifier = Modifier
                 .size(4.dp)
                 .clip(CircleShape)
-                .background(if (day.isFilled) colors.accent else Color.Transparent),
+                .background(dotColor),
         )
     }
 }
 
 @Composable
-private fun TodayCard(
-    today: HomeContract.TodayMetrics,
+private fun DayOverviewCard(
+    selectedDay: Int,
+    currentDay: Int,
+    totalDays: Int,
+    metrics: HomeContract.DayMetrics?,
     onEditClick: () -> Unit,
     onViewDetailsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = Whole30Theme.colors
+    val isToday = selectedDay == currentDay
+    val isFuture = selectedDay > currentDay
     Whole30Card(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = stringResource(Res.string.home_today_label),
-                style = Whole30Theme.typography.textBase.copy(fontWeight = FontWeight.Bold),
-                color = colors.textSecondary,
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3)) {
-                IconCircleButton(onClick = onEditClick) {
-                    EditIcon(
-                        tint = colors.text,
-                        modifier = Modifier.size(14.dp),
-                        contentDescription = stringResource(Res.string.home_edit_today_content_description),
-                    )
-                }
-                IconCircleButton(onClick = onViewDetailsClick) {
-                    ViewDetailsIcon(
-                        tint = colors.text,
-                        modifier = Modifier.size(14.dp),
-                        contentDescription = stringResource(Res.string.home_view_today_details_content_description),
-                    )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3),
+            ) {
+                Text(
+                    text = if (isToday) {
+                        stringResource(Res.string.home_today_label)
+                    } else {
+                        stringResource(Res.string.home_day_title, selectedDay)
+                    },
+                    style = Whole30Theme.typography.textBase.copy(fontWeight = FontWeight.Bold),
+                    color = colors.textSecondary,
+                )
+                Text(
+                    text = "$selectedDay/$totalDays",
+                    style = Whole30Theme.typography.text2xs,
+                    color = colors.textTertiary,
+                    modifier = Modifier
+                        .clip(Whole30Shapes.pill)
+                        .background(colors.surface2)
+                        .padding(horizontal = Whole30Spacing.space3, vertical = Whole30Spacing.space1),
+                )
+            }
+            if (!isFuture) {
+                Row(horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3)) {
+                    IconCircleButton(onClick = onEditClick) {
+                        EditIcon(
+                            tint = colors.text,
+                            modifier = Modifier.size(14.dp),
+                            contentDescription = stringResource(Res.string.home_edit_today_content_description),
+                        )
+                    }
+                    if (metrics != null) {
+                        IconCircleButton(onClick = onViewDetailsClick) {
+                            ViewDetailsIcon(
+                                tint = colors.text,
+                                modifier = Modifier.size(14.dp),
+                                contentDescription = stringResource(Res.string.home_view_today_details_content_description),
+                            )
+                        }
+                    }
                 }
             }
         }
-        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-            val ringSize = 150.dp
-            val gridWidth = (maxWidth - ringSize - Whole30Spacing.space7).coerceAtLeast(0.dp)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space7),
-            ) {
-                Whole30ProgressRing(
-                    score = today.overall,
-                    size = ringSize,
-                    label = stringResource(Res.string.home_metric_overall),
-                )
-                MetricGrid(today = today, modifier = Modifier.width(gridWidth))
+        if (metrics != null) {
+            BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                val ringSize = 150.dp
+                val gridWidth = (maxWidth - ringSize - Whole30Spacing.space7).coerceAtLeast(0.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space7),
+                ) {
+                    Whole30ProgressRing(
+                        score = metrics.overall,
+                        size = ringSize,
+                        label = stringResource(Res.string.home_metric_overall),
+                    )
+                    MetricGrid(metrics = metrics, modifier = Modifier.width(gridWidth))
+                }
             }
+        } else {
+            DayEmptyState(isFuture = isFuture)
         }
     }
+}
+
+@Composable
+private fun DayEmptyState(isFuture: Boolean, modifier: Modifier = Modifier) {
+    Text(
+        text = if (isFuture) {
+            stringResource(Res.string.home_day_future_message)
+        } else {
+            stringResource(Res.string.home_day_no_entry_message)
+        },
+        style = Whole30Theme.typography.textSm,
+        color = Whole30Theme.colors.textSecondary,
+        textAlign = TextAlign.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = Whole30Spacing.space8),
+    )
 }
 
 @Composable
@@ -302,21 +380,21 @@ private fun IconCircleButton(onClick: () -> Unit, modifier: Modifier = Modifier,
 }
 
 @Composable
-private fun MetricGrid(today: HomeContract.TodayMetrics, modifier: Modifier = Modifier) {
+private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Modifier) {
     val colors = Whole30Theme.colors
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5)) {
         Row(modifier = Modifier.fillMaxWidth()) {
             MetricCell(
                 label = stringResource(Res.string.home_metric_energy),
-                value = today.energy,
+                value = metrics.energy,
                 modifier = Modifier.fillMaxWidth(HALF_WIDTH_FRACTION).padding(end = Whole30Spacing.space6),
             ) {
                 EnergyIcon(tint = colors.iconEnergy, modifier = Modifier.size(16.dp))
             }
             MetricCell(
                 label = stringResource(Res.string.home_metric_mood),
-                value = today.mood,
+                value = metrics.mood,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 MoodIcon(tint = colors.iconMood, modifier = Modifier.size(16.dp))
@@ -325,7 +403,7 @@ private fun MetricGrid(today: HomeContract.TodayMetrics, modifier: Modifier = Mo
         Row(modifier = Modifier.fillMaxWidth()) {
             MetricCell(
                 label = stringResource(Res.string.home_metric_sleep),
-                value = today.sleep,
+                value = metrics.sleep,
                 modifier = Modifier.fillMaxWidth(HALF_WIDTH_FRACTION).padding(end = Whole30Spacing.space6),
             ) {
                 SleepIcon(tint = colors.iconSleep, modifier = Modifier.size(16.dp))
@@ -334,7 +412,7 @@ private fun MetricGrid(today: HomeContract.TodayMetrics, modifier: Modifier = Mo
             // the two are numerically identical in both themes today, but accent is what was chosen.
             MetricCell(
                 label = stringResource(Res.string.home_metric_cravings),
-                value = today.cravings,
+                value = metrics.cravings,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 CravingsIcon(tint = colors.accent, modifier = Modifier.size(16.dp))
@@ -525,7 +603,16 @@ private fun previewUiData(): HomeContract.UiData {
                 isToday = day == currentDay,
             )
         },
-        today = HomeContract.TodayMetrics(overall = 8, energy = 7, mood = 8, sleep = 6, cravings = 3),
+        selectedDay = currentDay,
+        metricsByDay = (1..currentDay).associateWith { day ->
+            HomeContract.DayMetrics(
+                overall = trendValues[(day - 1) % trendValues.size],
+                energy = 7,
+                mood = 8,
+                sleep = 6,
+                cravings = 3,
+            )
+        },
         selectedTrendMetric = HomeContract.TrendMetric.Overall,
         trendSeries = HomeContract.TrendMetric.entries.associateWith { metric ->
             trendValues.mapIndexed { index, value -> HomeContract.TrendPoint(dayNumber = index + 1, value = value) }
