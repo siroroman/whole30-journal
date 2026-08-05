@@ -32,6 +32,7 @@ class HomeViewModel :
 private const val CURRENT_DAY = 12
 private const val TOTAL_DAYS = 30
 private const val PROGRESS_PERCENT = 40
+private const val MISSING_ENTRY_DAY = 5
 
 @OptIn(ExperimentalTime::class)
 private val TODAY: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
@@ -59,7 +60,7 @@ private fun buildDayCells(): List<HomeContract.DayCell> = (1..TOTAL_DAYS).map { 
         dayNumber = day,
         date = date,
         weekdayAbbreviation = weekdayAbbreviation(date.dayOfWeek),
-        isFilled = day <= CURRENT_DAY,
+        isFilled = day <= CURRENT_DAY && day != MISSING_ENTRY_DAY,
         isToday = day == CURRENT_DAY,
     )
 }
@@ -74,16 +75,17 @@ private fun buildTrendSeries(): Map<HomeContract.TrendMetric, List<HomeContract.
     HomeContract.TrendMetric.Cravings to series(CRAVINGS_VALUES),
 )
 
-private fun buildMetricsByDay(): Map<Int, HomeContract.DayMetrics> = (1..CURRENT_DAY).associateWith { day ->
-    val index = day - 1
-    HomeContract.DayMetrics(
-        overall = OVERALL_VALUES[index],
-        energy = ENERGY_VALUES[index],
-        mood = MOOD_VALUES[index],
-        sleep = SLEEP_VALUES[index],
-        cravings = CRAVINGS_VALUES[index],
-    )
-}
+private fun buildMetricsByDay(): Map<Int, HomeContract.DayMetrics> =
+    (1..CURRENT_DAY).filter { it != MISSING_ENTRY_DAY }.associateWith { day ->
+        val index = day - 1
+        HomeContract.DayMetrics(
+            overall = OVERALL_VALUES[index],
+            energy = ENERGY_VALUES[index],
+            mood = MOOD_VALUES[index],
+            sleep = SLEEP_VALUES[index],
+            cravings = CRAVINGS_VALUES[index],
+        )
+    }
 
 private fun buildHardcodedUiData(): HomeContract.UiData = HomeContract.UiData(
     currentDay = CURRENT_DAY,
