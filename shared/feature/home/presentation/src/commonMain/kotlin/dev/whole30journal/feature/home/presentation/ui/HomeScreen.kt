@@ -55,6 +55,7 @@ import dev.whole30journal.core.designsystem.theme.Whole30Theme
 import dev.whole30journal.core.designsystem.theme.scoreColor
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
+import dev.whole30journal.feature.home.presentation.generated.resources.home_days_title
 import dev.whole30journal.feature.home.presentation.generated.resources.home_edit_today_content_description
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_cravings
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_energy
@@ -182,12 +183,19 @@ private fun HomeHeader(currentDay: Int, totalDays: Int, modifier: Modifier = Mod
 
 @Composable
 private fun DayStrip(days: List<HomeContract.DayCell>, onDayClick: (Int) -> Unit, modifier: Modifier = Modifier) {
-    LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3),
-    ) {
-        items(items = days, key = { it.dayNumber }) { day ->
-            DayCellItem(day = day, onClick = { onDayClick(day.dayNumber) })
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5)) {
+        Text(
+            text = stringResource(Res.string.home_days_title),
+            style = Whole30Theme.typography.textXl,
+            color = Whole30Theme.colors.text,
+        )
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3),
+        ) {
+            items(items = days, key = { it.dayNumber }) { day ->
+                DayCellItem(day = day, onClick = { onDayClick(day.dayNumber) })
+            }
         }
     }
 }

@@ -10,4 +10,5 @@
     <string name="home_metric_sleep">Sleep</string>
     <string name="home_metric_cravings">Cravings</string>
     <string name="home_trends_title">Trends</string>
+    <string name="home_days_title">Days</string>
 </resources>
