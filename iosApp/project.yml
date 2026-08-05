@@ -29,6 +29,17 @@ targets:
         LD_RUNPATH_SEARCH_PATHS:
           - "$(inherited)"
           - "@executable_path/Frameworks"
+        # SQLDelight's native driver (pulled in transitively via SharedKit -> core:database) needs
+        # the system sqlite3 symbols - the app linking SharedKit.framework must supply them itself.
+        OTHER_LDFLAGS:
+          - "$(inherited)"
+          - "-lsqlite3"
+        # SKIE's swiftBundling embeds a Swift overlay in SharedKit.framework as a binary
+        # .swiftmodule with no .swiftinterface. Xcode's explicit-module dependency scanner only
+        # finds the framework's Clang/ObjC side in that case (silently dropping the Swift overlay
+        # from the SharedKit.HomeScreenViewController-style free functions SKIE generates), so
+        # explicit modules must stay off for this target.
+        SWIFT_ENABLE_EXPLICIT_MODULES: NO
     preBuildScripts:
       - name: "SwiftLint"
         script: |

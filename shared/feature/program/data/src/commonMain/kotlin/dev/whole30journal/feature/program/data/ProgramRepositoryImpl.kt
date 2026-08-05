@@ -14,17 +14,19 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import dev.whole30journal.core.database.databaseDispatcher as dbDispatcher
 
 internal class ProgramRepositoryImpl(
     private val database: Whole30Database,
+    @OptIn(ExperimentalTime::class)
     private val clock: Clock = Clock.System,
 ) : ProgramRepository {
 

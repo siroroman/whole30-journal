@@ -32,6 +32,7 @@ kotlin {
             export(projects.shared.core.uiUistate)
             export(projects.shared.feature.dayEntry.domain)
             export(projects.shared.feature.program.domain)
+            export(projects.shared.feature.home.presentation)
         }
     }
 
@@ -44,6 +45,7 @@ kotlin {
             implementation(projects.shared.feature.dayEntry.data)
             api(projects.shared.feature.program.domain)
             implementation(projects.shared.feature.program.data)
+            api(projects.shared.feature.home.presentation)
 
             implementation(libs.koin.core)
         }

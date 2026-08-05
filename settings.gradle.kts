@@ -37,5 +37,8 @@ include(":shared:feature:day-entry:data")
 include(":shared:feature:program:domain")
 include(":shared:feature:program:data")
 
+// Feature: home (presentation only - hardcoded UI data, no domain/data layer yet)
+include(":shared:feature:home:presentation")
+
 // Umbrella - combines everything into one XCFramework for iOS
 include(":shared:umbrella")
