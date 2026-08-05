@@ -5,13 +5,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,6 +40,7 @@ import dev.whole30journal.feature.home.presentation.generated.resources.home_vie
 import dev.whole30journal.feature.home.presentation.ui.icons.CravingsIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.EditIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.EnergyIcon
+import dev.whole30journal.feature.home.presentation.ui.icons.LeafIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.MoodIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.SleepIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.ViewDetailsIcon
@@ -108,21 +107,19 @@ fun DayOverviewCard(
             }
         }
         if (metrics != null) {
-            BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-                val ringSize = 150.dp
-                val gridWidth = (maxWidth - ringSize - Whole30Spacing.space7).coerceAtLeast(0.dp)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space7),
-                ) {
-                    Whole30ProgressRing(
-                        score = metrics.overall,
-                        size = ringSize,
-                        label = stringResource(Res.string.home_metric_overall),
-                    )
-                    MetricGrid(metrics = metrics, modifier = Modifier.width(gridWidth))
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space7),
+            ) {
+                Whole30ProgressRing(
+                    score = metrics.overall,
+                    size = OVERALL_RING_SIZE,
+                    stroke = OVERALL_RING_STROKE,
+                    label = stringResource(Res.string.home_metric_overall),
+                    icon = { LeafIcon(tint = colors.accent, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+                )
+                MetricGrid(metrics = metrics, modifier = Modifier.weight(1f))
             }
         } else {
             DayEmptyState(isFuture = isFuture)
@@ -167,64 +164,51 @@ private fun IconCircleButton(onClick: () -> Unit, modifier: Modifier = Modifier,
 private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Modifier) {
     val colors = Whole30Theme.colors
 
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5)) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            MetricCell(
-                label = stringResource(Res.string.home_metric_energy),
-                value = metrics.energy,
-                modifier = Modifier.fillMaxWidth(HALF_WIDTH_FRACTION).padding(end = Whole30Spacing.space6),
-            ) {
-                EnergyIcon(tint = colors.iconEnergy, modifier = Modifier.size(16.dp))
-            }
-            MetricCell(
-                label = stringResource(Res.string.home_metric_mood),
-                value = metrics.mood,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                MoodIcon(tint = colors.iconMood, modifier = Modifier.size(16.dp))
-            }
-        }
-        Row(modifier = Modifier.fillMaxWidth()) {
-            MetricCell(
-                label = stringResource(Res.string.home_metric_sleep),
-                value = metrics.sleep,
-                modifier = Modifier.fillMaxWidth(HALF_WIDTH_FRACTION).padding(end = Whole30Spacing.space6),
-            ) {
-                SleepIcon(tint = colors.iconSleep, modifier = Modifier.size(16.dp))
-            }
-            // Cravings uses colors.accent directly per the design spec (not colors.iconCravings) -
-            // the two are numerically identical in both themes today, but accent is what was chosen.
-            MetricCell(
-                label = stringResource(Res.string.home_metric_cravings),
-                value = metrics.cravings,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                CravingsIcon(tint = colors.accent, modifier = Modifier.size(16.dp))
-            }
-        }
-    }
-}
-
-private const val HALF_WIDTH_FRACTION = 0.5f
-
-@Composable
-private fun MetricCell(label: String, value: Int?, modifier: Modifier = Modifier, icon: @Composable () -> Unit) {
-    val colors = Whole30Theme.colors
-    Row(
+    Column(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3),
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5),
     ) {
-        icon()
-        Column {
-            Text(text = label, style = Whole30Theme.typography.textXs, color = colors.textSecondary)
-            Row(verticalAlignment = Alignment.Bottom) {
-                Text(text = value?.toString() ?: "–", style = Whole30Theme.typography.textLg, color = colors.text)
-                Text(text = "/10", style = Whole30Theme.typography.textXs, color = colors.textTertiary)
-            }
+        Row(horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space10)) {
+            Whole30ProgressRing(
+                score = metrics.energy,
+                size = METRIC_RING_SIZE,
+                stroke = METRIC_RING_STROKE,
+                label = stringResource(Res.string.home_metric_energy),
+                icon = { EnergyIcon(tint = colors.iconEnergy, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+            )
+            Whole30ProgressRing(
+                score = metrics.mood,
+                size = METRIC_RING_SIZE,
+                stroke = METRIC_RING_STROKE,
+                label = stringResource(Res.string.home_metric_mood),
+                icon = { MoodIcon(tint = colors.iconMood, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space10)) {
+            Whole30ProgressRing(
+                score = metrics.sleep,
+                size = METRIC_RING_SIZE,
+                stroke = METRIC_RING_STROKE,
+                label = stringResource(Res.string.home_metric_sleep),
+                icon = { SleepIcon(tint = colors.iconSleep, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+            )
+            Whole30ProgressRing(
+                score = metrics.cravings,
+                size = METRIC_RING_SIZE,
+                stroke = METRIC_RING_STROKE,
+                label = stringResource(Res.string.home_metric_cravings),
+                icon = { CravingsIcon(tint = colors.accent, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+            )
         }
     }
 }
+
+private val OVERALL_RING_SIZE = 96.dp
+private val OVERALL_RING_STROKE = 6.dp
+private val METRIC_RING_SIZE = 64.dp
+private val METRIC_RING_STROKE = 4.dp
+private val METRIC_ICON_SIZE = 12.dp
 
 private fun previewMetrics() = HomeContract.DayMetrics(overall = 4, energy = 3, mood = 4, sleep = 5, cravings = 3)
 
