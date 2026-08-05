@@ -3,9 +3,14 @@
 package dev.whole30journal.umbrella.di
 
 import dev.whole30journal.core.database.di.iosDatabaseModule
+import dev.whole30journal.feature.dayentry.domain.usecase.SaveDayEntryUseCase
+import dev.whole30journal.feature.program.domain.usecase.ConfigureProgramUseCase
+import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
+import dev.whole30journal.umbrella.seed.SampleDataSeeder
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ObjCClass
 import kotlinx.cinterop.getOriginalKotlinClass
+import kotlinx.coroutines.runBlocking
 import org.koin.core.Koin
 import org.koin.core.KoinApplication
 import org.koin.dsl.koinApplication
@@ -21,9 +26,19 @@ object KoinIOS {
     private var koinApp: KoinApplication? = null
 
     fun initKoinIos(doOnStartup: () -> Unit) {
-        koinApp = koinApplication {
+        val app = koinApplication {
             modules(appModules + iosDatabaseModule)
         }
+        koinApp = app
+
+        runBlocking {
+            SampleDataSeeder(
+                getProgram = app.koin.get<GetProgramUseCase>(),
+                configureProgram = app.koin.get<ConfigureProgramUseCase>(),
+                saveDayEntry = app.koin.get<SaveDayEntryUseCase>(),
+            ).seedIfNeeded()
+        }
+
         doOnStartup()
     }
 

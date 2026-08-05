@@ -6,6 +6,14 @@ import dev.whole30journal.core.uistate.UiStateAware
 
 object HomeContract {
 
+    object MetricTitle {
+        const val OVERALL = "Overall"
+        const val ENERGY = "Energy"
+        const val MOOD = "Mood"
+        const val SLEEP = "Sleep"
+        const val CRAVINGS = "Cravings"
+    }
+
     enum class TrendMetric { Overall, Energy, Sleep, Cravings }
 
     @Immutable

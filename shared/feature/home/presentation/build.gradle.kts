@@ -18,6 +18,8 @@ kotlin {
             api(projects.shared.core.uiUistate)
             implementation(projects.shared.core.designSystem)
             implementation(projects.shared.core.utils)
+            implementation(projects.shared.feature.dayEntry.domain)
+            implementation(projects.shared.feature.program.domain)
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)

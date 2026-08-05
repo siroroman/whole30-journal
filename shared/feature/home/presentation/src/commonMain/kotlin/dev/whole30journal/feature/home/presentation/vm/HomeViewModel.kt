@@ -4,6 +4,11 @@ import androidx.lifecycle.viewModelScope
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.core.uistate.vm.StateFlowViewModel
 import dev.whole30journal.core.utils.DateFormatter
+import dev.whole30journal.feature.dayentry.domain.model.DayEntry
+import dev.whole30journal.feature.dayentry.domain.usecase.GetDayEntryUseCase
+import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -15,12 +20,17 @@ import kotlin.time.ExperimentalTime
 
 class HomeViewModel(
     private val dateFormatter: DateFormatter,
+    private val getProgram: GetProgramUseCase,
+    private val getDayEntry: GetDayEntryUseCase,
 ) : StateFlowViewModel<HomeContract.UiData, HomeContract.UiAction, HomeContract.UiEvent, HomeContract.OutputEvent>(
-    initialState = UiStateAware.UiState(isLoading = false, uiData = buildHardcodedUiData(dateFormatter))
+    initialState = UiStateAware.UiState(isLoading = true, uiData = HomeContract.UiData())
 ) {
 
+    private var programStartDate: LocalDate = TODAY
+    private var totalDays: Int = 0
+
     init {
-        viewModelScope.launch { refreshDateLabels(currentUiData.selectedDay) }
+        viewModelScope.launch { loadHomeData() }
     }
 
     override suspend fun applyUiAction(uiAction: HomeContract.UiAction) {
@@ -34,6 +44,47 @@ class HomeViewModel(
         }
     }
 
+    private suspend fun loadHomeData() {
+        val program = getProgram().getOrNull()
+        if (program == null) {
+            updateIsLoading(false)
+            return
+        }
+
+        programStartDate = program.startDate
+        totalDays = program.durationDays.toInt()
+        val currentDay = program.currentDayNumber.toInt()
+
+        val entries = coroutineScope {
+            (1..currentDay)
+                .map { day -> day to async { getDayEntry(day.toLong()).getOrNull() } }
+                .associate { (day, deferred) -> day to deferred.await() }
+        }
+        val metricsByDay = entries.mapNotNull { (day, entry) -> entry?.toDayMetrics()?.let { day to it } }.toMap()
+
+        val days = (1..totalDays).map { day ->
+            HomeContract.DayCell(
+                dayNumber = day,
+                weekdayAbbreviation = dateFormatter.weekdayAbbreviation(dateForDay(day).dayOfWeek),
+                isFilled = metricsByDay.containsKey(day),
+                isToday = day == currentDay,
+            )
+        }
+
+        updateUiData(isLoading = false) {
+            copy(
+                currentDay = currentDay,
+                totalDays = totalDays,
+                progressPercent = currentDay * PROGRESS_PERCENT_SCALE / totalDays,
+                days = days,
+                selectedDay = currentDay,
+                metricsByDay = metricsByDay,
+                trendSeries = buildTrendSeries(metricsByDay),
+            )
+        }
+        refreshDateLabels(currentDay)
+    }
+
     private suspend fun selectDay(dayNumber: Int) {
         val label = dateFormatter(dateForDay(dayNumber), TODAY, DateFormatter.Style.Long)
         updateUiData { copy(selectedDay = dayNumber, selectedDayLabel = label) }
@@ -42,10 +93,10 @@ class HomeViewModel(
     private suspend fun refreshDateLabels(selectedDay: Int) {
         val selectedDayLabel = dateFormatter(dateForDay(selectedDay), TODAY, DateFormatter.Style.Long)
         val progressStartLabel = dateFormatter(dateForDay(1), TODAY, DateFormatter.Style.Short)
-        val progressEndLabel = dateFormatter(dateForDay(TOTAL_DAYS), TODAY, DateFormatter.Style.Short)
+        val progressEndLabel = dateFormatter(dateForDay(totalDays), TODAY, DateFormatter.Style.Short)
         val trendAxisLabels = HomeContract.TrendAxisLabels(
             start = progressStartLabel,
-            middle = dateFormatter(dateForDay(TOTAL_DAYS / 2), TODAY, DateFormatter.Style.Short),
+            middle = dateFormatter(dateForDay(totalDays / 2), TODAY, DateFormatter.Style.Short),
             end = progressEndLabel,
         )
         updateUiData {
@@ -57,62 +108,39 @@ class HomeViewModel(
             )
         }
     }
+
+    private fun dateForDay(dayNumber: Int): LocalDate = programStartDate.plus(dayNumber - 1, DateTimeUnit.DAY)
 }
 
-private const val CURRENT_DAY = 12
-private const val TOTAL_DAYS = 30
-private const val PROGRESS_PERCENT = 40
-private const val MISSING_ENTRY_DAY = 5
+private const val PROGRESS_PERCENT_SCALE = 100
 
 @OptIn(ExperimentalTime::class)
 private val TODAY: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-private val PROGRAM_START_DATE: LocalDate = TODAY.plus(-(CURRENT_DAY - 1), DateTimeUnit.DAY)
 
-private fun dateForDay(dayNumber: Int): LocalDate = PROGRAM_START_DATE.plus(dayNumber - 1, DateTimeUnit.DAY)
-
-private val OVERALL_VALUES = listOf(3, 4, 3, 5, 5, 6, 6, 7, 7, 8, 8, 8)
-private val ENERGY_VALUES = listOf(3, 3, 2, 4, 5, 6, 6, 7, 7, 8, 8, 8)
-private val MOOD_VALUES = listOf(4, 4, 3, 5, 6, 6, 7, 7, 8, 8, 8, 8)
-private val SLEEP_VALUES = listOf(4, 5, 4, 6, 6, 7, 7, 8, 7, 8, 8, 8)
-private val CRAVINGS_VALUES = listOf(2, 3, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8)
-
-private fun buildDayCells(dateFormatter: DateFormatter): List<HomeContract.DayCell> = (1..TOTAL_DAYS).map { day ->
-    HomeContract.DayCell(
-        dayNumber = day,
-        weekdayAbbreviation = dateFormatter.weekdayAbbreviation(dateForDay(day).dayOfWeek),
-        isFilled = day <= CURRENT_DAY && day != MISSING_ENTRY_DAY,
-        isToday = day == CURRENT_DAY,
+private fun DayEntry.toDayMetrics(): HomeContract.DayMetrics? {
+    if (metrics.isEmpty()) return null
+    fun scoreFor(title: String): Int? = metrics.firstOrNull { it.title == title }?.value?.toInt()
+    return HomeContract.DayMetrics(
+        overall = scoreFor(HomeContract.MetricTitle.OVERALL),
+        energy = scoreFor(HomeContract.MetricTitle.ENERGY),
+        mood = scoreFor(HomeContract.MetricTitle.MOOD),
+        sleep = scoreFor(HomeContract.MetricTitle.SLEEP),
+        cravings = scoreFor(HomeContract.MetricTitle.CRAVINGS),
     )
 }
 
-private fun series(values: List<Int>): List<HomeContract.TrendPoint> =
-    values.mapIndexed { index, value -> HomeContract.TrendPoint(dayNumber = index + 1, value = value) }
+private fun buildTrendSeries(
+    metricsByDay: Map<Int, HomeContract.DayMetrics>,
+): Map<HomeContract.TrendMetric, List<HomeContract.TrendPoint>> {
+    fun series(selector: (HomeContract.DayMetrics) -> Int?): List<HomeContract.TrendPoint> =
+        metricsByDay.entries.sortedBy { it.key }.mapNotNull { (day, metrics) ->
+            selector(metrics)?.let { HomeContract.TrendPoint(dayNumber = day, value = it) }
+        }
 
-private fun buildTrendSeries(): Map<HomeContract.TrendMetric, List<HomeContract.TrendPoint>> = mapOf(
-    HomeContract.TrendMetric.Overall to series(OVERALL_VALUES),
-    HomeContract.TrendMetric.Energy to series(ENERGY_VALUES),
-    HomeContract.TrendMetric.Sleep to series(SLEEP_VALUES),
-    HomeContract.TrendMetric.Cravings to series(CRAVINGS_VALUES),
-)
-
-private fun buildMetricsByDay(): Map<Int, HomeContract.DayMetrics> =
-    (1..CURRENT_DAY).filter { it != MISSING_ENTRY_DAY }.associateWith { day ->
-        val index = day - 1
-        HomeContract.DayMetrics(
-            overall = OVERALL_VALUES[index],
-            energy = ENERGY_VALUES[index],
-            mood = MOOD_VALUES[index],
-            sleep = SLEEP_VALUES[index],
-            cravings = CRAVINGS_VALUES[index],
-        )
-    }
-
-private fun buildHardcodedUiData(dateFormatter: DateFormatter): HomeContract.UiData = HomeContract.UiData(
-    currentDay = CURRENT_DAY,
-    totalDays = TOTAL_DAYS,
-    progressPercent = PROGRESS_PERCENT,
-    days = buildDayCells(dateFormatter),
-    selectedDay = 1,
-    metricsByDay = buildMetricsByDay(),
-    trendSeries = buildTrendSeries(),
-)
+    return mapOf(
+        HomeContract.TrendMetric.Overall to series { it.overall },
+        HomeContract.TrendMetric.Energy to series { it.energy },
+        HomeContract.TrendMetric.Sleep to series { it.sleep },
+        HomeContract.TrendMetric.Cravings to series { it.cravings },
+    )
+}

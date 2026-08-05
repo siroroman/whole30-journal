@@ -48,6 +48,8 @@ kotlin {
             api(projects.shared.feature.home.presentation)
 
             implementation(libs.koin.core)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
         }
     }
 }
