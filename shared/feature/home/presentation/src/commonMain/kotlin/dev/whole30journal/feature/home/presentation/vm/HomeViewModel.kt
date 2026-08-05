@@ -14,7 +14,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class HomeViewModel(
-    private val dateFormatter: DateFormatter = DateFormatter(),
+    private val dateFormatter: DateFormatter,
 ) : StateFlowViewModel<HomeContract.UiData, HomeContract.UiAction, HomeContract.UiEvent, HomeContract.OutputEvent>(
     initialState = UiStateAware.UiState(isLoading = false, uiData = buildHardcodedUiData(dateFormatter))
 ) {
