@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +40,6 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -445,7 +443,6 @@ private fun trendMetricLabel(metric: HomeContract.TrendMetric): String = when (m
 private fun TrendBarChart(series: List<HomeContract.TrendPoint>, totalDays: Int, modifier: Modifier = Modifier) {
     val colors = Whole30Theme.colors
     val textMeasurer = rememberTextMeasurer()
-    val average = remember(series) { if (series.isEmpty()) 0f else series.map { it.value }.average().toFloat() }
     val labelStyle = Whole30Theme.typography.text2xs.copy(color = colors.textTertiary)
     val maxValue = 10f
     val animatedSeries = series.map { point ->
@@ -471,14 +468,6 @@ private fun TrendBarChart(series: List<HomeContract.TrendPoint>, totalDays: Int,
                     style = labelStyle,
                 )
             }
-            val avgY = size.height - (average / maxValue) * size.height
-            drawLine(
-                color = colors.avgLine,
-                start = Offset(0f, avgY),
-                end = Offset(size.width, avgY),
-                strokeWidth = 1.dp.toPx(),
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 4.dp.toPx())),
-            )
             val slotWidth = size.width / totalDays
             val barWidth = slotWidth * 0.6f
             animatedSeries.forEach { (dayNumber, animatedValue) ->
