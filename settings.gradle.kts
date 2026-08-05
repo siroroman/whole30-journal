@@ -29,6 +29,7 @@ include(":shared:core:ui-uistate")
 include(":shared:core:network")
 include(":shared:core:database")
 include(":shared:core:design-system")
+include(":shared:core:utils")
 
 // Feature: day-entry (domain + data only - no presentation layer yet)
 include(":shared:feature:day-entry:domain")

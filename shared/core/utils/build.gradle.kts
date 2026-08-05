@@ -15,31 +15,15 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.shared.core.uiUistate)
-            implementation(projects.shared.core.designSystem)
-            implementation(projects.shared.core.utils)
-
             implementation(libs.compose.runtime)
-            implementation(libs.compose.foundation)
-            implementation(libs.compose.material3)
-            implementation(libs.compose.ui)
-            implementation(libs.compose.ui.tooling.preview)
             implementation(libs.compose.components.resources)
-
-            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.koin.core)
-            implementation(libs.koin.core.viewmodel)
-        }
-        iosMain.dependencies {
-            implementation(libs.androidx.lifecycle.runtime.compose)
         }
     }
 }
 
 android {
-    namespace = "dev.whole30journal.feature.home.presentation"
+    namespace = "dev.whole30journal.core.utils"
     compileSdk = libs.versions.sdk.compile.get().toInt()
 
     defaultConfig {
@@ -48,7 +32,7 @@ android {
 }
 
 compose.resources {
-    packageOfResClass = "dev.whole30journal.feature.home.presentation.generated.resources"
+    packageOfResClass = "dev.whole30journal.core.utils.generated.resources"
 }
 
 detekt {
@@ -62,8 +46,6 @@ tasks.withType<Detekt>().configureEach {
 }
 
 dependencies {
-    debugImplementation(libs.compose.ui.tooling)
-
     detektPlugins(libs.detekt.formatting)
     detektPlugins(libs.detekt.rules.compose)
 }

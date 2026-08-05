@@ -3,7 +3,7 @@ package dev.whole30journal.feature.home.presentation.vm
 import androidx.lifecycle.viewModelScope
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.core.uistate.vm.StateFlowViewModel
-import dev.whole30journal.feature.home.presentation.usecase.FormatDayLabelUseCase
+import dev.whole30journal.core.utils.DateFormatter
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -15,7 +15,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class HomeViewModel(
-    private val formatDayLabelUseCase: FormatDayLabelUseCase = FormatDayLabelUseCase(),
+    private val dateFormatter: DateFormatter = DateFormatter(),
 ) : StateFlowViewModel<HomeContract.UiData, HomeContract.UiAction, HomeContract.UiEvent, HomeContract.OutputEvent>(
     initialState = UiStateAware.UiState(isLoading = false, uiData = buildHardcodedUiData())
 ) {
@@ -36,17 +36,17 @@ class HomeViewModel(
     }
 
     private suspend fun selectDay(dayNumber: Int) {
-        val label = formatDayLabelUseCase(dateForDay(dayNumber), TODAY, FormatDayLabelUseCase.Style.Long)
+        val label = dateFormatter(dateForDay(dayNumber), TODAY, DateFormatter.Style.Long)
         updateUiData { copy(selectedDay = dayNumber, selectedDayLabel = label) }
     }
 
     private suspend fun refreshDateLabels(selectedDay: Int) {
-        val selectedDayLabel = formatDayLabelUseCase(dateForDay(selectedDay), TODAY, FormatDayLabelUseCase.Style.Long)
-        val progressStartLabel = formatDayLabelUseCase(dateForDay(1), TODAY, FormatDayLabelUseCase.Style.Short)
-        val progressEndLabel = formatDayLabelUseCase(dateForDay(TOTAL_DAYS), TODAY, FormatDayLabelUseCase.Style.Short)
+        val selectedDayLabel = dateFormatter(dateForDay(selectedDay), TODAY, DateFormatter.Style.Long)
+        val progressStartLabel = dateFormatter(dateForDay(1), TODAY, DateFormatter.Style.Short)
+        val progressEndLabel = dateFormatter(dateForDay(TOTAL_DAYS), TODAY, DateFormatter.Style.Short)
         val trendAxisLabels = HomeContract.TrendAxisLabels(
             start = progressStartLabel,
-            middle = formatDayLabelUseCase(dateForDay(TOTAL_DAYS / 2), TODAY, FormatDayLabelUseCase.Style.Short),
+            middle = dateFormatter(dateForDay(TOTAL_DAYS / 2), TODAY, DateFormatter.Style.Short),
             end = progressEndLabel,
         )
         updateUiData {
