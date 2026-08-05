@@ -9,10 +9,6 @@ import dev.whole30journal.feature.home.presentation.ui.HomeScreen
 import dev.whole30journal.feature.home.presentation.vm.HomeViewModel
 import platform.UIKit.UIViewController
 
-/**
- * Wraps the shared Compose Multiplatform [HomeScreen] in a UIViewController so it can be embedded
- * from SwiftUI via `UIViewControllerRepresentable` (see ComposeViewController.swift in iosApp).
- */
 @Suppress("FunctionName", "unused")
 fun HomeScreenViewController(viewModel: HomeViewModel): UIViewController =
     ComposeUIViewController {

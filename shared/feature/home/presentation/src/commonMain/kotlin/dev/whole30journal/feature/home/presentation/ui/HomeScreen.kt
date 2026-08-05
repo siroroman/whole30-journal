@@ -70,11 +70,6 @@ import dev.whole30journal.feature.home.presentation.ui.icons.ViewDetailsIcon
 import dev.whole30journal.feature.home.presentation.vm.HomeContract
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Written once, rendered natively on both platforms: embedded directly in Android's Compose tree,
- * and wrapped in a UIViewController for iOS (see HomeScreenViewController.kt in iosMain). Applies
- * Whole30Theme itself, since iOS has no SwiftUI-side equivalent - callers must not wrap it again.
- */
 @Composable
 fun HomeScreen(
     state: UiStateAware.UiState<HomeContract.UiData, HomeContract.UiEvent>,
@@ -295,9 +290,7 @@ private fun IconCircleButton(onClick: () -> Unit, modifier: Modifier = Modifier,
 @Composable
 private fun MetricGrid(today: HomeContract.TodayMetrics, modifier: Modifier = Modifier) {
     val colors = Whole30Theme.colors
-    // Each row below uses fillMaxWidth(0.5f) for a fixed 50/50 split, with the gap reproduced as
-    // trailing padding on the first cell rather than Arrangement.spacedBy (see MetricCell/weight()
-    // note below).
+
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5)) {
         Row(modifier = Modifier.fillMaxWidth()) {
             MetricCell(
@@ -336,13 +329,6 @@ private fun MetricGrid(today: HomeContract.TodayMetrics, modifier: Modifier = Mo
     }
 }
 
-// RowScope/ColumnScope's Modifier.weight(...) triggers a "RowColumnParentData is internal" compile
-// error in this project's exact Compose Multiplatform/Kotlin toolchain combination (a pre-existing
-// klib version-skew between the pinned org.jetbrains.compose.runtime:runtime:1.11.1 metadata
-// artifact and the androidx.compose.runtime:runtime:1.11.2 actually resolved on the classpath via
-// other transitive deps - not fixable by a patch bump, since no 1.11.2 org.jetbrains.compose release
-// exists yet). fillMaxWidth(fraction) is a plain Modifier extension unaffected by that scope, so it's
-// used here and in TrendMetricSelector instead, wherever a Row needs equal-width children.
 private const val HALF_WIDTH_FRACTION = 0.5f
 
 @Composable

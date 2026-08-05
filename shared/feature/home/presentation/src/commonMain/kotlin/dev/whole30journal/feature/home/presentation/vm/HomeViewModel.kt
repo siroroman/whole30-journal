@@ -20,11 +20,6 @@ class HomeViewModel :
     }
 }
 
-// Program start date (day 1) matches the original design's own sample dataset, for a plausible,
-// internally consistent "Day 12 of 30, 40%" hardcoded state - not read from any real clock or use
-// case. July 16, 2026 falls on a Thursday (verified by hand: day-of-year 197, 196 days after a
-// Thursday Jan 1 2026, 196 mod 7 == 0). No kotlinx-datetime dependency for this - a real date
-// library isn't worth pulling into this module just to derive a cosmetic weekday label.
 private val WEEKDAYS_FROM_DAY_ONE = listOf("TH", "FR", "SA", "SU", "MO", "TU", "WE")
 private const val CURRENT_DAY = 12
 private const val TOTAL_DAYS = 30
@@ -42,8 +37,6 @@ private fun buildDayCells(): List<HomeContract.DayCell> = (1..TOTAL_DAYS).map { 
 private fun series(values: List<Int>): List<HomeContract.TrendPoint> =
     values.mapIndexed { index, value -> HomeContract.TrendPoint(dayNumber = index + 1, value = value) }
 
-// Days 1-12, pulled from the design project's own sample dataset (whole30-data.js) for fidelity.
-// Trends deliberately exclude Mood - the original design brief scopes trends to these four metrics.
 private fun buildTrendSeries(): Map<HomeContract.TrendMetric, List<HomeContract.TrendPoint>> = mapOf(
     HomeContract.TrendMetric.Overall to series(listOf(3, 4, 3, 5, 5, 6, 6, 7, 7, 8, 8, 8)),
     HomeContract.TrendMetric.Energy to series(listOf(3, 3, 2, 4, 5, 6, 6, 7, 7, 8, 8, 8)),
