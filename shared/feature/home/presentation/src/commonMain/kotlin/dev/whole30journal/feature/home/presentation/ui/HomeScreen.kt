@@ -29,6 +29,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,6 +76,7 @@ import dev.whole30journal.feature.home.presentation.ui.icons.SleepIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.ViewDetailsIcon
 import dev.whole30journal.feature.home.presentation.vm.HomeContract
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
@@ -446,6 +448,11 @@ private fun TrendBarChart(series: List<HomeContract.TrendPoint>, totalDays: Int,
     val average = remember(series) { if (series.isEmpty()) 0f else series.map { it.value }.average().toFloat() }
     val labelStyle = Whole30Theme.typography.text2xs.copy(color = colors.textTertiary)
     val maxValue = 10f
+    val animatedSeries = series.map { point ->
+        point.dayNumber to key(point.dayNumber) {
+            animateFloatAsState(targetValue = point.value.toFloat(), label = "trendBarValue")
+        }
+    }
 
     Column(modifier = modifier) {
         Canvas(modifier = Modifier.fillMaxWidth().height(120.dp)) {
@@ -474,9 +481,10 @@ private fun TrendBarChart(series: List<HomeContract.TrendPoint>, totalDays: Int,
             )
             val slotWidth = size.width / totalDays
             val barWidth = slotWidth * 0.6f
-            series.forEach { point ->
-                val barHeight = (point.value / maxValue) * size.height
-                val left = (point.dayNumber - 1) * slotWidth + (slotWidth - barWidth) / 2f
+            animatedSeries.forEach { (dayNumber, animatedValue) ->
+                val value = animatedValue.value
+                val barHeight = (value / maxValue) * size.height
+                val left = (dayNumber - 1) * slotWidth + (slotWidth - barWidth) / 2f
                 val topCorner = CornerRadius(3.dp.toPx(), 3.dp.toPx())
                 val barPath = Path().apply {
                     addRoundRect(
@@ -492,7 +500,7 @@ private fun TrendBarChart(series: List<HomeContract.TrendPoint>, totalDays: Int,
                         ),
                     )
                 }
-                drawPath(path = barPath, color = colors.scoreColor(point.value))
+                drawPath(path = barPath, color = colors.scoreColor(value.roundToInt()))
             }
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
