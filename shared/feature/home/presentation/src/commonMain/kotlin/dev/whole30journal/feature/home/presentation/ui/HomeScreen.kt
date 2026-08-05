@@ -1,5 +1,7 @@
 package dev.whole30journal.feature.home.presentation.ui
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,13 +28,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
@@ -379,14 +384,25 @@ private fun TrendMetricSelector(
     modifier: Modifier = Modifier,
 ) {
     val colors = Whole30Theme.colors
+    val entries = HomeContract.TrendMetric.entries
+    val selectedIndex = entries.indexOf(selected)
+    val animatedSelectedIndex by animateFloatAsState(targetValue = selectedIndex.toFloat(), label = "trendMetricIndicator")
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(Whole30Shapes.pill)
             .background(colors.surface2)
-            .padding(Whole30Spacing.space1),
+            .padding(Whole30Spacing.space1)
+            .drawBehind {
+                val segmentWidth = size.width / entries.size
+                drawRoundRect(
+                    color = colors.surface,
+                    topLeft = Offset(x = segmentWidth * animatedSelectedIndex, y = 0f),
+                    size = Size(segmentWidth, size.height),
+                    cornerRadius = CornerRadius(size.height / 2f),
+                )
+            },
     ) {
-        val entries = HomeContract.TrendMetric.entries
         entries.forEach { metric ->
             val isSelected = metric == selected
             val segmentFontSize = Whole30Theme.typography.textXs.fontSize
@@ -395,8 +411,10 @@ private fun TrendMetricSelector(
             } else {
                 Whole30Theme.typography.textSm.copy(fontSize = segmentFontSize)
             }
-            val textColor = if (isSelected) colors.text else colors.textSecondary
-            val chipModifier = if (isSelected) Modifier.background(colors.surface) else Modifier
+            val textColor by animateColorAsState(
+                targetValue = if (isSelected) colors.text else colors.textSecondary,
+                label = "trendMetricTextColor",
+            )
             Text(
                 text = trendMetricLabel(metric),
                 style = textStyle,
@@ -406,7 +424,6 @@ private fun TrendMetricSelector(
                 modifier = Modifier
                     .weight(1f)
                     .clip(Whole30Shapes.pill)
-                    .then(chipModifier)
                     .clickable { onSelect(metric) }
                     .padding(vertical = Whole30Spacing.space3),
             )
