@@ -387,9 +387,6 @@ private fun TrendMetricSelector(
             .padding(Whole30Spacing.space1),
     ) {
         val entries = HomeContract.TrendMetric.entries
-        // fillMaxWidth(1/n) instead of weight(1f) - see the HALF_WIDTH_FRACTION note above; this
-        // Row has no Arrangement.spacedBy gap, so equal fractions divide it exactly.
-        val segmentWidthFraction = 1f / entries.size
         entries.forEach { metric ->
             val isSelected = metric == selected
             val segmentFontSize = Whole30Theme.typography.textXs.fontSize
@@ -407,7 +404,7 @@ private fun TrendMetricSelector(
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 modifier = Modifier
-                    .fillMaxWidth(segmentWidthFraction)
+                    .weight(1f)
                     .clip(Whole30Shapes.pill)
                     .then(chipModifier)
                     .clickable { onSelect(metric) }
