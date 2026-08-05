@@ -1,5 +1,7 @@
 package dev.whole30journal.core.designsystem.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -34,8 +37,9 @@ fun Whole30ProgressRing(
     label: String? = null,
 ) {
     val colors = Whole30Theme.colors
-    val ringColor = colors.scoreColor(score)
-    val fraction = score?.let { (it / 10f).coerceIn(0f, 1f) } ?: 0f
+    val ringColor by animateColorAsState(targetValue = colors.scoreColor(score), label = "progressRingColor")
+    val targetFraction = score?.let { (it / 10f).coerceIn(0f, 1f) } ?: 0f
+    val fraction by animateFloatAsState(targetValue = targetFraction, label = "progressRingFraction")
     val valueTextStyle = when {
         size >= 100.dp -> Whole30Theme.typography.text4xl
         size >= 56.dp -> Whole30Theme.typography.text2xl

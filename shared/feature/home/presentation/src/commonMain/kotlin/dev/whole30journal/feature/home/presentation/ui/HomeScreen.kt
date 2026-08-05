@@ -229,7 +229,7 @@ private fun DayCellItem(day: HomeContract.DayCell, isSelected: Boolean, onClick:
         else -> colors.textTertiary to colors.textTertiary
     }
     val dotColor = when {
-        isSelected && day.isFilled -> colors.accentOn
+        isSelected -> Color.Transparent
         day.isFilled -> colors.accent
         else -> Color.Transparent
     }
@@ -295,10 +295,10 @@ private fun DayOverviewCard(
                 Text(
                     text = "$selectedDay/$totalDays",
                     style = Whole30Theme.typography.text2xs,
-                    color = colors.textTertiary,
+                    color = colors.accentOn,
                     modifier = Modifier
                         .clip(Whole30Shapes.pill)
-                        .background(colors.surface2)
+                        .background(colors.accent)
                         .padding(horizontal = Whole30Spacing.space3, vertical = Whole30Spacing.space1),
                 )
             }
@@ -603,7 +603,7 @@ private fun previewUiData(): HomeContract.UiData {
                 isToday = day == currentDay,
             )
         },
-        selectedDay = currentDay,
+        selectedDay = 1,
         metricsByDay = (1..currentDay).associateWith { day ->
             HomeContract.DayMetrics(
                 overall = trendValues[(day - 1) % trendValues.size],

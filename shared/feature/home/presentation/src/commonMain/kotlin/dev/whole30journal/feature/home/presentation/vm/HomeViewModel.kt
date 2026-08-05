@@ -67,7 +67,7 @@ private fun buildHardcodedUiData(): HomeContract.UiData = HomeContract.UiData(
     totalDays = TOTAL_DAYS,
     progressPercent = PROGRESS_PERCENT,
     days = buildDayCells(),
-    selectedDay = CURRENT_DAY,
+    selectedDay = 1,
     metricsByDay = buildMetricsByDay(),
     trendSeries = buildTrendSeries(),
 )
