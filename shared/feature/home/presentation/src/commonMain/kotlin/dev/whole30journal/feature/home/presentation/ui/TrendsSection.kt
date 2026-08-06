@@ -30,10 +30,10 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.whole30journal.core.designsystem.components.Whole30Card
-import dev.whole30journal.core.designsystem.theme.Whole30Shapes
-import dev.whole30journal.core.designsystem.theme.Whole30Spacing
-import dev.whole30journal.core.designsystem.theme.Whole30Theme
+import dev.whole30journal.core.designsystem.components.DSCard
+import dev.whole30journal.core.designsystem.theme.DSShapes
+import dev.whole30journal.core.designsystem.theme.DSSpacing
+import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.designsystem.theme.scoreColor
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_cravings
@@ -54,13 +54,13 @@ fun TrendsSection(
     onMetricSelect: (HomeContract.TrendMetric) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5)) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
         Text(
             text = stringResource(Res.string.home_trends_title),
-            style = Whole30Theme.typography.textXl,
-            color = Whole30Theme.colors.text,
+            style = DSTheme.typography.textXl,
+            color = DSTheme.colors.text,
         )
-        Whole30Card(modifier = Modifier.fillMaxWidth()) {
+        DSCard(modifier = Modifier.fillMaxWidth()) {
             TrendMetricSelector(selected = selectedMetric, onSelect = onMetricSelect)
             TrendBarChart(
                 series = series,
@@ -78,16 +78,16 @@ private fun TrendMetricSelector(
     onSelect: (HomeContract.TrendMetric) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
     val entries = HomeContract.TrendMetric.entries
     val selectedIndex = entries.indexOf(selected)
     val animatedSelectedIndex by animateFloatAsState(targetValue = selectedIndex.toFloat(), label = "trendMetricIndicator")
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(Whole30Shapes.pill)
+            .clip(DSShapes.pill)
             .background(colors.surface2)
-            .padding(Whole30Spacing.space1)
+            .padding(DSSpacing.space1)
             .drawBehind {
                 val segmentWidth = size.width / entries.size
                 drawRoundRect(
@@ -100,11 +100,11 @@ private fun TrendMetricSelector(
     ) {
         entries.forEach { metric ->
             val isSelected = metric == selected
-            val segmentFontSize = Whole30Theme.typography.textXs.fontSize
+            val segmentFontSize = DSTheme.typography.textXs.fontSize
             val textStyle = if (isSelected) {
-                Whole30Theme.typography.textSm.copy(fontSize = segmentFontSize, fontWeight = FontWeight.Bold)
+                DSTheme.typography.textSm.copy(fontSize = segmentFontSize, fontWeight = FontWeight.Bold)
             } else {
-                Whole30Theme.typography.textSm.copy(fontSize = segmentFontSize)
+                DSTheme.typography.textSm.copy(fontSize = segmentFontSize)
             }
             val textColor by animateColorAsState(
                 targetValue = if (isSelected) colors.accentOn else colors.textSecondary,
@@ -118,9 +118,9 @@ private fun TrendMetricSelector(
                 maxLines = 1,
                 modifier = Modifier
                     .weight(1f)
-                    .clip(Whole30Shapes.pill)
+                    .clip(DSShapes.pill)
                     .clickable { onSelect(metric) }
-                    .padding(vertical = Whole30Spacing.space3),
+                    .padding(vertical = DSSpacing.space3),
             )
         }
     }
@@ -141,9 +141,9 @@ private fun TrendBarChart(
     axisLabels: HomeContract.TrendAxisLabels,
     modifier: Modifier = Modifier,
 ) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
     val textMeasurer = rememberTextMeasurer()
-    val labelStyle = Whole30Theme.typography.text2xs.copy(color = colors.textTertiary)
+    val labelStyle = DSTheme.typography.text2xs.copy(color = colors.textTertiary)
     val maxValue = 10f
     val animatedSeries = series.map { point ->
         point.dayNumber to key(point.dayNumber) {
@@ -193,9 +193,9 @@ private fun TrendBarChart(
             }
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = axisLabels.start, style = Whole30Theme.typography.text2xs, color = colors.textTertiary)
-            Text(text = axisLabels.middle, style = Whole30Theme.typography.text2xs, color = colors.textTertiary)
-            Text(text = axisLabels.end, style = Whole30Theme.typography.text2xs, color = colors.textTertiary)
+            Text(text = axisLabels.start, style = DSTheme.typography.text2xs, color = colors.textTertiary)
+            Text(text = axisLabels.middle, style = DSTheme.typography.text2xs, color = colors.textTertiary)
+            Text(text = axisLabels.end, style = DSTheme.typography.text2xs, color = colors.textTertiary)
         }
     }
 }
@@ -208,8 +208,8 @@ private fun previewSeries(): List<HomeContract.TrendPoint> {
 @Preview
 @Composable
 private fun TrendsSectionPreviewLight() {
-    Whole30Theme(darkTheme = false) {
-        Surface(color = Whole30Theme.colors.bg) {
+    DSTheme(darkTheme = false) {
+        Surface(color = DSTheme.colors.bg) {
             TrendsSection(
                 selectedMetric = HomeContract.TrendMetric.Overall,
                 series = previewSeries(),
@@ -225,8 +225,8 @@ private fun TrendsSectionPreviewLight() {
 @Preview
 @Composable
 private fun TrendsSectionPreviewDark() {
-    Whole30Theme(darkTheme = true) {
-        Surface(color = Whole30Theme.colors.bg) {
+    DSTheme(darkTheme = true) {
+        Surface(color = DSTheme.colors.bg) {
             TrendsSection(
                 selectedMetric = HomeContract.TrendMetric.Overall,
                 series = previewSeries(),

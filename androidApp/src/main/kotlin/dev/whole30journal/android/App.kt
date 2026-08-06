@@ -9,7 +9,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Root of the app - renders the shared Compose Multiplatform Home screen (see ARCHITECTURE.md,
- * Pattern A). HomeScreen applies Whole30Theme itself, since the same composable is also embedded
+ * Pattern A). HomeScreen applies DSTheme itself, since the same composable is also embedded
  * from iOS with no SwiftUI-side theming equivalent.
  */
 @Composable

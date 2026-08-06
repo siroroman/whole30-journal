@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-data class Whole30Typography(
+data class DSTypography(
     val text2xs: TextStyle,
     val textXs: TextStyle,
     val textSm: TextStyle,
@@ -19,7 +19,7 @@ data class Whole30Typography(
     val text4xl: TextStyle,
 )
 
-fun whole30Typography(fontFamily: FontFamily = whole30FontFamily()): Whole30Typography = Whole30Typography(
+fun dsTypography(fontFamily: FontFamily = dsFontFamily()): DSTypography = DSTypography(
     text2xs = TextStyle(fontFamily = fontFamily, fontSize = 10.sp, fontWeight = FontWeight.Normal),
     textXs = TextStyle(fontFamily = fontFamily, fontSize = 11.sp, fontWeight = FontWeight.SemiBold),
     textSm = TextStyle(fontFamily = fontFamily, fontSize = 12.sp, fontWeight = FontWeight.Normal),
@@ -32,4 +32,4 @@ fun whole30Typography(fontFamily: FontFamily = whole30FontFamily()): Whole30Typo
     text4xl = TextStyle(fontFamily = fontFamily, fontSize = 34.sp, fontWeight = FontWeight.ExtraBold),
 )
 
-val LocalWhole30Typography = staticCompositionLocalOf { whole30Typography() }
+val LocalDSTypography = staticCompositionLocalOf { dsTypography() }

@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.whole30journal.core.designsystem.theme.Whole30Theme
+import dev.whole30journal.core.designsystem.theme.DSTheme
 
 @Composable
-fun Whole30ProgressBar(
+fun DSProgressBar(
     value: Int,
     modifier: Modifier = Modifier,
     max: Int = 30,
@@ -28,7 +28,7 @@ fun Whole30ProgressBar(
     labelCenter: String? = null,
     labelRight: String? = null,
 ) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
     val fraction = if (max <= 0) 0f else (value.toFloat() / max.toFloat()).coerceIn(0f, 1f)
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Box(
@@ -48,9 +48,9 @@ fun Whole30ProgressBar(
         }
         if (labelLeft != null || labelCenter != null || labelRight != null) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = labelLeft.orEmpty(), style = Whole30Theme.typography.text2xs, color = colors.textSecondary)
-                Text(text = labelCenter.orEmpty(), style = Whole30Theme.typography.text2xs, color = colors.textSecondary)
-                Text(text = labelRight.orEmpty(), style = Whole30Theme.typography.text2xs, color = colors.textSecondary)
+                Text(text = labelLeft.orEmpty(), style = DSTheme.typography.text2xs, color = colors.textSecondary)
+                Text(text = labelCenter.orEmpty(), style = DSTheme.typography.text2xs, color = colors.textSecondary)
+                Text(text = labelRight.orEmpty(), style = DSTheme.typography.text2xs, color = colors.textSecondary)
             }
         }
     }
@@ -58,11 +58,11 @@ fun Whole30ProgressBar(
 
 @Preview
 @Composable
-private fun Whole30ProgressBarPreviewLight() {
-    Whole30Theme(darkTheme = false) {
-        Surface(color = Whole30Theme.colors.bg) {
+private fun DSProgressBarPreviewLight() {
+    DSTheme(darkTheme = false) {
+        Surface(color = DSTheme.colors.bg) {
             Box(modifier = Modifier.padding(16.dp)) {
-                Whole30ProgressBar(value = 12, max = 30, labelLeft = "Day 1", labelCenter = "Day 12 · 40%", labelRight = "Day 30")
+                DSProgressBar(value = 12, max = 30, labelLeft = "Day 1", labelCenter = "Day 12 · 40%", labelRight = "Day 30")
             }
         }
     }
@@ -70,11 +70,11 @@ private fun Whole30ProgressBarPreviewLight() {
 
 @Preview
 @Composable
-private fun Whole30ProgressBarPreviewDark() {
-    Whole30Theme(darkTheme = true) {
-        Surface(color = Whole30Theme.colors.bg) {
+private fun DSProgressBarPreviewDark() {
+    DSTheme(darkTheme = true) {
+        Surface(color = DSTheme.colors.bg) {
             Box(modifier = Modifier.padding(16.dp)) {
-                Whole30ProgressBar(value = 12, max = 30, labelLeft = "Day 1", labelCenter = "Day 12 · 40%", labelRight = "Day 30")
+                DSProgressBar(value = 12, max = 30, labelLeft = "Day 1", labelCenter = "Day 12 · 40%", labelRight = "Day 30")
             }
         }
     }

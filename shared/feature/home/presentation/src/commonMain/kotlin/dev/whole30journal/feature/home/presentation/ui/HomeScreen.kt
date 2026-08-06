@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import dev.whole30journal.core.designsystem.theme.Whole30Spacing
-import dev.whole30journal.core.designsystem.theme.Whole30Theme
+import dev.whole30journal.core.designsystem.theme.DSSpacing
+import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.feature.home.presentation.vm.HomeContract
 
@@ -24,8 +24,8 @@ fun HomeScreen(
     onUiEventConsume: (HomeContract.UiEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Whole30Theme {
-        Scaffold(modifier = modifier, containerColor = Whole30Theme.colors.bg) { contentPadding ->
+    DSTheme {
+        Scaffold(modifier = modifier, containerColor = DSTheme.colors.bg) { contentPadding ->
             HomeContent(
                 uiData = state.uiData,
                 onUiAction = onUiAction,
@@ -57,8 +57,8 @@ private fun HomeContent(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .padding(contentPadding)
-            .padding(horizontal = Whole30Spacing.space7, vertical = Whole30Spacing.space7),
-        verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space8),
+            .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space8),
     ) {
         HomeProgressHeader(
             currentDay = uiData.currentDay,

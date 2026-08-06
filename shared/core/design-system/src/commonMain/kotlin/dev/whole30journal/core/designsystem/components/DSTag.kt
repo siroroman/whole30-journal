@@ -9,42 +9,42 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.whole30journal.core.designsystem.theme.Whole30Shapes
-import dev.whole30journal.core.designsystem.theme.Whole30Theme
+import dev.whole30journal.core.designsystem.theme.DSShapes
+import dev.whole30journal.core.designsystem.theme.DSTheme
 
 @Composable
-fun Whole30Tag(
+fun DSTag(
     text: String,
     modifier: Modifier = Modifier,
-    tone: Whole30TagTone = Whole30TagTone.Accent,
+    tone: DSTagTone = DSTagTone.Accent,
 ) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
     val (background, contentColor) = when (tone) {
-        Whole30TagTone.Accent -> colors.accentTint to colors.accent
-        Whole30TagTone.Neutral -> colors.surface2 to colors.textSecondary
+        DSTagTone.Accent -> colors.accentTint to colors.accent
+        DSTagTone.Neutral -> colors.surface2 to colors.textSecondary
     }
     Surface(
         modifier = modifier,
         color = background,
         contentColor = contentColor,
-        shape = Whole30Shapes.pill,
+        shape = DSShapes.pill,
     ) {
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-            style = Whole30Theme.typography.textXs,
+            style = DSTheme.typography.textXs,
         )
     }
 }
 
 @Preview
 @Composable
-private fun Whole30TagPreviewLight() {
-    Whole30Theme(darkTheme = false) {
-        Surface(color = Whole30Theme.colors.bg) {
+private fun DSTagPreviewLight() {
+    DSTheme(darkTheme = false) {
+        Surface(color = DSTheme.colors.bg) {
             Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Whole30Tag(text = "Day completed", tone = Whole30TagTone.Accent)
-                Whole30Tag(text = "12 / 30", tone = Whole30TagTone.Neutral)
+                DSTag(text = "Day completed", tone = DSTagTone.Accent)
+                DSTag(text = "12 / 30", tone = DSTagTone.Neutral)
             }
         }
     }
@@ -52,12 +52,12 @@ private fun Whole30TagPreviewLight() {
 
 @Preview
 @Composable
-private fun Whole30TagPreviewDark() {
-    Whole30Theme(darkTheme = true) {
-        Surface(color = Whole30Theme.colors.bg) {
+private fun DSTagPreviewDark() {
+    DSTheme(darkTheme = true) {
+        Surface(color = DSTheme.colors.bg) {
             Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Whole30Tag(text = "Day completed", tone = Whole30TagTone.Accent)
-                Whole30Tag(text = "12 / 30", tone = Whole30TagTone.Neutral)
+                DSTag(text = "Day completed", tone = DSTagTone.Accent)
+                DSTag(text = "12 / 30", tone = DSTagTone.Neutral)
             }
         }
     }
