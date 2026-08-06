@@ -1,0 +1,289 @@
+package dev.whole30journal.feature.home.presentation.ui
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import dev.whole30journal.core.designsystem.components.Whole30Card
+import dev.whole30journal.core.designsystem.components.Whole30ProgressRing
+import dev.whole30journal.core.designsystem.theme.Whole30Shapes
+import dev.whole30journal.core.designsystem.theme.Whole30Spacing
+import dev.whole30journal.core.designsystem.theme.Whole30Theme
+import dev.whole30journal.feature.home.presentation.generated.resources.Res
+import dev.whole30journal.feature.home.presentation.generated.resources.home_day_future_message
+import dev.whole30journal.feature.home.presentation.generated.resources.home_day_no_entry_message
+import dev.whole30journal.feature.home.presentation.generated.resources.home_edit_today_content_description
+import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_cravings
+import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_energy
+import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_mood
+import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_overall
+import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_sleep
+import dev.whole30journal.feature.home.presentation.generated.resources.home_view_today_details_content_description
+import dev.whole30journal.feature.home.presentation.ui.icons.CravingsIcon
+import dev.whole30journal.feature.home.presentation.ui.icons.EditIcon
+import dev.whole30journal.feature.home.presentation.ui.icons.EnergyIcon
+import dev.whole30journal.feature.home.presentation.ui.icons.LeafIcon
+import dev.whole30journal.feature.home.presentation.ui.icons.MoodIcon
+import dev.whole30journal.feature.home.presentation.ui.icons.SleepIcon
+import dev.whole30journal.feature.home.presentation.ui.icons.ViewDetailsIcon
+import dev.whole30journal.feature.home.presentation.vm.HomeContract
+import org.jetbrains.compose.resources.stringResource
+
+@Composable
+fun DayOverviewCard(
+    selectedDay: Int,
+    selectedDayLabel: String,
+    currentDay: Int,
+    totalDays: Int,
+    metrics: HomeContract.DayMetrics?,
+    onEditClick: () -> Unit,
+    onViewDetailsClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = Whole30Theme.colors
+    val isFuture = selectedDay > currentDay
+    Whole30Card(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3),
+            ) {
+                Text(
+                    text = selectedDayLabel,
+                    style = Whole30Theme.typography.textBase.copy(fontWeight = FontWeight.Bold),
+                    color = colors.textSecondary,
+                )
+                Text(
+                    text = "$selectedDay/$totalDays",
+                    style = Whole30Theme.typography.text2xs,
+                    color = colors.accentOn,
+                    modifier = Modifier
+                        .clip(Whole30Shapes.pill)
+                        .background(colors.accent)
+                        .padding(horizontal = Whole30Spacing.space3, vertical = Whole30Spacing.space1),
+                )
+            }
+            if (!isFuture) {
+                Row(horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3)) {
+                    IconCircleButton(onClick = onEditClick) {
+                        EditIcon(
+                            tint = colors.text,
+                            modifier = Modifier.size(14.dp),
+                            contentDescription = stringResource(Res.string.home_edit_today_content_description),
+                        )
+                    }
+                    if (metrics != null) {
+                        IconCircleButton(onClick = onViewDetailsClick) {
+                            ViewDetailsIcon(
+                                tint = colors.text,
+                                modifier = Modifier.size(14.dp),
+                                contentDescription = stringResource(Res.string.home_view_today_details_content_description),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        if (metrics != null) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space7),
+            ) {
+                Whole30ProgressRing(
+                    score = metrics.overall,
+                    size = OVERALL_RING_SIZE,
+                    stroke = OVERALL_RING_STROKE,
+                    label = stringResource(Res.string.home_metric_overall),
+                    icon = { LeafIcon(tint = colors.accent, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+                )
+                MetricGrid(metrics = metrics, modifier = Modifier.weight(1f))
+            }
+        } else {
+            DayEmptyState(isFuture = isFuture)
+        }
+    }
+}
+
+@Composable
+private fun DayEmptyState(isFuture: Boolean, modifier: Modifier = Modifier) {
+    Text(
+        text = if (isFuture) {
+            stringResource(Res.string.home_day_future_message)
+        } else {
+            stringResource(Res.string.home_day_no_entry_message)
+        },
+        style = Whole30Theme.typography.textSm,
+        color = Whole30Theme.colors.textSecondary,
+        textAlign = TextAlign.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = Whole30Spacing.space8),
+    )
+}
+
+@Composable
+private fun IconCircleButton(onClick: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val colors = Whole30Theme.colors
+    Box(
+        modifier = modifier
+            .minimumInteractiveComponentSize()
+            .size(28.dp)
+            .clip(CircleShape)
+            .border(width = 1.dp, color = colors.divider, shape = CircleShape)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Modifier) {
+    val colors = Whole30Theme.colors
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5),
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space10)) {
+            Whole30ProgressRing(
+                score = metrics.energy,
+                size = METRIC_RING_SIZE,
+                stroke = METRIC_RING_STROKE,
+                label = stringResource(Res.string.home_metric_energy),
+                icon = { EnergyIcon(tint = colors.iconEnergy, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+            )
+            Whole30ProgressRing(
+                score = metrics.mood,
+                size = METRIC_RING_SIZE,
+                stroke = METRIC_RING_STROKE,
+                label = stringResource(Res.string.home_metric_mood),
+                icon = { MoodIcon(tint = colors.iconMood, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space10)) {
+            Whole30ProgressRing(
+                score = metrics.sleep,
+                size = METRIC_RING_SIZE,
+                stroke = METRIC_RING_STROKE,
+                label = stringResource(Res.string.home_metric_sleep),
+                icon = { SleepIcon(tint = colors.iconSleep, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+            )
+            Whole30ProgressRing(
+                score = metrics.cravings,
+                size = METRIC_RING_SIZE,
+                stroke = METRIC_RING_STROKE,
+                label = stringResource(Res.string.home_metric_cravings),
+                icon = { CravingsIcon(tint = colors.accent, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+            )
+        }
+    }
+}
+
+private val OVERALL_RING_SIZE = 96.dp
+private val OVERALL_RING_STROKE = 6.dp
+private val METRIC_RING_SIZE = 64.dp
+private val METRIC_RING_STROKE = 4.dp
+private val METRIC_ICON_SIZE = 12.dp
+
+private fun previewMetrics() = HomeContract.DayMetrics(overall = 4, energy = 3, mood = 4, sleep = 5, cravings = 3)
+
+@Preview
+@Composable
+private fun DayOverviewCardPreviewLight() {
+    Whole30Theme(darkTheme = false) {
+        Surface(color = Whole30Theme.colors.bg) {
+            DayOverviewCard(
+                selectedDay = 2,
+                selectedDayLabel = "Sunday 26.7.2026",
+                currentDay = 12,
+                totalDays = 30,
+                metrics = previewMetrics(),
+                onEditClick = {},
+                onViewDetailsClick = {},
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun DayOverviewCardPreviewDark() {
+    Whole30Theme(darkTheme = true) {
+        Surface(color = Whole30Theme.colors.bg) {
+            DayOverviewCard(
+                selectedDay = 2,
+                selectedDayLabel = "Sunday 26.7.2026",
+                currentDay = 12,
+                totalDays = 30,
+                metrics = previewMetrics(),
+                onEditClick = {},
+                onViewDetailsClick = {},
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun DayOverviewCardEmptyPreviewLight() {
+    Whole30Theme(darkTheme = false) {
+        Surface(color = Whole30Theme.colors.bg) {
+            DayOverviewCard(
+                selectedDay = 5,
+                selectedDayLabel = "Wednesday 29.7.2026",
+                currentDay = 12,
+                totalDays = 30,
+                metrics = null,
+                onEditClick = {},
+                onViewDetailsClick = {},
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun DayOverviewCardEmptyPreviewDark() {
+    Whole30Theme(darkTheme = true) {
+        Surface(color = Whole30Theme.colors.bg) {
+            DayOverviewCard(
+                selectedDay = 5,
+                selectedDayLabel = "Wednesday 29.7.2026",
+                currentDay = 12,
+                totalDays = 30,
+                metrics = null,
+                onEditClick = {},
+                onViewDetailsClick = {},
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+    }
+}

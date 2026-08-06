@@ -1,5 +1,7 @@
 package dev.whole30journal.core.designsystem.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -32,51 +35,60 @@ fun Whole30ProgressRing(
     size: Dp = 56.dp,
     stroke: Dp = 5.dp,
     label: String? = null,
+    icon: (@Composable () -> Unit)? = null,
 ) {
     val colors = Whole30Theme.colors
-    val ringColor = colors.scoreColor(score)
-    val fraction = score?.let { (it / 10f).coerceIn(0f, 1f) } ?: 0f
+    val ringColor by animateColorAsState(targetValue = colors.scoreColor(score), label = "progressRingColor")
+    val targetFraction = score?.let { (it / 10f).coerceIn(0f, 1f) } ?: 0f
+    val fraction by animateFloatAsState(targetValue = targetFraction, label = "progressRingFraction")
     val valueTextStyle = when {
         size >= 100.dp -> Whole30Theme.typography.text4xl
         size >= 56.dp -> Whole30Theme.typography.text2xl
         else -> Whole30Theme.typography.textBase
     }
 
-    Box(modifier = modifier.size(size), contentAlignment = Alignment.Center) {
-        Canvas(modifier = Modifier.size(size)) {
-            val strokePx = stroke.toPx()
-            val diameter = this.size.minDimension - strokePx
-            val arcTopLeft = Offset(strokePx / 2f, strokePx / 2f)
-            val arcSize = Size(diameter, diameter)
-            drawArc(
-                color = colors.track,
-                startAngle = -90f,
-                sweepAngle = 360f,
-                useCenter = false,
-                topLeft = arcTopLeft,
-                size = arcSize,
-                style = Stroke(width = strokePx, cap = StrokeCap.Round),
-            )
-            if (fraction > 0f) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Box(modifier = Modifier.size(size), contentAlignment = Alignment.Center) {
+            Canvas(modifier = Modifier.size(size)) {
+                val strokePx = stroke.toPx()
+                val diameter = this.size.minDimension - strokePx
+                val arcTopLeft = Offset(strokePx / 2f, strokePx / 2f)
+                val arcSize = Size(diameter, diameter)
                 drawArc(
-                    color = ringColor,
+                    color = colors.track,
                     startAngle = -90f,
-                    sweepAngle = 360f * fraction,
+                    sweepAngle = 360f,
                     useCenter = false,
                     topLeft = arcTopLeft,
                     size = arcSize,
                     style = Stroke(width = strokePx, cap = StrokeCap.Round),
                 )
+                if (fraction > 0f) {
+                    drawArc(
+                        color = ringColor,
+                        startAngle = -90f,
+                        sweepAngle = 360f * fraction,
+                        useCenter = false,
+                        topLeft = arcTopLeft,
+                        size = arcSize,
+                        style = Stroke(width = strokePx, cap = StrokeCap.Round),
+                    )
+                }
             }
-        }
-        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
                 text = score?.toString() ?: "–",
                 style = valueTextStyle.copy(fontWeight = FontWeight.ExtraBold),
                 color = colors.text,
                 textAlign = TextAlign.Center,
             )
-            if (label != null) {
+        }
+        if (label != null) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                icon?.invoke()
                 Text(
                     text = label.uppercase(),
                     style = Whole30Theme.typography.text2xs.copy(letterSpacing = 0.08.em, fontWeight = FontWeight.Normal),

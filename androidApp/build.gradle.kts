@@ -54,11 +54,14 @@ dependencies {
     // Needed directly (not re-exported by umbrella) to wire androidDatabaseModule into startKoin{}
     implementation(projects.shared.core.database)
 
+    implementation(libs.kotlinx.coroutines.core)
+
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
     implementation(libs.compose.ui)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     implementation(libs.koin.core)
     implementation(libs.koin.android)

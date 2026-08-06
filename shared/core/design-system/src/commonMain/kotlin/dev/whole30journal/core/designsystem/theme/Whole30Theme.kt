@@ -1,6 +1,7 @@
 package dev.whole30journal.core.designsystem.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
@@ -16,8 +17,9 @@ fun Whole30Theme(
     CompositionLocalProvider(
         LocalWhole30Colors provides colors,
         LocalWhole30Typography provides typography,
-        content = content,
-    )
+    ) {
+        MaterialTheme(content = content)
+    }
 }
 
 object Whole30Theme {

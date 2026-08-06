@@ -6,6 +6,7 @@ import dev.whole30journal.feature.dayentry.domain.model.Achievement
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import dev.whole30journal.feature.dayentry.domain.model.Meal
 import dev.whole30journal.feature.dayentry.domain.model.Metric
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -88,7 +89,7 @@ class DayEntryRepositoryImplTest {
     @Test
     fun `observeDayEntry pushes a new emission when saveDayEntry changes the row`() = runTest {
         val emissions = Channel<Result<DayEntry?>>(Channel.UNLIMITED)
-        val job = launch { repository.observeDayEntry(1L).collect { emissions.send(it) } }
+        backgroundScope.launch { repository.observeDayEntry(1L).collect { emissions.send(it) } }
 
         assertNull(emissions.receive().getOrThrow())
 
@@ -96,8 +97,6 @@ class DayEntryRepositoryImplTest {
         repository.saveDayEntry(entry).getOrThrow()
 
         assertEquals(entry, emissions.receive().getOrThrow())
-
-        job.cancel()
     }
 
     @Test
@@ -112,7 +111,7 @@ class DayEntryRepositoryImplTest {
         fun isConsistent(entry: DayEntry?) = entry == null || entry == versionA || entry == versionB
 
         val observed = mutableListOf<DayEntry?>()
-        val observeJob = launch {
+        val observeJob = backgroundScope.launch {
             repository.observeDayEntry(1L).collect { observed.add(it.getOrThrow()) }
         }
 
@@ -124,7 +123,7 @@ class DayEntryRepositoryImplTest {
         }
         saveJob.join()
         readJob.join()
-        observeJob.cancel()
+        observeJob.cancelAndJoin()
 
         assertTrue(observed.isNotEmpty())
         observed.forEach { assertTrue(isConsistent(it)) }
