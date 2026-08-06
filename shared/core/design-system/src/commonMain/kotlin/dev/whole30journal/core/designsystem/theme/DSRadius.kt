@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-object DSRadii {
+object DSRadius {
     val sm: Dp = 8.dp
     val md: Dp = 12.dp
     val lg: Dp = 14.dp
@@ -15,10 +15,10 @@ object DSRadii {
 }
 
 object DSShapes {
-    val sm: Shape = RoundedCornerShape(DSRadii.sm)
-    val md: Shape = RoundedCornerShape(DSRadii.md)
-    val lg: Shape = RoundedCornerShape(DSRadii.lg)
-    val xl: Shape = RoundedCornerShape(DSRadii.xl)
-    val xxl: Shape = RoundedCornerShape(DSRadii.xxl)
-    val pill: Shape = RoundedCornerShape(DSRadii.pill)
+    val sm: Shape = RoundedCornerShape(DSRadius.sm)
+    val md: Shape = RoundedCornerShape(DSRadius.md)
+    val lg: Shape = RoundedCornerShape(DSRadius.lg)
+    val xl: Shape = RoundedCornerShape(DSRadius.xl)
+    val xxl: Shape = RoundedCornerShape(DSRadius.xxl)
+    val pill: Shape = RoundedCornerShape(DSRadius.pill)
 }
