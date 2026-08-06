@@ -92,7 +92,7 @@ fun Whole30ProgressRing(
                 Text(
                     text = label.uppercase(),
                     style = Whole30Theme.typography.text2xs.copy(letterSpacing = 0.08.em, fontWeight = FontWeight.Normal),
-                    color = colors.text,
+                    color = colors.textTertiary,
                 )
             }
         }

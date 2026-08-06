@@ -10,9 +10,14 @@ import dev.whole30journal.feature.program.domain.usecase.ConfigureProgramUseCase
 import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
 import kotlin.math.roundToInt
 import kotlin.random.Random
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Populates a fresh install's database with a realistic-looking 30-day program so the Home screen
@@ -23,10 +28,14 @@ class SampleDataSeeder(
     private val getProgram: GetProgramUseCase,
     private val configureProgram: ConfigureProgramUseCase,
     private val saveDayEntry: SaveDayEntryUseCase,
+    @OptIn(ExperimentalTime::class)
+    private val clock: Clock = Clock.System,
 ) {
+    @OptIn(ExperimentalTime::class)
     suspend fun seedIfNeeded() {
         if (getProgram().getOrNull() != null) return
-        val program = configureProgram(startDate = SEED_START_DATE, durationDays = SEED_DURATION_DAYS).getOrThrow()
+        val startDate = clock.todayIn(TimeZone.currentSystemDefault()).minus(SEED_ELAPSED_DAYS, DateTimeUnit.DAY)
+        val program = configureProgram(startDate = startDate, durationDays = SEED_DURATION_DAYS).getOrThrow()
         val elapsedDays = 1..program.currentDayNumber.toInt()
         val unfilledDays = elapsedDays.shuffled(Random(SEED_RANDOM_SEED)).take(UNFILLED_DAY_COUNT).toSet()
         elapsedDays
@@ -35,7 +44,7 @@ class SampleDataSeeder(
     }
 }
 
-private val SEED_START_DATE = LocalDate(2026, 7, 22)
+private const val SEED_ELAPSED_DAYS = 14
 private const val SEED_DURATION_DAYS = 30L
 private const val UNFILLED_DAY_COUNT = 2
 private const val SEED_RANDOM_SEED = 42

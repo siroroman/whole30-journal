@@ -32,11 +32,13 @@ object KoinIOS {
         koinApp = app
 
         runBlocking {
-            SampleDataSeeder(
-                getProgram = app.koin.get<GetProgramUseCase>(),
-                configureProgram = app.koin.get<ConfigureProgramUseCase>(),
-                saveDayEntry = app.koin.get<SaveDayEntryUseCase>(),
-            ).seedIfNeeded()
+            runCatching {
+                SampleDataSeeder(
+                    getProgram = app.koin.get<GetProgramUseCase>(),
+                    configureProgram = app.koin.get<ConfigureProgramUseCase>(),
+                    saveDayEntry = app.koin.get<SaveDayEntryUseCase>(),
+                ).seedIfNeeded()
+            }
         }
 
         doOnStartup()

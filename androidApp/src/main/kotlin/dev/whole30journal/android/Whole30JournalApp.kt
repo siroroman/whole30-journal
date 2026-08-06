@@ -22,11 +22,13 @@ class Whole30JournalApp : Application() {
         }
 
         runBlocking {
-            SampleDataSeeder(
-                getProgram = koinApp.koin.get<GetProgramUseCase>(),
-                configureProgram = koinApp.koin.get<ConfigureProgramUseCase>(),
-                saveDayEntry = koinApp.koin.get<SaveDayEntryUseCase>(),
-            ).seedIfNeeded()
+            runCatching {
+                SampleDataSeeder(
+                    getProgram = koinApp.koin.get<GetProgramUseCase>(),
+                    configureProgram = koinApp.koin.get<ConfigureProgramUseCase>(),
+                    saveDayEntry = koinApp.koin.get<SaveDayEntryUseCase>(),
+                ).seedIfNeeded()
+            }
         }
     }
 }

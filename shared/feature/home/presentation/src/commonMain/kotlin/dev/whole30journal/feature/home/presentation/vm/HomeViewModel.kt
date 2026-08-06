@@ -15,6 +15,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
+import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -22,11 +23,13 @@ class HomeViewModel(
     private val dateFormatter: DateFormatter,
     private val getProgram: GetProgramUseCase,
     private val getDayEntry: GetDayEntryUseCase,
+    @OptIn(ExperimentalTime::class)
+    private val clock: Clock = Clock.System,
 ) : StateFlowViewModel<HomeContract.UiData, HomeContract.UiAction, HomeContract.UiEvent, HomeContract.OutputEvent>(
     initialState = UiStateAware.UiState(isLoading = true, uiData = HomeContract.UiData())
 ) {
 
-    private var programStartDate: LocalDate = TODAY
+    private var programStartDate: LocalDate = today()
     private var totalDays: Int = 0
 
     init {
@@ -86,17 +89,18 @@ class HomeViewModel(
     }
 
     private suspend fun selectDay(dayNumber: Int) {
-        val label = dateFormatter(dateForDay(dayNumber), TODAY, DateFormatter.Style.Long)
+        val label = dateFormatter(dateForDay(dayNumber), today(), DateFormatter.Style.Long)
         updateUiData { copy(selectedDay = dayNumber, selectedDayLabel = label) }
     }
 
     private suspend fun refreshDateLabels(selectedDay: Int) {
-        val selectedDayLabel = dateFormatter(dateForDay(selectedDay), TODAY, DateFormatter.Style.Long)
-        val progressStartLabel = dateFormatter(dateForDay(1), TODAY, DateFormatter.Style.Short)
-        val progressEndLabel = dateFormatter(dateForDay(totalDays), TODAY, DateFormatter.Style.Short)
+        val today = today()
+        val selectedDayLabel = dateFormatter(dateForDay(selectedDay), today, DateFormatter.Style.Long)
+        val progressStartLabel = dateFormatter(dateForDay(1), today, DateFormatter.Style.Short)
+        val progressEndLabel = dateFormatter(dateForDay(totalDays), today, DateFormatter.Style.Short)
         val trendAxisLabels = HomeContract.TrendAxisLabels(
             start = progressStartLabel,
-            middle = dateFormatter(dateForDay(totalDays / 2), TODAY, DateFormatter.Style.Short),
+            middle = dateFormatter(dateForDay(totalDays / 2), today, DateFormatter.Style.Short),
             end = progressEndLabel,
         )
         updateUiData {
@@ -110,16 +114,21 @@ class HomeViewModel(
     }
 
     private fun dateForDay(dayNumber: Int): LocalDate = programStartDate.plus(dayNumber - 1, DateTimeUnit.DAY)
+
+    @OptIn(ExperimentalTime::class)
+    private fun today(): LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
 }
 
 private const val PROGRESS_PERCENT_SCALE = 100
-
-@OptIn(ExperimentalTime::class)
-private val TODAY: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+private const val NORMALIZED_SCORE_SCALE = 10.0
 
 private fun DayEntry.toDayMetrics(): HomeContract.DayMetrics? {
     if (metrics.isEmpty()) return null
-    fun scoreFor(title: String): Int? = metrics.firstOrNull { it.title == title }?.value?.toInt()
+    fun scoreFor(title: String): Int? = metrics.firstOrNull { it.title == title }?.let { metric ->
+        val value = metric.value ?: return@let null
+        if (metric.maxValue <= 0) return@let null
+        (value.toDouble() / metric.maxValue * NORMALIZED_SCORE_SCALE).roundToInt()
+    }
     return HomeContract.DayMetrics(
         overall = scoreFor(HomeContract.MetricTitle.OVERALL),
         energy = scoreFor(HomeContract.MetricTitle.ENERGY),

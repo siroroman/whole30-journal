@@ -48,9 +48,9 @@ fun DayStrip(
 
     LaunchedEffect(days) {
         if (hasScrolledToToday || days.isEmpty()) return@LaunchedEffect
-        hasScrolledToToday = true
         val todayIndex = days.indexOfFirst { it.isToday }
         if (todayIndex >= 0) {
+            hasScrolledToToday = true
             listState.scrollToItem((todayIndex - LEADING_DAYS_BEFORE_TODAY).coerceAtLeast(0))
         }
     }

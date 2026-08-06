@@ -11,7 +11,7 @@ class DateFormatter {
     enum class Style { Short, Long }
 
     suspend operator fun invoke(date: LocalDate, today: LocalDate, style: Style = Style.Long): String {
-        if (date == today) return getString(Res.string.utils_today_label)
+        if (date == today && style == Style.Long) return getString(Res.string.utils_today_label)
         val shortDate = "${date.day}.${date.month.ordinal + 1}.${date.year}"
         return if (style == Style.Short) shortDate else "${fullWeekdayName(date.dayOfWeek)} $shortDate"
     }
