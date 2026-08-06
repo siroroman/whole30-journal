@@ -3,6 +3,7 @@ package dev.whole30journal.feature.home.presentation.vm
 import androidx.compose.runtime.Immutable
 import dev.whole30journal.core.uistate.UiActionAware
 import dev.whole30journal.core.uistate.UiStateAware
+import kotlinx.datetime.LocalDate
 
 object HomeContract {
 
@@ -45,6 +46,7 @@ object HomeContract {
 
     @Immutable
     data class UiData(
+        val programStartDate: LocalDate? = null,
         val currentDay: Int = 0,
         val totalDays: Int = 30,
         val progressPercent: Int = 0,

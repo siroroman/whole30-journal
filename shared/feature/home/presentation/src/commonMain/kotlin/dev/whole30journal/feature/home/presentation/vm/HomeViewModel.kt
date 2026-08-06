@@ -29,9 +29,6 @@ class HomeViewModel(
     initialState = UiStateAware.UiState(isLoading = true, uiData = HomeContract.UiData())
 ) {
 
-    private var programStartDate: LocalDate = today()
-    private var totalDays: Int = 0
-
     init {
         viewModelScope.launch { loadHomeData() }
     }
@@ -54,8 +51,8 @@ class HomeViewModel(
             return
         }
 
-        programStartDate = program.startDate
-        totalDays = program.durationDays.toInt()
+        val startDate = program.startDate
+        val totalDays = program.durationDays.toInt()
         val currentDay = program.currentDayNumber.toInt()
 
         val entries = coroutineScope {
@@ -68,7 +65,7 @@ class HomeViewModel(
         val days = (1..totalDays).map { day ->
             HomeContract.DayCell(
                 dayNumber = day,
-                weekdayAbbreviation = dateFormatter.weekdayAbbreviation(dateForDay(day).dayOfWeek),
+                weekdayAbbreviation = dateFormatter.weekdayAbbreviation(dateForDay(day, startDate).dayOfWeek),
                 isFilled = metricsByDay.containsKey(day),
                 isToday = day == currentDay,
             )
@@ -76,6 +73,7 @@ class HomeViewModel(
 
         updateUiData(isLoading = false) {
             copy(
+                programStartDate = startDate,
                 currentDay = currentDay,
                 totalDays = totalDays,
                 progressPercent = currentDay * PROGRESS_PERCENT_SCALE / totalDays,
@@ -85,22 +83,23 @@ class HomeViewModel(
                 trendSeries = buildTrendSeries(metricsByDay),
             )
         }
-        refreshDateLabels(currentDay)
+        refreshDateLabels(currentDay, startDate, totalDays)
     }
 
     private suspend fun selectDay(dayNumber: Int) {
-        val label = dateFormatter(dateForDay(dayNumber), today(), DateFormatter.Style.Long)
+        val startDate = currentUiData.programStartDate ?: return
+        val label = dateFormatter(dateForDay(dayNumber, startDate), today(), DateFormatter.Style.Long)
         updateUiData { copy(selectedDay = dayNumber, selectedDayLabel = label) }
     }
 
-    private suspend fun refreshDateLabels(selectedDay: Int) {
+    private suspend fun refreshDateLabels(selectedDay: Int, startDate: LocalDate, totalDays: Int) {
         val today = today()
-        val selectedDayLabel = dateFormatter(dateForDay(selectedDay), today, DateFormatter.Style.Long)
-        val progressStartLabel = dateFormatter(dateForDay(1), today, DateFormatter.Style.Short)
-        val progressEndLabel = dateFormatter(dateForDay(totalDays), today, DateFormatter.Style.Short)
+        val selectedDayLabel = dateFormatter(dateForDay(selectedDay, startDate), today, DateFormatter.Style.Long)
+        val progressStartLabel = dateFormatter(dateForDay(1, startDate), today, DateFormatter.Style.Short)
+        val progressEndLabel = dateFormatter(dateForDay(totalDays, startDate), today, DateFormatter.Style.Short)
         val trendAxisLabels = HomeContract.TrendAxisLabels(
             start = progressStartLabel,
-            middle = dateFormatter(dateForDay(totalDays / 2), today, DateFormatter.Style.Short),
+            middle = dateFormatter(dateForDay(totalDays / 2, startDate), today, DateFormatter.Style.Short),
             end = progressEndLabel,
         )
         updateUiData {
@@ -113,11 +112,11 @@ class HomeViewModel(
         }
     }
 
-    private fun dateForDay(dayNumber: Int): LocalDate = programStartDate.plus(dayNumber - 1, DateTimeUnit.DAY)
-
     @OptIn(ExperimentalTime::class)
     private fun today(): LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
 }
+
+private fun dateForDay(dayNumber: Int, startDate: LocalDate): LocalDate = startDate.plus(dayNumber - 1, DateTimeUnit.DAY)
 
 private const val PROGRESS_PERCENT_SCALE = 100
 private const val NORMALIZED_SCORE_SCALE = 10.0
