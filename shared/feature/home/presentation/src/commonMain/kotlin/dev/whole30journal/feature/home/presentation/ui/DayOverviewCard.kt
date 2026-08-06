@@ -22,11 +22,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.whole30journal.core.designsystem.components.Whole30Card
-import dev.whole30journal.core.designsystem.components.Whole30ProgressRing
-import dev.whole30journal.core.designsystem.theme.Whole30Shapes
-import dev.whole30journal.core.designsystem.theme.Whole30Spacing
-import dev.whole30journal.core.designsystem.theme.Whole30Theme
+import dev.whole30journal.core.designsystem.components.DSCard
+import dev.whole30journal.core.designsystem.components.DSProgressRing
+import dev.whole30journal.core.designsystem.theme.DSShapes
+import dev.whole30journal.core.designsystem.theme.DSSpacing
+import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
 import dev.whole30journal.feature.home.presentation.generated.resources.home_day_future_message
 import dev.whole30journal.feature.home.presentation.generated.resources.home_day_no_entry_message
@@ -58,9 +58,9 @@ fun DayOverviewCard(
     onViewDetailsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
     val isFuture = selectedDay > currentDay
-    Whole30Card(modifier = modifier.fillMaxWidth()) {
+    DSCard(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -68,25 +68,25 @@ fun DayOverviewCard(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3),
+                horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
             ) {
                 Text(
                     text = selectedDayLabel,
-                    style = Whole30Theme.typography.textBase.copy(fontWeight = FontWeight.Bold),
+                    style = DSTheme.typography.textBase.copy(fontWeight = FontWeight.Bold),
                     color = colors.textSecondary,
                 )
                 Text(
                     text = "$selectedDay/$totalDays",
-                    style = Whole30Theme.typography.text2xs,
+                    style = DSTheme.typography.text2xs,
                     color = colors.accentOn,
                     modifier = Modifier
-                        .clip(Whole30Shapes.pill)
+                        .clip(DSShapes.pill)
                         .background(colors.accent)
-                        .padding(horizontal = Whole30Spacing.space3, vertical = Whole30Spacing.space1),
+                        .padding(horizontal = DSSpacing.space3, vertical = DSSpacing.space1),
                 )
             }
             if (!isFuture) {
-                Row(horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
                     IconCircleButton(onClick = onEditClick) {
                         EditIcon(
                             tint = colors.text,
@@ -110,9 +110,9 @@ fun DayOverviewCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space7),
+                horizontalArrangement = Arrangement.spacedBy(DSSpacing.space7),
             ) {
-                Whole30ProgressRing(
+                DSProgressRing(
                     score = metrics.overall,
                     size = OVERALL_RING_SIZE,
                     stroke = OVERALL_RING_STROKE,
@@ -135,18 +135,18 @@ private fun DayEmptyState(isFuture: Boolean, modifier: Modifier = Modifier) {
         } else {
             stringResource(Res.string.home_day_no_entry_message)
         },
-        style = Whole30Theme.typography.textSm,
-        color = Whole30Theme.colors.textSecondary,
+        style = DSTheme.typography.textSm,
+        color = DSTheme.colors.textSecondary,
         textAlign = TextAlign.Center,
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = Whole30Spacing.space8),
+            .padding(vertical = DSSpacing.space8),
     )
 }
 
 @Composable
 private fun IconCircleButton(onClick: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
     Box(
         modifier = modifier
             .minimumInteractiveComponentSize()
@@ -162,22 +162,22 @@ private fun IconCircleButton(onClick: () -> Unit, modifier: Modifier = Modifier,
 
 @Composable
 private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Modifier) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
 
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space5),
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space10)) {
-            Whole30ProgressRing(
+        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10)) {
+            DSProgressRing(
                 score = metrics.energy,
                 size = METRIC_RING_SIZE,
                 stroke = METRIC_RING_STROKE,
                 label = stringResource(Res.string.home_metric_energy),
                 icon = { EnergyIcon(tint = colors.iconEnergy, modifier = Modifier.size(METRIC_ICON_SIZE)) },
             )
-            Whole30ProgressRing(
+            DSProgressRing(
                 score = metrics.mood,
                 size = METRIC_RING_SIZE,
                 stroke = METRIC_RING_STROKE,
@@ -185,15 +185,15 @@ private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Mo
                 icon = { MoodIcon(tint = colors.iconMood, modifier = Modifier.size(METRIC_ICON_SIZE)) },
             )
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space10)) {
-            Whole30ProgressRing(
+        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10)) {
+            DSProgressRing(
                 score = metrics.sleep,
                 size = METRIC_RING_SIZE,
                 stroke = METRIC_RING_STROKE,
                 label = stringResource(Res.string.home_metric_sleep),
                 icon = { SleepIcon(tint = colors.iconSleep, modifier = Modifier.size(METRIC_ICON_SIZE)) },
             )
-            Whole30ProgressRing(
+            DSProgressRing(
                 score = metrics.cravings,
                 size = METRIC_RING_SIZE,
                 stroke = METRIC_RING_STROKE,
@@ -215,8 +215,8 @@ private fun previewMetrics() = HomeContract.DayMetrics(overall = 4, energy = 3, 
 @Preview
 @Composable
 private fun DayOverviewCardPreviewLight() {
-    Whole30Theme(darkTheme = false) {
-        Surface(color = Whole30Theme.colors.bg) {
+    DSTheme(darkTheme = false) {
+        Surface(color = DSTheme.colors.bg) {
             DayOverviewCard(
                 selectedDay = 2,
                 selectedDayLabel = "Sunday 26.7.2026",
@@ -234,8 +234,8 @@ private fun DayOverviewCardPreviewLight() {
 @Preview
 @Composable
 private fun DayOverviewCardPreviewDark() {
-    Whole30Theme(darkTheme = true) {
-        Surface(color = Whole30Theme.colors.bg) {
+    DSTheme(darkTheme = true) {
+        Surface(color = DSTheme.colors.bg) {
             DayOverviewCard(
                 selectedDay = 2,
                 selectedDayLabel = "Sunday 26.7.2026",
@@ -253,8 +253,8 @@ private fun DayOverviewCardPreviewDark() {
 @Preview
 @Composable
 private fun DayOverviewCardEmptyPreviewLight() {
-    Whole30Theme(darkTheme = false) {
-        Surface(color = Whole30Theme.colors.bg) {
+    DSTheme(darkTheme = false) {
+        Surface(color = DSTheme.colors.bg) {
             DayOverviewCard(
                 selectedDay = 5,
                 selectedDayLabel = "Wednesday 29.7.2026",
@@ -272,8 +272,8 @@ private fun DayOverviewCardEmptyPreviewLight() {
 @Preview
 @Composable
 private fun DayOverviewCardEmptyPreviewDark() {
-    Whole30Theme(darkTheme = true) {
-        Surface(color = Whole30Theme.colors.bg) {
+    DSTheme(darkTheme = true) {
+        Surface(color = DSTheme.colors.bg) {
             DayOverviewCard(
                 selectedDay = 5,
                 selectedDayLabel = "Wednesday 29.7.2026",

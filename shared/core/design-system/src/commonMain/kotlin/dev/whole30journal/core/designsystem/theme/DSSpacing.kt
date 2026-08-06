@@ -3,7 +3,7 @@ package dev.whole30journal.core.designsystem.theme
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-object Whole30Spacing {
+object DSSpacing {
     val space1: Dp = 4.dp
     val space2: Dp = 6.dp
     val space3: Dp = 8.dp

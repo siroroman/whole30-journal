@@ -25,11 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import dev.whole30journal.core.designsystem.theme.Whole30Theme
+import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.designsystem.theme.scoreColor
 
 @Composable
-fun Whole30ProgressRing(
+fun DSProgressRing(
     score: Int?,
     modifier: Modifier = Modifier,
     size: Dp = 56.dp,
@@ -37,14 +37,14 @@ fun Whole30ProgressRing(
     label: String? = null,
     icon: (@Composable () -> Unit)? = null,
 ) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
     val ringColor by animateColorAsState(targetValue = colors.scoreColor(score), label = "progressRingColor")
     val targetFraction = score?.let { (it / 10f).coerceIn(0f, 1f) } ?: 0f
     val fraction by animateFloatAsState(targetValue = targetFraction, label = "progressRingFraction")
     val valueTextStyle = when {
-        size >= 100.dp -> Whole30Theme.typography.text4xl
-        size >= 56.dp -> Whole30Theme.typography.text2xl
-        else -> Whole30Theme.typography.textBase
+        size >= 100.dp -> DSTheme.typography.text4xl
+        size >= 56.dp -> DSTheme.typography.text2xl
+        else -> DSTheme.typography.textBase
     }
 
     Column(
@@ -91,7 +91,7 @@ fun Whole30ProgressRing(
                 icon?.invoke()
                 Text(
                     text = label.uppercase(),
-                    style = Whole30Theme.typography.text2xs.copy(letterSpacing = 0.08.em, fontWeight = FontWeight.Normal),
+                    style = DSTheme.typography.text2xs.copy(letterSpacing = 0.08.em, fontWeight = FontWeight.Normal),
                     color = colors.textTertiary,
                 )
             }
@@ -101,16 +101,16 @@ fun Whole30ProgressRing(
 
 @Preview
 @Composable
-private fun Whole30ProgressRingPreviewLight() {
-    Whole30Theme(darkTheme = false) {
-        Surface(color = Whole30Theme.colors.bg) {
+private fun DSProgressRingPreviewLight() {
+    DSTheme(darkTheme = false) {
+        Surface(color = DSTheme.colors.bg) {
             Row(
                 modifier = Modifier.padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Whole30ProgressRing(score = 7, size = 150.dp, label = "Overall")
-                Whole30ProgressRing(score = 4, size = 48.dp)
-                Whole30ProgressRing(score = null, size = 48.dp)
+                DSProgressRing(score = 7, size = 150.dp, label = "Overall")
+                DSProgressRing(score = 4, size = 48.dp)
+                DSProgressRing(score = null, size = 48.dp)
             }
         }
     }
@@ -118,16 +118,16 @@ private fun Whole30ProgressRingPreviewLight() {
 
 @Preview
 @Composable
-private fun Whole30ProgressRingPreviewDark() {
-    Whole30Theme(darkTheme = true) {
-        Surface(color = Whole30Theme.colors.bg) {
+private fun DSProgressRingPreviewDark() {
+    DSTheme(darkTheme = true) {
+        Surface(color = DSTheme.colors.bg) {
             Row(
                 modifier = Modifier.padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Whole30ProgressRing(score = 7, size = 150.dp, label = "Overall")
-                Whole30ProgressRing(score = 4, size = 48.dp)
-                Whole30ProgressRing(score = null, size = 48.dp)
+                DSProgressRing(score = 7, size = 150.dp, label = "Overall")
+                DSProgressRing(score = 4, size = 48.dp)
+                DSProgressRing(score = null, size = 48.dp)
             }
         }
     }

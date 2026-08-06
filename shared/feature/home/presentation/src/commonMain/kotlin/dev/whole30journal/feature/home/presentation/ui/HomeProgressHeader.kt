@@ -17,10 +17,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.whole30journal.core.designsystem.components.Whole30ProgressBar
-import dev.whole30journal.core.designsystem.theme.Whole30Shapes
-import dev.whole30journal.core.designsystem.theme.Whole30Spacing
-import dev.whole30journal.core.designsystem.theme.Whole30Theme
+import dev.whole30journal.core.designsystem.components.DSProgressBar
+import dev.whole30journal.core.designsystem.theme.DSShapes
+import dev.whole30journal.core.designsystem.theme.DSSpacing
+import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
 import dev.whole30journal.feature.home.presentation.generated.resources.home_today_label
 import dev.whole30journal.feature.home.presentation.generated.resources.home_wordmark
@@ -36,9 +36,9 @@ fun HomeProgressHeader(
     progressEndLabel: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space8)) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space8)) {
         HomeHeader(currentDay = currentDay, totalDays = totalDays)
-        Whole30ProgressBar(
+        DSProgressBar(
             value = currentDay,
             modifier = Modifier.fillMaxWidth(),
             max = totalDays,
@@ -51,7 +51,7 @@ fun HomeProgressHeader(
 
 @Composable
 private fun HomeHeader(currentDay: Int, totalDays: Int, modifier: Modifier = Modifier) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -59,29 +59,29 @@ private fun HomeHeader(currentDay: Int, totalDays: Int, modifier: Modifier = Mod
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space4),
+            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space4),
         ) {
             Box(
-                modifier = Modifier.size(28.dp).clip(Whole30Shapes.sm).background(colors.accent),
+                modifier = Modifier.size(28.dp).clip(DSShapes.sm).background(colors.accent),
                 contentAlignment = Alignment.Center,
             ) {
                 LeafIcon(tint = colors.accentOn, modifier = Modifier.size(16.dp))
             }
-            Text(text = stringResource(Res.string.home_wordmark), style = Whole30Theme.typography.textXl, color = colors.text)
+            Text(text = stringResource(Res.string.home_wordmark), style = DSTheme.typography.textXl, color = colors.text)
         }
         Row(
             modifier = Modifier
-                .clip(Whole30Shapes.pill)
+                .clip(DSShapes.pill)
                 .background(colors.surface)
-                .padding(horizontal = Whole30Spacing.space5, vertical = Whole30Spacing.space3),
+                .padding(horizontal = DSSpacing.space5, vertical = DSSpacing.space3),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "$currentDay",
-                style = Whole30Theme.typography.textBase.copy(fontWeight = FontWeight.Bold),
+                style = DSTheme.typography.textBase.copy(fontWeight = FontWeight.Bold),
                 color = colors.accent,
             )
-            Text(text = " / $totalDays", style = Whole30Theme.typography.textSm, color = colors.textSecondary)
+            Text(text = " / $totalDays", style = DSTheme.typography.textSm, color = colors.textSecondary)
         }
     }
 }
@@ -89,8 +89,8 @@ private fun HomeHeader(currentDay: Int, totalDays: Int, modifier: Modifier = Mod
 @Preview
 @Composable
 private fun HomeProgressHeaderPreviewLight() {
-    Whole30Theme(darkTheme = false) {
-        Surface(color = Whole30Theme.colors.bg) {
+    DSTheme(darkTheme = false) {
+        Surface(color = DSTheme.colors.bg) {
             HomeProgressHeader(
                 currentDay = 12,
                 totalDays = 30,
@@ -106,8 +106,8 @@ private fun HomeProgressHeaderPreviewLight() {
 @Preview
 @Composable
 private fun HomeProgressHeaderPreviewDark() {
-    Whole30Theme(darkTheme = true) {
-        Surface(color = Whole30Theme.colors.bg) {
+    DSTheme(darkTheme = true) {
+        Surface(color = DSTheme.colors.bg) {
             HomeProgressHeader(
                 currentDay = 12,
                 totalDays = 30,

@@ -24,21 +24,21 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.whole30journal.core.designsystem.theme.Whole30Shapes
-import dev.whole30journal.core.designsystem.theme.Whole30Theme
+import dev.whole30journal.core.designsystem.theme.DSShapes
+import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.designsystem.theme.scoreColor
 
 private val DotGap = 5.dp
 
 @Composable
-fun Whole30ScoreDots(
+fun DSScoreDots(
     score: Int?,
     modifier: Modifier = Modifier,
     max: Int = 10,
     enabled: Boolean = true,
     onScoreChange: ((Int) -> Unit)? = null,
 ) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
     val filledColor = colors.scoreColor(score)
     BoxWithConstraints(
         modifier = modifier
@@ -73,7 +73,7 @@ fun Whole30ScoreDots(
                     Box(
                         modifier = Modifier
                             .size(dotSize)
-                            .clip(Whole30Shapes.pill)
+                            .clip(DSShapes.pill)
                             .background(if (filled) filledColor else colors.track),
                     )
                 }
@@ -84,16 +84,16 @@ fun Whole30ScoreDots(
 
 @Preview
 @Composable
-private fun Whole30ScoreDotsPreviewLight() {
-    Whole30Theme(darkTheme = false) {
-        Surface(color = Whole30Theme.colors.bg) {
+private fun DSScoreDotsPreviewLight() {
+    DSTheme(darkTheme = false) {
+        Surface(color = DSTheme.colors.bg) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Whole30ScoreDots(score = 6, onScoreChange = {})
-                Whole30ScoreDots(score = 7, enabled = false)
-                Whole30ScoreDots(score = null, onScoreChange = {})
+                DSScoreDots(score = 6, onScoreChange = {})
+                DSScoreDots(score = 7, enabled = false)
+                DSScoreDots(score = null, onScoreChange = {})
             }
         }
     }
@@ -101,16 +101,16 @@ private fun Whole30ScoreDotsPreviewLight() {
 
 @Preview
 @Composable
-private fun Whole30ScoreDotsPreviewDark() {
-    Whole30Theme(darkTheme = true) {
-        Surface(color = Whole30Theme.colors.bg) {
+private fun DSScoreDotsPreviewDark() {
+    DSTheme(darkTheme = true) {
+        Surface(color = DSTheme.colors.bg) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Whole30ScoreDots(score = 6, onScoreChange = {})
-                Whole30ScoreDots(score = 7, enabled = false)
-                Whole30ScoreDots(score = null, onScoreChange = {})
+                DSScoreDots(score = 6, onScoreChange = {})
+                DSScoreDots(score = 7, enabled = false)
+                DSScoreDots(score = null, onScoreChange = {})
             }
         }
     }

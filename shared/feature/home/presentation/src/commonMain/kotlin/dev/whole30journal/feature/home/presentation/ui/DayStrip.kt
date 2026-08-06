@@ -28,9 +28,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.whole30journal.core.designsystem.theme.Whole30Shapes
-import dev.whole30journal.core.designsystem.theme.Whole30Spacing
-import dev.whole30journal.core.designsystem.theme.Whole30Theme
+import dev.whole30journal.core.designsystem.theme.DSShapes
+import dev.whole30journal.core.designsystem.theme.DSSpacing
+import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
 import dev.whole30journal.feature.home.presentation.generated.resources.home_days_title
 import dev.whole30journal.feature.home.presentation.vm.HomeContract
@@ -55,16 +55,16 @@ fun DayStrip(
         }
     }
 
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space5)) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
         Text(
             text = stringResource(Res.string.home_days_title),
-            style = Whole30Theme.typography.textXl,
-            color = Whole30Theme.colors.text,
+            style = DSTheme.typography.textXl,
+            color = DSTheme.colors.text,
         )
         LazyRow(
             state = listState,
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Whole30Spacing.space3),
+            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
         ) {
             items(items = days, key = { it.dayNumber }) { day ->
                 DayCellItem(
@@ -81,7 +81,7 @@ private const val LEADING_DAYS_BEFORE_TODAY = 2
 
 @Composable
 private fun DayCellItem(day: HomeContract.DayCell, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val colors = Whole30Theme.colors
+    val colors = DSTheme.colors
     val backgroundColor = if (isSelected) colors.accent else Color.Transparent
     val (weekdayColor, numberColor) = when {
         isSelected -> colors.accentOn to colors.accentOn
@@ -94,23 +94,23 @@ private fun DayCellItem(day: HomeContract.DayCell, isSelected: Boolean, onClick:
         else -> Color.Transparent
     }
     val todayBorderModifier = if (day.isToday && !isSelected) {
-        Modifier.border(width = 1.dp, color = colors.accent, shape = Whole30Shapes.lg)
+        Modifier.border(width = 1.dp, color = colors.accent, shape = DSShapes.lg)
     } else {
         Modifier
     }
     Column(
         modifier = modifier
             .width(46.dp)
-            .clip(Whole30Shapes.lg)
+            .clip(DSShapes.lg)
             .background(backgroundColor)
             .then(todayBorderModifier)
             .clickable(onClick = onClick)
-            .padding(vertical = Whole30Spacing.space3),
+            .padding(vertical = DSSpacing.space3),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Whole30Spacing.space1),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space1),
     ) {
-        Text(text = day.weekdayAbbreviation, style = Whole30Theme.typography.text2xs, color = weekdayColor)
-        Text(text = "${day.dayNumber}", style = Whole30Theme.typography.textXl, color = numberColor)
+        Text(text = day.weekdayAbbreviation, style = DSTheme.typography.text2xs, color = weekdayColor)
+        Text(text = "${day.dayNumber}", style = DSTheme.typography.textXl, color = numberColor)
         Box(
             modifier = Modifier
                 .size(4.dp)
@@ -135,8 +135,8 @@ private fun previewDays(): List<HomeContract.DayCell> {
 @Preview
 @Composable
 private fun DayStripPreviewLight() {
-    Whole30Theme(darkTheme = false) {
-        Surface(color = Whole30Theme.colors.bg) {
+    DSTheme(darkTheme = false) {
+        Surface(color = DSTheme.colors.bg) {
             DayStrip(days = previewDays(), selectedDay = 2, onDayClick = {}, modifier = Modifier.padding(16.dp))
         }
     }
@@ -145,8 +145,8 @@ private fun DayStripPreviewLight() {
 @Preview
 @Composable
 private fun DayStripPreviewDark() {
-    Whole30Theme(darkTheme = true) {
-        Surface(color = Whole30Theme.colors.bg) {
+    DSTheme(darkTheme = true) {
+        Surface(color = DSTheme.colors.bg) {
             DayStrip(days = previewDays(), selectedDay = 2, onDayClick = {}, modifier = Modifier.padding(16.dp))
         }
     }

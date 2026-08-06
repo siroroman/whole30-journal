@@ -3,7 +3,7 @@ package dev.whole30journal.core.designsystem.theme
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-data class Whole30Colors(
+data class DSColor(
     val bg: Color,
     val surface: Color,
     val surface2: Color,
@@ -26,7 +26,7 @@ data class Whole30Colors(
     val iconCravings: Color,
 )
 
-fun whole30DarkColors(): Whole30Colors = Whole30Colors(
+fun dsDarkColors(): DSColor = DSColor(
     bg = Color(0xFF101217),
     surface = Color(0xFF1C1F26),
     surface2 = Color(0xFF262A32),
@@ -49,7 +49,7 @@ fun whole30DarkColors(): Whole30Colors = Whole30Colors(
     iconCravings = Color(0xFF2DD4BF),
 )
 
-fun whole30LightColors(): Whole30Colors = Whole30Colors(
+fun dsLightColors(): DSColor = DSColor(
     bg = Color(0xFFE4E6E5),
     surface = Color(0xFFFFFFFF),
     surface2 = Color(0xFFEEF0EF),
@@ -72,4 +72,4 @@ fun whole30LightColors(): Whole30Colors = Whole30Colors(
     iconCravings = Color(0xFF0E9488),
 )
 
-val LocalWhole30Colors = staticCompositionLocalOf { whole30DarkColors() }
+val LocalDSColor = staticCompositionLocalOf { dsDarkColors() }

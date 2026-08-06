@@ -8,28 +8,28 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 
 @Composable
-fun Whole30Theme(
+fun DSTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val colors = remember(darkTheme) { if (darkTheme) whole30DarkColors() else whole30LightColors() }
-    val typography = remember { whole30Typography() }
+    val colors = remember(darkTheme) { if (darkTheme) dsDarkColors() else dsLightColors() }
+    val typography = remember { dsTypography() }
     CompositionLocalProvider(
-        LocalWhole30Colors provides colors,
-        LocalWhole30Typography provides typography,
+        LocalDSColor provides colors,
+        LocalDSTypography provides typography,
     ) {
         MaterialTheme(content = content)
     }
 }
 
-object Whole30Theme {
-    val colors: Whole30Colors
+object DSTheme {
+    val colors: DSColor
         @Composable
         @ReadOnlyComposable
-        get() = LocalWhole30Colors.current
+        get() = LocalDSColor.current
 
-    val typography: Whole30Typography
+    val typography: DSTypography
         @Composable
         @ReadOnlyComposable
-        get() = LocalWhole30Typography.current
+        get() = LocalDSTypography.current
 }
