@@ -91,7 +91,7 @@ private fun TrendMetricSelector(
             .drawBehind {
                 val segmentWidth = size.width / entries.size
                 drawRoundRect(
-                    color = colors.surface,
+                    color = colors.accent,
                     topLeft = Offset(x = segmentWidth * animatedSelectedIndex, y = 0f),
                     size = Size(segmentWidth, size.height),
                     cornerRadius = CornerRadius(size.height / 2f),
@@ -107,7 +107,7 @@ private fun TrendMetricSelector(
                 Whole30Theme.typography.textSm.copy(fontSize = segmentFontSize)
             }
             val textColor by animateColorAsState(
-                targetValue = if (isSelected) colors.text else colors.textSecondary,
+                targetValue = if (isSelected) colors.accentOn else colors.textSecondary,
                 label = "trendMetricTextColor",
             )
             Text(
