@@ -3,7 +3,7 @@ package dev.whole30journal.core.designsystem.theme
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-data class DSColors(
+data class DSColor(
     val bg: Color,
     val surface: Color,
     val surface2: Color,
@@ -26,7 +26,7 @@ data class DSColors(
     val iconCravings: Color,
 )
 
-fun dsDarkColors(): DSColors = DSColors(
+fun dsDarkColors(): DSColor = DSColor(
     bg = Color(0xFF101217),
     surface = Color(0xFF1C1F26),
     surface2 = Color(0xFF262A32),
@@ -49,7 +49,7 @@ fun dsDarkColors(): DSColors = DSColors(
     iconCravings = Color(0xFF2DD4BF),
 )
 
-fun dsLightColors(): DSColors = DSColors(
+fun dsLightColors(): DSColor = DSColor(
     bg = Color(0xFFE4E6E5),
     surface = Color(0xFFFFFFFF),
     surface2 = Color(0xFFEEF0EF),
@@ -72,4 +72,4 @@ fun dsLightColors(): DSColors = DSColors(
     iconCravings = Color(0xFF0E9488),
 )
 
-val LocalDSColors = staticCompositionLocalOf { dsDarkColors() }
+val LocalDSColor = staticCompositionLocalOf { dsDarkColors() }

@@ -15,7 +15,7 @@ fun DSTheme(
     val colors = remember(darkTheme) { if (darkTheme) dsDarkColors() else dsLightColors() }
     val typography = remember { dsTypography() }
     CompositionLocalProvider(
-        LocalDSColors provides colors,
+        LocalDSColor provides colors,
         LocalDSTypography provides typography,
     ) {
         MaterialTheme(content = content)
@@ -23,10 +23,10 @@ fun DSTheme(
 }
 
 object DSTheme {
-    val colors: DSColors
+    val colors: DSColor
         @Composable
         @ReadOnlyComposable
-        get() = LocalDSColors.current
+        get() = LocalDSColor.current
 
     val typography: DSTypography
         @Composable
