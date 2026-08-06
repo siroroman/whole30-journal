@@ -6,6 +6,7 @@ import dev.whole30journal.feature.dayentry.domain.model.Achievement
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import dev.whole30journal.feature.dayentry.domain.model.Meal
 import dev.whole30journal.feature.dayentry.domain.model.Metric
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -97,7 +98,7 @@ class DayEntryRepositoryImplTest {
 
         assertEquals(entry, emissions.receive().getOrThrow())
 
-        job.cancel()
+        job.cancelAndJoin()
     }
 
     @Test
@@ -124,7 +125,7 @@ class DayEntryRepositoryImplTest {
         }
         saveJob.join()
         readJob.join()
-        observeJob.cancel()
+        observeJob.cancelAndJoin()
 
         assertTrue(observed.isNotEmpty())
         observed.forEach { assertTrue(isConsistent(it)) }
