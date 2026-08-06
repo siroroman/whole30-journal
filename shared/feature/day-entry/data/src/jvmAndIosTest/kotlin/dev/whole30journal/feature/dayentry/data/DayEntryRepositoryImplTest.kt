@@ -89,7 +89,7 @@ class DayEntryRepositoryImplTest {
     @Test
     fun `observeDayEntry pushes a new emission when saveDayEntry changes the row`() = runTest {
         val emissions = Channel<Result<DayEntry?>>(Channel.UNLIMITED)
-        val job = launch { repository.observeDayEntry(1L).collect { emissions.send(it) } }
+        backgroundScope.launch { repository.observeDayEntry(1L).collect { emissions.send(it) } }
 
         assertNull(emissions.receive().getOrThrow())
 
@@ -97,8 +97,6 @@ class DayEntryRepositoryImplTest {
         repository.saveDayEntry(entry).getOrThrow()
 
         assertEquals(entry, emissions.receive().getOrThrow())
-
-        job.cancelAndJoin()
     }
 
     @Test
@@ -113,7 +111,7 @@ class DayEntryRepositoryImplTest {
         fun isConsistent(entry: DayEntry?) = entry == null || entry == versionA || entry == versionB
 
         val observed = mutableListOf<DayEntry?>()
-        val observeJob = launch {
+        val observeJob = backgroundScope.launch {
             repository.observeDayEntry(1L).collect { observed.add(it.getOrThrow()) }
         }
 
