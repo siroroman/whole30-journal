@@ -49,12 +49,9 @@ class DayEntryViewModel(
                 updateUiData { withScore(uiAction.metric, uiAction.score) }
             is DayEntryContract.UiAction.OnNoteChange ->
                 updateUiData { withNote(uiAction.metric, uiAction.note) }
-            DayEntryContract.UiAction.OnToggleNsvPicker ->
-                updateUiData { copy(nsvPickerOpen = !nsvPickerOpen) }
             is DayEntryContract.UiAction.OnAchievementTextChange ->
                 updateUiData { withAchievementText(uiAction.id, uiAction.text) }
-            is DayEntryContract.UiAction.OnAddAchievementChip ->
-                updateUiData { withAchievementChip(uiAction.label) }
+            DayEntryContract.UiAction.OnAddAchievementClick -> addAchievement()
             DayEntryContract.UiAction.OnAddMealClick -> addMeal()
             is DayEntryContract.UiAction.OnMealDescriptionChange ->
                 updateUiData { withMealDescription(uiAction.id, uiAction.description) }
@@ -127,6 +124,12 @@ class DayEntryViewModel(
     private suspend fun addMeal() {
         val label = getString(Res.string.day_entry_meal_label_numbered, currentUiData.meals.size + 1)
         updateUiData { copy(meals = meals + DayEntryContract.MealEntry(id = "meal-added-${meals.size}", label = label)) }
+    }
+
+    private fun addAchievement() {
+        updateUiData {
+            copy(achievements = achievements + DayEntryContract.AchievementEntry(id = "achievement-added-${achievements.size}", text = ""))
+        }
     }
 
     private suspend fun defaultUiData(
@@ -203,7 +206,7 @@ class DayEntryViewModel(
 }
 
 private const val DEFAULT_TOTAL_DAYS = 30
-private const val DEFAULT_ACHIEVEMENT_SLOTS = 3
+private const val DEFAULT_ACHIEVEMENT_SLOTS = 1
 private const val MAX_SCORE = 10L
 
 private fun dateForDay(dayNumber: Int, startDate: LocalDate): LocalDate = startDate.plus(dayNumber - 1, DateTimeUnit.DAY)
@@ -233,16 +236,6 @@ private fun DayEntryContract.UiData.withNote(metric: DayEntryContract.MetricKind
 
 private fun DayEntryContract.UiData.withAchievementText(id: String, text: String): DayEntryContract.UiData =
     copy(achievements = achievements.map { if (it.id == id) it.copy(text = text) else it })
-
-private fun DayEntryContract.UiData.withAchievementChip(label: String): DayEntryContract.UiData {
-    val blankIndex = achievements.indexOfFirst { it.text.isBlank() }
-    val updated = if (blankIndex >= 0) {
-        achievements.toMutableList().apply { this[blankIndex] = this[blankIndex].copy(text = label) }
-    } else {
-        achievements + DayEntryContract.AchievementEntry(id = "achievement-added-${achievements.size}", text = label)
-    }
-    return copy(achievements = updated)
-}
 
 private fun DayEntryContract.UiData.withMealDescription(id: String, description: String): DayEntryContract.UiData =
     copy(meals = meals.map { if (it.id == id) it.copy(description = description) else it })

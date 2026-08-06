@@ -45,16 +45,6 @@ import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_note_placeholder
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_notes_placeholder
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_notes_title
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_nsv_chip_1
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_nsv_chip_10
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_nsv_chip_2
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_nsv_chip_3
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_nsv_chip_4
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_nsv_chip_5
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_nsv_chip_6
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_nsv_chip_7
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_nsv_chip_8
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_nsv_chip_9
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_save_button_short
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_section_how_i_felt
 import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryContract
@@ -216,11 +206,8 @@ private fun DayEntryContent(
 
         AchievementsSection(
             achievements = uiData.achievements,
-            pickerOpen = uiData.nsvPickerOpen,
-            chipLabels = nsvChipLabels(),
-            onTogglePicker = { onUiAction(DayEntryContract.UiAction.OnToggleNsvPicker) },
             onTextChange = { id, text -> onUiAction(DayEntryContract.UiAction.OnAchievementTextChange(id, text)) },
-            onChipClick = { onUiAction(DayEntryContract.UiAction.OnAddAchievementChip(it)) },
+            onAddClick = { onUiAction(DayEntryContract.UiAction.OnAddAchievementClick) },
         )
 
         MealsSection(
@@ -245,20 +232,6 @@ private fun DayEntryContent(
     }
 }
 
-@Composable
-private fun nsvChipLabels(): List<String> = listOf(
-    stringResource(Res.string.day_entry_nsv_chip_1),
-    stringResource(Res.string.day_entry_nsv_chip_2),
-    stringResource(Res.string.day_entry_nsv_chip_3),
-    stringResource(Res.string.day_entry_nsv_chip_4),
-    stringResource(Res.string.day_entry_nsv_chip_5),
-    stringResource(Res.string.day_entry_nsv_chip_6),
-    stringResource(Res.string.day_entry_nsv_chip_7),
-    stringResource(Res.string.day_entry_nsv_chip_8),
-    stringResource(Res.string.day_entry_nsv_chip_9),
-    stringResource(Res.string.day_entry_nsv_chip_10),
-)
-
 private fun previewUiData(): DayEntryContract.UiData = DayEntryContract.UiData(
     dayNumber = 12,
     dateLabel = "27.7.2026",
@@ -270,8 +243,6 @@ private fun previewUiData(): DayEntryContract.UiData = DayEntryContract.UiData(
     overallScore = 6,
     achievements = listOf(
         DayEntryContract.AchievementEntry(id = "1", text = "Ran 3 miles without feeling drained after"),
-        DayEntryContract.AchievementEntry(id = "2", text = ""),
-        DayEntryContract.AchievementEntry(id = "3", text = ""),
     ),
     meals = listOf(
         DayEntryContract.MealEntry(id = "1", label = "Meal 1", description = "Frittata with spinach and mushrooms"),

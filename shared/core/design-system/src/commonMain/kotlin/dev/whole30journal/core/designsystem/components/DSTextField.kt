@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -30,6 +31,7 @@ fun DSTextField(
     minLines: Int = 1,
     containerColor: Color = DSTheme.colors.bg,
     shape: Shape = DSShapes.md,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     val colors = DSTheme.colors
     TextField(
@@ -47,6 +49,7 @@ fun DSTextField(
         singleLine = singleLine,
         minLines = minLines,
         shape = shape,
+        keyboardOptions = keyboardOptions,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = containerColor,
             unfocusedContainerColor = containerColor,

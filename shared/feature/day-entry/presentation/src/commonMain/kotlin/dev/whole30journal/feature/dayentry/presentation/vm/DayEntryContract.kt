@@ -35,7 +35,6 @@ object DayEntryContract {
         val sleep: MetricEntry = MetricEntry(),
         val cravings: MetricEntry = MetricEntry(),
         val overallScore: Int? = null,
-        val nsvPickerOpen: Boolean = false,
         val achievements: List<AchievementEntry> = emptyList(),
         val meals: List<MealEntry> = emptyList(),
         val notes: String = "",
@@ -47,9 +46,8 @@ object DayEntryContract {
         data class OnAppear(val dayNumber: Int) : UiAction
         data class OnScoreChange(val metric: MetricKind, val score: Int) : UiAction
         data class OnNoteChange(val metric: MetricKind, val note: String) : UiAction
-        data object OnToggleNsvPicker : UiAction
         data class OnAchievementTextChange(val id: String, val text: String) : UiAction
-        data class OnAddAchievementChip(val label: String) : UiAction
+        data object OnAddAchievementClick : UiAction
         data object OnAddMealClick : UiAction
         data class OnMealDescriptionChange(val id: String, val description: String) : UiAction
         data class OnMealLovedToggle(val id: String) : UiAction

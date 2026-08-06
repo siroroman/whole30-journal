@@ -15,14 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.whole30journal.core.designsystem.components.DSCard
 import dev.whole30journal.core.designsystem.components.DSTextField
@@ -62,23 +55,7 @@ fun MealsSection(
                 onAddPhotoClick = onAddPhotoClick,
             )
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .dashedBorder(colors.divider, DSShapes.lg)
-                .clickable(onClick = onAddMealClick)
-                .padding(DSSpacing.space6),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            PlusIcon(tint = colors.textSecondary, modifier = Modifier.size(16.dp))
-            Text(
-                text = stringResource(Res.string.day_entry_add_meal_button),
-                style = DSTheme.typography.textBase,
-                color = colors.textSecondary,
-                modifier = Modifier.padding(start = DSSpacing.space3),
-            )
-        }
+        AddEntryButton(text = stringResource(Res.string.day_entry_add_meal_button), onClick = onAddMealClick)
     }
 }
 
@@ -130,15 +107,6 @@ private fun MealRow(
             }
         }
     }
-}
-
-private fun Modifier.dashedBorder(color: Color, shape: Shape, width: Dp = 1.5.dp): Modifier = drawWithContent {
-    drawContent()
-    drawOutline(
-        outline = shape.createOutline(size, layoutDirection, this),
-        color = color,
-        style = Stroke(width = width.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(6f, 6f))),
-    )
 }
 
 @Preview

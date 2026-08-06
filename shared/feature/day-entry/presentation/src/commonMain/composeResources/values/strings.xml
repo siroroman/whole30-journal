@@ -23,18 +23,8 @@
     <string name="day_entry_overall_caption">Auto-calculated from Energy, Mood, Sleep and Cravings</string>
 
     <string name="day_entry_nsv_title">Non-scale victories</string>
-    <string name="day_entry_nsv_add_content_description">Add achievement</string>
     <string name="day_entry_nsv_placeholder">Non-scale victory</string>
-    <string name="day_entry_nsv_chip_1">More patient</string>
-    <string name="day_entry_nsv_chip_2">Less stressed</string>
-    <string name="day_entry_nsv_chip_3">More confident</string>
-    <string name="day_entry_nsv_chip_4">Cravings under control</string>
-    <string name="day_entry_nsv_chip_5">Clearer skin</string>
-    <string name="day_entry_nsv_chip_6">Less bloating</string>
-    <string name="day_entry_nsv_chip_7">Stronger nails</string>
-    <string name="day_entry_nsv_chip_8">Clothes fit better</string>
-    <string name="day_entry_nsv_chip_9">More energy for workouts</string>
-    <string name="day_entry_nsv_chip_10">Better mood</string>
+    <string name="day_entry_add_achievement_button">Add victory</string>
 
     <string name="day_entry_meals_title">What I ate</string>
     <string name="day_entry_meal_label_numbered">Meal %1$d</string>
