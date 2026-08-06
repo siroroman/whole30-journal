@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utils_today_label">Dnes</string>
+    <string name="utils_weekday_monday_full">Pondělí</string>
+    <string name="utils_weekday_monday_short">PO</string>
+    <string name="utils_weekday_tuesday_full">Úterý</string>
+    <string name="utils_weekday_tuesday_short">ÚT</string>
+    <string name="utils_weekday_wednesday_full">Středa</string>
+    <string name="utils_weekday_wednesday_short">ST</string>
+    <string name="utils_weekday_thursday_full">Čtvrtek</string>
+    <string name="utils_weekday_thursday_short">ČT</string>
+    <string name="utils_weekday_friday_full">Pátek</string>
+    <string name="utils_weekday_friday_short">PÁ</string>
+    <string name="utils_weekday_saturday_full">Sobota</string>
+    <string name="utils_weekday_saturday_short">SO</string>
+    <string name="utils_weekday_sunday_full">Neděle</string>
+    <string name="utils_weekday_sunday_short">NE</string>
+</resources>

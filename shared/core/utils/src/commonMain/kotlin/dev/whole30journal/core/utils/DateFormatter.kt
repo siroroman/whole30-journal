@@ -2,8 +2,23 @@ package dev.whole30journal.core.utils
 
 import dev.whole30journal.core.utils.generated.resources.Res
 import dev.whole30journal.core.utils.generated.resources.utils_today_label
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_friday_full
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_friday_short
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_monday_full
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_monday_short
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_saturday_full
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_saturday_short
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_sunday_full
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_sunday_short
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_thursday_full
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_thursday_short
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_tuesday_full
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_tuesday_short
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_wednesday_full
+import dev.whole30journal.core.utils.generated.resources.utils_weekday_wednesday_short
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 
 class DateFormatter {
@@ -16,23 +31,27 @@ class DateFormatter {
         return if (style == Style.Short) shortDate else "${fullWeekdayName(date.dayOfWeek)} $shortDate"
     }
 
-    fun weekdayAbbreviation(dayOfWeek: DayOfWeek): String = when (dayOfWeek) {
-        DayOfWeek.MONDAY -> "MO"
-        DayOfWeek.TUESDAY -> "TU"
-        DayOfWeek.WEDNESDAY -> "WE"
-        DayOfWeek.THURSDAY -> "TH"
-        DayOfWeek.FRIDAY -> "FR"
-        DayOfWeek.SATURDAY -> "SA"
-        DayOfWeek.SUNDAY -> "SU"
+    suspend fun weekdayAbbreviation(dayOfWeek: DayOfWeek): String = getString(shortWeekdayNameRes(dayOfWeek))
+
+    private suspend fun fullWeekdayName(dayOfWeek: DayOfWeek): String = getString(fullWeekdayNameRes(dayOfWeek))
+
+    private fun fullWeekdayNameRes(dayOfWeek: DayOfWeek): StringResource = when (dayOfWeek) {
+        DayOfWeek.MONDAY -> Res.string.utils_weekday_monday_full
+        DayOfWeek.TUESDAY -> Res.string.utils_weekday_tuesday_full
+        DayOfWeek.WEDNESDAY -> Res.string.utils_weekday_wednesday_full
+        DayOfWeek.THURSDAY -> Res.string.utils_weekday_thursday_full
+        DayOfWeek.FRIDAY -> Res.string.utils_weekday_friday_full
+        DayOfWeek.SATURDAY -> Res.string.utils_weekday_saturday_full
+        DayOfWeek.SUNDAY -> Res.string.utils_weekday_sunday_full
     }
 
-    private fun fullWeekdayName(dayOfWeek: DayOfWeek): String = when (dayOfWeek) {
-        DayOfWeek.MONDAY -> "Monday"
-        DayOfWeek.TUESDAY -> "Tuesday"
-        DayOfWeek.WEDNESDAY -> "Wednesday"
-        DayOfWeek.THURSDAY -> "Thursday"
-        DayOfWeek.FRIDAY -> "Friday"
-        DayOfWeek.SATURDAY -> "Saturday"
-        DayOfWeek.SUNDAY -> "Sunday"
+    private fun shortWeekdayNameRes(dayOfWeek: DayOfWeek): StringResource = when (dayOfWeek) {
+        DayOfWeek.MONDAY -> Res.string.utils_weekday_monday_short
+        DayOfWeek.TUESDAY -> Res.string.utils_weekday_tuesday_short
+        DayOfWeek.WEDNESDAY -> Res.string.utils_weekday_wednesday_short
+        DayOfWeek.THURSDAY -> Res.string.utils_weekday_thursday_short
+        DayOfWeek.FRIDAY -> Res.string.utils_weekday_friday_short
+        DayOfWeek.SATURDAY -> Res.string.utils_weekday_saturday_short
+        DayOfWeek.SUNDAY -> Res.string.utils_weekday_sunday_short
     }
 }

@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="utils_today_label">Today</string>
+    <string name="utils_weekday_monday_full">Monday</string>
+    <string name="utils_weekday_monday_short">MO</string>
+    <string name="utils_weekday_tuesday_full">Tuesday</string>
+    <string name="utils_weekday_tuesday_short">TU</string>
+    <string name="utils_weekday_wednesday_full">Wednesday</string>
+    <string name="utils_weekday_wednesday_short">WE</string>
+    <string name="utils_weekday_thursday_full">Thursday</string>
+    <string name="utils_weekday_thursday_short">TH</string>
+    <string name="utils_weekday_friday_full">Friday</string>
+    <string name="utils_weekday_friday_short">FR</string>
+    <string name="utils_weekday_saturday_full">Saturday</string>
+    <string name="utils_weekday_saturday_short">SA</string>
+    <string name="utils_weekday_sunday_full">Sunday</string>
+    <string name="utils_weekday_sunday_short">SU</string>
 </resources>
