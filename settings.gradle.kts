@@ -31,9 +31,10 @@ include(":shared:core:database")
 include(":shared:core:design-system")
 include(":shared:core:utils")
 
-// Feature: day-entry (domain + data only - no presentation layer yet)
+// Feature: day-entry (domain + data + presentation)
 include(":shared:feature:day-entry:domain")
 include(":shared:feature:day-entry:data")
+include(":shared:feature:day-entry:presentation")
 
 include(":shared:feature:program:domain")
 include(":shared:feature:program:data")

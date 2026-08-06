@@ -1,25 +1,60 @@
 package dev.whole30journal.android
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.whole30journal.feature.dayentry.presentation.ui.DayEntryScreen
+import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryContract
+import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryViewModel
 import dev.whole30journal.feature.home.presentation.ui.HomeScreen
+import dev.whole30journal.feature.home.presentation.vm.HomeContract
 import dev.whole30journal.feature.home.presentation.vm.HomeViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
-/**
- * Root of the app - renders the shared Compose Multiplatform Home screen (see ARCHITECTURE.md,
- * Pattern A). HomeScreen applies DSTheme itself, since the same composable is also embedded
- * from iOS with no SwiftUI-side theming equivalent.
- */
 @Composable
 fun App() {
-    val viewModel: HomeViewModel = koinViewModel()
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val homeViewModel: HomeViewModel = koinViewModel()
+    val homeState by homeViewModel.state.collectAsStateWithLifecycle()
+    var editingDay by remember { mutableStateOf<Int?>(null) }
 
-    HomeScreen(
-        state = state,
-        onUiAction = { viewModel.onUiAction(it) },
-        onUiEventConsume = { viewModel.onUiEventConsumed(it) },
-    )
+    LaunchedEffect(homeViewModel) {
+        homeViewModel.outputEvents.collect { event ->
+            when (event) {
+                is HomeContract.OutputEvent.NavigateToDayEntry -> editingDay = event.dayNumber
+            }
+        }
+    }
+
+    val dayNumber = editingDay
+    if (dayNumber != null) {
+        val dayEntryViewModel: DayEntryViewModel = koinViewModel()
+        val dayEntryState by dayEntryViewModel.state.collectAsStateWithLifecycle()
+
+        LaunchedEffect(dayNumber) {
+            dayEntryViewModel.onUiAction(DayEntryContract.UiAction.OnAppear(dayNumber))
+        }
+        LaunchedEffect(dayEntryViewModel) {
+            dayEntryViewModel.outputEvents.collect { event ->
+                when (event) {
+                    DayEntryContract.OutputEvent.Close -> editingDay = null
+                }
+            }
+        }
+
+        DayEntryScreen(
+            state = dayEntryState,
+            onUiAction = { dayEntryViewModel.onUiAction(it) },
+            onUiEventConsume = { dayEntryViewModel.onUiEventConsumed(it) },
+        )
+    } else {
+        HomeScreen(
+            state = homeState,
+            onUiAction = { homeViewModel.onUiAction(it) },
+            onUiEventConsume = { homeViewModel.onUiEventConsumed(it) },
+        )
+    }
 }

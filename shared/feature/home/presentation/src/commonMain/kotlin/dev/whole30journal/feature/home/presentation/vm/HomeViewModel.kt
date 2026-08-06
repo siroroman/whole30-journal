@@ -5,6 +5,7 @@ import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.core.uistate.vm.StateFlowViewModel
 import dev.whole30journal.core.utils.DateFormatter
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
+import dev.whole30journal.feature.dayentry.domain.model.MetricTitle
 import dev.whole30journal.feature.dayentry.domain.usecase.GetDayEntryUseCase
 import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
 import kotlinx.coroutines.async
@@ -36,9 +37,9 @@ class HomeViewModel(
     override suspend fun applyUiAction(uiAction: HomeContract.UiAction) {
         when (uiAction) {
             is HomeContract.UiAction.OnDayClick -> selectDay(uiAction.dayNumber)
-            is HomeContract.UiAction.OnEditDayClick,
-            is HomeContract.UiAction.OnViewDayDetailsClick,
-            -> Unit // No Detail/Entry screen exists yet - documents intent for future navigation.
+            is HomeContract.UiAction.OnEditDayClick ->
+                emitOutputEvent(HomeContract.OutputEvent.NavigateToDayEntry(uiAction.dayNumber))
+            is HomeContract.UiAction.OnViewDayDetailsClick -> Unit
             is HomeContract.UiAction.OnTrendMetricSelected ->
                 updateUiData { copy(selectedTrendMetric = uiAction.metric) }
         }
@@ -129,11 +130,11 @@ private fun DayEntry.toDayMetrics(): HomeContract.DayMetrics? {
         (value.toDouble() / metric.maxValue * NORMALIZED_SCORE_SCALE).roundToInt()
     }
     return HomeContract.DayMetrics(
-        overall = scoreFor(HomeContract.MetricTitle.OVERALL),
-        energy = scoreFor(HomeContract.MetricTitle.ENERGY),
-        mood = scoreFor(HomeContract.MetricTitle.MOOD),
-        sleep = scoreFor(HomeContract.MetricTitle.SLEEP),
-        cravings = scoreFor(HomeContract.MetricTitle.CRAVINGS),
+        overall = scoreFor(MetricTitle.OVERALL),
+        energy = scoreFor(MetricTitle.ENERGY),
+        mood = scoreFor(MetricTitle.MOOD),
+        sleep = scoreFor(MetricTitle.SLEEP),
+        cravings = scoreFor(MetricTitle.CRAVINGS),
     )
 }
 

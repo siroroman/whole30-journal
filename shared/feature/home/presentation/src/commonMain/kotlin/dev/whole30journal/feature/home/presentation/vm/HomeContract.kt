@@ -7,14 +7,6 @@ import kotlinx.datetime.LocalDate
 
 object HomeContract {
 
-    object MetricTitle {
-        const val OVERALL = "Overall"
-        const val ENERGY = "Energy"
-        const val MOOD = "Mood"
-        const val SLEEP = "Sleep"
-        const val CRAVINGS = "Cravings"
-    }
-
     enum class TrendMetric { Overall, Energy, Sleep, Cravings }
 
     @Immutable
@@ -71,6 +63,7 @@ object HomeContract {
     /** No cases yet - nothing async, nothing that can fail with hardcoded data. */
     sealed interface UiEvent : UiStateAware.UiEvent
 
-    /** No cases yet - no Detail/Entry screen exists to navigate to. */
-    sealed interface OutputEvent : UiStateAware.OutputEvent
+    sealed interface OutputEvent : UiStateAware.OutputEvent {
+        data class NavigateToDayEntry(val dayNumber: Int) : OutputEvent
+    }
 }

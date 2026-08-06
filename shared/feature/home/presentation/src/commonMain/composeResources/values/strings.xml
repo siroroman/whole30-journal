@@ -11,6 +11,6 @@
     <string name="home_metric_cravings">Cravings</string>
     <string name="home_trends_title">Trends</string>
     <string name="home_days_title">Days</string>
-    <string name="home_day_future_message">This day hasn\'t happened yet</string>
+    <string name="home_day_future_message">This day hasn't happened yet</string>
     <string name="home_day_no_entry_message">No entry logged for this day yet</string>
 </resources>

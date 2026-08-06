@@ -4,8 +4,8 @@ import dev.whole30journal.feature.dayentry.domain.model.Achievement
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import dev.whole30journal.feature.dayentry.domain.model.Meal
 import dev.whole30journal.feature.dayentry.domain.model.Metric
+import dev.whole30journal.feature.dayentry.domain.model.MetricTitle
 import dev.whole30journal.feature.dayentry.domain.usecase.SaveDayEntryUseCase
-import dev.whole30journal.feature.home.presentation.vm.HomeContract
 import dev.whole30journal.feature.program.domain.usecase.ConfigureProgramUseCase
 import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
 import kotlinx.datetime.DateTimeUnit
@@ -63,11 +63,11 @@ private fun buildSampleDayEntry(dayNumber: Int, startDate: LocalDate): DayEntry 
         dayNumber = dayNumber.toLong(),
         date = date.toString(),
         metrics = listOf(
-            Metric(HomeContract.MetricTitle.OVERALL, "leaf", overall.toLong(), MAX_SCORE.toLong(), ""),
-            Metric(HomeContract.MetricTitle.ENERGY, "energy", energy.toLong(), MAX_SCORE.toLong(), ""),
-            Metric(HomeContract.MetricTitle.MOOD, "mood", mood.toLong(), MAX_SCORE.toLong(), ""),
-            Metric(HomeContract.MetricTitle.SLEEP, "sleep", sleep.toLong(), MAX_SCORE.toLong(), ""),
-            Metric(HomeContract.MetricTitle.CRAVINGS, "cravings", cravings.toLong(), MAX_SCORE.toLong(), ""),
+            Metric(MetricTitle.OVERALL, "leaf", overall.toLong(), MAX_SCORE.toLong(), ""),
+            Metric(MetricTitle.ENERGY, "energy", energy.toLong(), MAX_SCORE.toLong(), ""),
+            Metric(MetricTitle.MOOD, "mood", mood.toLong(), MAX_SCORE.toLong(), ""),
+            Metric(MetricTitle.SLEEP, "sleep", sleep.toLong(), MAX_SCORE.toLong(), ""),
+            Metric(MetricTitle.CRAVINGS, "cravings", cravings.toLong(), MAX_SCORE.toLong(), ""),
         ),
         notes = NOTES.random(random),
         isComplete = true,
