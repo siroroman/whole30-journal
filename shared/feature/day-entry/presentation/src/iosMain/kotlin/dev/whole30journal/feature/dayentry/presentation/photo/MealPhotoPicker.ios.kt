@@ -74,14 +74,13 @@ private class CameraDelegate(
 ) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
 
     override fun imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo: Map<Any?, *>) {
-        picker.dismissViewControllerAnimated(true, completion = null)
         val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
-        onResult(image?.let { UIImageJPEGRepresentation(it, 0.9) })
+        val data = image?.let { UIImageJPEGRepresentation(it, 0.9) }
+        picker.dismissViewControllerAnimated(true) { onResult(data) }
     }
 
     override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        picker.dismissViewControllerAnimated(true, completion = null)
-        onResult(null)
+        picker.dismissViewControllerAnimated(true) { onResult(null) }
     }
 }
 
@@ -90,14 +89,15 @@ private class LibraryDelegate(
 ) : NSObject(), PHPickerViewControllerDelegateProtocol {
 
     override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
-        picker.dismissViewControllerAnimated(true, completion = null)
         val provider = (didFinishPicking.firstOrNull() as? PHPickerResult)?.itemProvider
-        if (provider != null && provider.hasItemConformingToTypeIdentifier(UTTypeJPEG.identifier)) {
-            provider.loadDataRepresentationForTypeIdentifier(UTTypeJPEG.identifier) { data, _ ->
-                dispatch_async(dispatch_get_main_queue()) { onResult(data) }
+        picker.dismissViewControllerAnimated(true) {
+            if (provider != null && provider.hasItemConformingToTypeIdentifier(UTTypeJPEG.identifier)) {
+                provider.loadDataRepresentationForTypeIdentifier(UTTypeJPEG.identifier) { data, _ ->
+                    dispatch_async(dispatch_get_main_queue()) { onResult(data) }
+                }
+            } else {
+                onResult(null)
             }
-        } else {
-            onResult(null)
         }
     }
 }

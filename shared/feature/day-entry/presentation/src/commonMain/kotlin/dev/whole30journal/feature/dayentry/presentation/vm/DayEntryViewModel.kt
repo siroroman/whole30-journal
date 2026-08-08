@@ -43,9 +43,12 @@ class DayEntryViewModel(
     initialState = UiStateAware.UiState(isLoading = true, uiData = DayEntryContract.UiData()),
 ) {
 
+    private var isLoaded = false
+
     override suspend fun applyUiAction(uiAction: DayEntryContract.UiAction) {
         when (uiAction) {
-            is DayEntryContract.UiAction.OnAppear -> loadDayEntry(uiAction.dayNumber)
+            is DayEntryContract.UiAction.OnAppear ->
+                if (!isLoaded) loadDayEntry(uiAction.dayNumber)
             is DayEntryContract.UiAction.OnScoreChange ->
                 updateUiData { withScore(uiAction.metric, uiAction.score) }
             is DayEntryContract.UiAction.OnNoteChange ->
@@ -87,6 +90,7 @@ class DayEntryViewModel(
         val draft = entry?.toUiData(dayNumber, dateLabel, totalDays, startDate)
             ?: defaultUiData(dayNumber, dateLabel, totalDays, startDate)
         updateUiData(isLoading = false) { draft }
+        isLoaded = true
     }
 
     private suspend fun save() {

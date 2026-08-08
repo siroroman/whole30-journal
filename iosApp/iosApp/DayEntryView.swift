@@ -1,10 +1,27 @@
 import SwiftUI
 import SharedKit
 
+private final class DayEntryViewModelHolder: ObservableObject {
+    let viewModel: DayEntryViewModel
+
+    init(viewModel: DayEntryViewModel) {
+        self.viewModel = viewModel
+    }
+
+    deinit {
+        let viewModel = self.viewModel
+        Task { @MainActor in viewModel.clearScope() }
+    }
+}
+
 struct DayEntryView: View {
     let dayNumber: Int
     let onClose: () -> Void
-    @State private var viewModel = KoinResolver.get(DayEntryViewModel.self)
+    @StateObject private var holder = DayEntryViewModelHolder(
+        viewModel: KoinResolver.get(DayEntryViewModel.self)
+    )
+
+    private var viewModel: DayEntryViewModel { holder.viewModel }
 
     var body: some View {
         ComposeViewController {
@@ -13,9 +30,6 @@ struct DayEntryView: View {
         .ignoresSafeArea()
         .onAppear {
             viewModel.onUiAction(uiAction: DayEntryContractUiActionOnAppear(dayNumber: Int32(dayNumber)))
-        }
-        .onDisappear {
-            viewModel.clearScope()
         }
         .task {
             for await event in viewModel.outputEvents {
