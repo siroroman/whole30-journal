@@ -31,8 +31,12 @@
     <string name="day_entry_meal_extra_label">Navíc / svačina</string>
     <string name="day_entry_meal_description_placeholder">Co jsi jedl/a?</string>
     <string name="day_entry_meal_add_photo_content_description">Přidat fotku</string>
+    <string name="day_entry_meal_photo_content_description">Fotka jídla</string>
     <string name="day_entry_meal_loved_content_description">Nejvíc mi chutnalo</string>
     <string name="day_entry_add_meal_button">Přidat jídlo</string>
+    <string name="day_entry_photo_source_title">Přidat fotku jídla</string>
+    <string name="day_entry_photo_source_camera">Vyfotit</string>
+    <string name="day_entry_photo_source_library">Vybrat z knihovny</string>
 
     <string name="day_entry_notes_title">Dnešní poznámky</string>
     <string name="day_entry_notes_placeholder">Nad čím dnes přemýšlíš?</string>

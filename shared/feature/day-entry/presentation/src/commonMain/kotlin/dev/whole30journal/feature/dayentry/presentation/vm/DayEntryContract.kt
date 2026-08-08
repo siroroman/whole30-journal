@@ -37,6 +37,7 @@ object DayEntryContract {
         val overallScore: Int? = null,
         val achievements: List<AchievementEntry> = emptyList(),
         val meals: List<MealEntry> = emptyList(),
+        val pendingPhotoMealId: String? = null,
         val notes: String = "",
         val isComplete: Boolean = false,
         val isSaving: Boolean = false,
@@ -52,6 +53,8 @@ object DayEntryContract {
         data class OnMealDescriptionChange(val id: String, val description: String) : UiAction
         data class OnMealLovedToggle(val id: String) : UiAction
         data class OnAddMealPhotoClick(val id: String) : UiAction
+        data class OnMealPhotoPicked(val mealId: String, val token: String) : UiAction
+        data object OnPhotoSourceDismiss : UiAction
         data class OnNotesChange(val notes: String) : UiAction
         data object OnCompleteToggle : UiAction
         data object OnSaveClick : UiAction

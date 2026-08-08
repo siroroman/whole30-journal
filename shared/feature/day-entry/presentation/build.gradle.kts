@@ -28,6 +28,9 @@ kotlin {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.compose.components.resources)
 
+            implementation(libs.coil.compose)
+            implementation(libs.coil.core)
+
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.androidx.lifecycle.viewmodel)

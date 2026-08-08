@@ -212,9 +212,12 @@ private fun DayEntryContent(
 
         MealsSection(
             meals = uiData.meals,
+            pendingPhotoMealId = uiData.pendingPhotoMealId,
             onDescriptionChange = { id, description -> onUiAction(DayEntryContract.UiAction.OnMealDescriptionChange(id, description)) },
             onLovedToggle = { onUiAction(DayEntryContract.UiAction.OnMealLovedToggle(it)) },
             onAddPhotoClick = { onUiAction(DayEntryContract.UiAction.OnAddMealPhotoClick(it)) },
+            onPhotoPicked = { id, token -> onUiAction(DayEntryContract.UiAction.OnMealPhotoPicked(id, token)) },
+            onPhotoSourceDismiss = { onUiAction(DayEntryContract.UiAction.OnPhotoSourceDismiss) },
             onAddMealClick = { onUiAction(DayEntryContract.UiAction.OnAddMealClick) },
         )
 

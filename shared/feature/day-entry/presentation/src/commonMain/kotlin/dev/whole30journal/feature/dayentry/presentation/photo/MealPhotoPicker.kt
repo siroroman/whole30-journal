@@ -1,0 +1,11 @@
+package dev.whole30journal.feature.dayentry.presentation.photo
+
+import androidx.compose.runtime.Composable
+
+interface MealPhotoPicker {
+    fun launchCamera()
+    fun launchLibrary()
+}
+
+@Composable
+expect fun rememberMealPhotoPicker(onPhotoSaved: (String) -> Unit): MealPhotoPicker

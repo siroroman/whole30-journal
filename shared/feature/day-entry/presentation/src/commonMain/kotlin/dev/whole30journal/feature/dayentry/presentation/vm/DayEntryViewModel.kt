@@ -58,7 +58,12 @@ class DayEntryViewModel(
                 updateUiData { withMealDescription(uiAction.id, uiAction.description) }
             is DayEntryContract.UiAction.OnMealLovedToggle ->
                 updateUiData { withMealLovedToggled(uiAction.id) }
-            is DayEntryContract.UiAction.OnAddMealPhotoClick -> Unit
+            is DayEntryContract.UiAction.OnAddMealPhotoClick ->
+                updateUiData { copy(pendingPhotoMealId = uiAction.id) }
+            is DayEntryContract.UiAction.OnMealPhotoPicked ->
+                updateUiData { withMealPhoto(uiAction.mealId, uiAction.token) }
+            DayEntryContract.UiAction.OnPhotoSourceDismiss ->
+                updateUiData { copy(pendingPhotoMealId = null) }
             is DayEntryContract.UiAction.OnNotesChange ->
                 updateUiData { copy(notes = uiAction.notes) }
             DayEntryContract.UiAction.OnCompleteToggle ->
@@ -251,3 +256,6 @@ private fun DayEntryContract.UiData.withMealDescription(id: String, description:
 
 private fun DayEntryContract.UiData.withMealLovedToggled(id: String): DayEntryContract.UiData =
     copy(meals = meals.map { if (it.id == id) it.copy(lovedIt = !it.lovedIt) else it })
+
+private fun DayEntryContract.UiData.withMealPhoto(id: String, token: String): DayEntryContract.UiData =
+    copy(meals = meals.map { if (it.id == id) it.copy(photoToken = token) else it }, pendingPhotoMealId = null)
