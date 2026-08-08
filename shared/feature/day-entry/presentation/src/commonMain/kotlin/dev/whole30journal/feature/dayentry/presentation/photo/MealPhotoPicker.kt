@@ -8,4 +8,4 @@ interface MealPhotoPicker {
 }
 
 @Composable
-expect fun rememberMealPhotoPicker(onPhotoSaved: (String) -> Unit): MealPhotoPicker
+expect fun rememberMealPhotoPicker(onPhotoSave: (String) -> Unit): MealPhotoPicker

@@ -56,14 +56,14 @@ fun MealsSection(
     onDescriptionChange: (id: String, description: String) -> Unit,
     onLovedToggle: (id: String) -> Unit,
     onAddPhotoClick: (id: String) -> Unit,
-    onPhotoPicked: (id: String, token: String) -> Unit,
+    onPhotoPick: (id: String, token: String) -> Unit,
     onPhotoSourceDismiss: () -> Unit,
     onAddMealClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var awaitingPhotoMealId by remember { mutableStateOf<String?>(null) }
     val photoPicker = rememberMealPhotoPicker { token ->
-        awaitingPhotoMealId?.let { onPhotoPicked(it, token) }
+        awaitingPhotoMealId?.let { onPhotoPick(it, token) }
         awaitingPhotoMealId = null
     }
 
@@ -193,7 +193,7 @@ private fun MealsSectionPreviewLight() {
                 onDescriptionChange = { _, _ -> },
                 onLovedToggle = {},
                 onAddPhotoClick = {},
-                onPhotoPicked = { _, _ -> },
+                onPhotoPick = { _, _ -> },
                 onPhotoSourceDismiss = {},
                 onAddMealClick = {},
                 modifier = Modifier.padding(DSSpacing.space7),
@@ -213,7 +213,7 @@ private fun MealsSectionPreviewDark() {
                 onDescriptionChange = { _, _ -> },
                 onLovedToggle = {},
                 onAddPhotoClick = {},
-                onPhotoPicked = { _, _ -> },
+                onPhotoPick = { _, _ -> },
                 onPhotoSourceDismiss = {},
                 onAddMealClick = {},
                 modifier = Modifier.padding(DSSpacing.space7),

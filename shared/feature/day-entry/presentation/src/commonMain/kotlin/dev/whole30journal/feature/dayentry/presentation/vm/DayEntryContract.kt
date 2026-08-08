@@ -53,7 +53,7 @@ object DayEntryContract {
         data class OnMealDescriptionChange(val id: String, val description: String) : UiAction
         data class OnMealLovedToggle(val id: String) : UiAction
         data class OnAddMealPhotoClick(val id: String) : UiAction
-        data class OnMealPhotoPicked(val mealId: String, val token: String) : UiAction
+        data class OnMealPhotoPick(val mealId: String, val token: String) : UiAction
         data object OnPhotoSourceDismiss : UiAction
         data class OnNotesChange(val notes: String) : UiAction
         data object OnCompleteToggle : UiAction

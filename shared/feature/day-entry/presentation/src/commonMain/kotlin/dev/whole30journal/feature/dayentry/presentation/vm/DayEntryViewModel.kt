@@ -60,7 +60,7 @@ class DayEntryViewModel(
                 updateUiData { withMealLovedToggled(uiAction.id) }
             is DayEntryContract.UiAction.OnAddMealPhotoClick ->
                 updateUiData { copy(pendingPhotoMealId = uiAction.id) }
-            is DayEntryContract.UiAction.OnMealPhotoPicked ->
+            is DayEntryContract.UiAction.OnMealPhotoPick ->
                 updateUiData { withMealPhoto(uiAction.mealId, uiAction.token) }
             DayEntryContract.UiAction.OnPhotoSourceDismiss ->
                 updateUiData { copy(pendingPhotoMealId = null) }
