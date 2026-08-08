@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.core.uistate.vm.StateFlowViewModel
 import dev.whole30journal.core.utils.DateFormatter
+import dev.whole30journal.core.utils.dateForDay
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import dev.whole30journal.feature.dayentry.domain.model.MetricTitle
 import dev.whole30journal.feature.dayentry.domain.usecase.ObserveDayEntryUseCase
@@ -15,10 +16,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import kotlin.math.roundToInt
 import kotlin.time.Clock
@@ -43,6 +42,7 @@ class HomeViewModel(
             is HomeContract.UiAction.OnDayClick -> selectDay(uiAction.dayNumber)
             is HomeContract.UiAction.OnEditDayClick ->
                 emitOutputEvent(HomeContract.OutputEvent.NavigateToDayEntry(uiAction.dayNumber))
+            // No Detail screen exists yet - intentionally a no-op until one is added.
             is HomeContract.UiAction.OnViewDayDetailsClick -> Unit
             is HomeContract.UiAction.OnTrendMetricSelected ->
                 updateUiData { copy(selectedTrendMetric = uiAction.metric) }
@@ -127,8 +127,6 @@ class HomeViewModel(
     @OptIn(ExperimentalTime::class)
     private fun today(): LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
 }
-
-private fun dateForDay(dayNumber: Int, startDate: LocalDate): LocalDate = startDate.plus(dayNumber - 1, DateTimeUnit.DAY)
 
 private const val PROGRESS_PERCENT_SCALE = 100
 private const val NORMALIZED_SCORE_SCALE = 10.0

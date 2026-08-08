@@ -14,6 +14,9 @@ struct DayEntryView: View {
         .onAppear {
             viewModel.onUiAction(uiAction: DayEntryContractUiActionOnAppear(dayNumber: Int32(dayNumber)))
         }
+        .onDisappear {
+            viewModel.clearScope()
+        }
         .task {
             for await event in viewModel.outputEvents {
                 switch onEnum(of: event) {

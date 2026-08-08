@@ -5,6 +5,7 @@ package dev.whole30journal.feature.dayentry.presentation.vm
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.core.uistate.vm.StateFlowViewModel
 import dev.whole30journal.core.utils.DateFormatter
+import dev.whole30journal.core.utils.dateForDay
 import dev.whole30journal.feature.dayentry.domain.model.Achievement
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import dev.whole30journal.feature.dayentry.domain.model.Meal
@@ -17,10 +18,10 @@ import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_label_numbered
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_save_error
 import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
-import kotlinx.datetime.DateTimeUnit
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import org.jetbrains.compose.resources.getString
 import kotlin.math.roundToInt
@@ -69,12 +70,15 @@ class DayEntryViewModel(
 
     private suspend fun loadDayEntry(dayNumber: Int) {
         updateIsLoading(true)
-        val program = getProgram().getOrNull()
+        val (program, entry) = coroutineScope {
+            val programDeferred = async { getProgram().getOrNull() }
+            val entryDeferred = async { getDayEntry(dayNumber.toLong()).getOrNull() }
+            programDeferred.await() to entryDeferred.await()
+        }
         val startDate = program?.startDate
         val dateLabel = startDate?.let { dateFormatter(dateForDay(dayNumber, it), today(), DateFormatter.Style.Short) }.orEmpty()
         val totalDays = program?.durationDays?.toInt() ?: DEFAULT_TOTAL_DAYS
 
-        val entry = getDayEntry(dayNumber.toLong()).getOrNull()
         val draft = entry?.toUiData(dayNumber, dateLabel, totalDays, startDate)
             ?: defaultUiData(dayNumber, dateLabel, totalDays, startDate)
         updateUiData(isLoading = false) { draft }
@@ -123,12 +127,17 @@ class DayEntryViewModel(
 
     private suspend fun addMeal() {
         val label = getString(Res.string.day_entry_meal_label_numbered, currentUiData.meals.size + 1)
-        updateUiData { copy(meals = meals + DayEntryContract.MealEntry(id = "meal-added-${meals.size}", label = label)) }
+        updateUiData {
+            copy(meals = meals + DayEntryContract.MealEntry(id = "day-$dayNumber-meal-added-${meals.size}", label = label))
+        }
     }
 
     private fun addAchievement() {
         updateUiData {
-            copy(achievements = achievements + DayEntryContract.AchievementEntry(id = "achievement-added-${achievements.size}", text = ""))
+            copy(
+                achievements = achievements +
+                    DayEntryContract.AchievementEntry(id = "day-$dayNumber-achievement-added-${achievements.size}", text = ""),
+            )
         }
     }
 
@@ -142,19 +151,21 @@ class DayEntryViewModel(
         dateLabel = dateLabel,
         totalDays = totalDays,
         programStartDate = startDate,
-        meals = defaultMeals(),
-        achievements = defaultAchievements(),
+        meals = defaultMeals(dayNumber),
+        achievements = defaultAchievements(dayNumber),
     )
 
-    private suspend fun defaultMeals(): List<DayEntryContract.MealEntry> = listOf(
-        DayEntryContract.MealEntry(id = "meal-slot-1", label = getString(Res.string.day_entry_meal_label_numbered, 1)),
-        DayEntryContract.MealEntry(id = "meal-slot-2", label = getString(Res.string.day_entry_meal_label_numbered, 2)),
-        DayEntryContract.MealEntry(id = "meal-slot-3", label = getString(Res.string.day_entry_meal_label_numbered, 3)),
-        DayEntryContract.MealEntry(id = "meal-slot-4", label = getString(Res.string.day_entry_meal_extra_label)),
+    private suspend fun defaultMeals(dayNumber: Int): List<DayEntryContract.MealEntry> = listOf(
+        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-1", label = getString(Res.string.day_entry_meal_label_numbered, 1)),
+        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-2", label = getString(Res.string.day_entry_meal_label_numbered, 2)),
+        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-3", label = getString(Res.string.day_entry_meal_label_numbered, 3)),
+        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-4", label = getString(Res.string.day_entry_meal_extra_label)),
     )
 
-    private fun defaultAchievements(): List<DayEntryContract.AchievementEntry> =
-        (0 until DEFAULT_ACHIEVEMENT_SLOTS).map { index -> DayEntryContract.AchievementEntry(id = "achievement-slot-$index", text = "") }
+    private fun defaultAchievements(dayNumber: Int): List<DayEntryContract.AchievementEntry> =
+        (0 until DEFAULT_ACHIEVEMENT_SLOTS).map { index ->
+            DayEntryContract.AchievementEntry(id = "day-$dayNumber-achievement-slot-$index", text = "")
+        }
 
     private fun today(): LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
 
@@ -186,7 +197,7 @@ class DayEntryViewModel(
             achievements = achievements.takeIf { it.isNotEmpty() }
                 ?.sortedBy { it.sortOrder }
                 ?.map { DayEntryContract.AchievementEntry(id = it.id, text = it.text) }
-                ?: defaultAchievements(),
+                ?: defaultAchievements(dayNumber),
             meals = meals.takeIf { it.isNotEmpty() }
                 ?.sortedBy { it.sortOrder }
                 ?.map {
@@ -198,7 +209,7 @@ class DayEntryViewModel(
                         lovedIt = it.lovedIt,
                     )
                 }
-                ?: defaultMeals(),
+                ?: defaultMeals(dayNumber),
             notes = notes,
             isComplete = isComplete,
         )
@@ -208,8 +219,6 @@ class DayEntryViewModel(
 private const val DEFAULT_TOTAL_DAYS = 30
 private const val DEFAULT_ACHIEVEMENT_SLOTS = 1
 private const val MAX_SCORE = 10L
-
-private fun dateForDay(dayNumber: Int, startDate: LocalDate): LocalDate = startDate.plus(dayNumber - 1, DateTimeUnit.DAY)
 
 private fun computeOverall(vararg entries: DayEntryContract.MetricEntry): Int? {
     val scores = entries.mapNotNull { it.score }

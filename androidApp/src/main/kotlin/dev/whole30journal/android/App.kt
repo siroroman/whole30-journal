@@ -31,7 +31,7 @@ fun App() {
 
     val dayNumber = editingDay
     if (dayNumber != null) {
-        val dayEntryViewModel: DayEntryViewModel = koinViewModel()
+        val dayEntryViewModel: DayEntryViewModel = koinViewModel(key = "day-entry-$dayNumber")
         val dayEntryState by dayEntryViewModel.state.collectAsStateWithLifecycle()
 
         LaunchedEffect(dayNumber) {
