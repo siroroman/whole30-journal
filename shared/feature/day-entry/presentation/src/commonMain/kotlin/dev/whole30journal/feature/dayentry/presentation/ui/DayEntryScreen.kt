@@ -48,6 +48,7 @@ import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_save_button_short
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_section_how_i_felt
 import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryContract
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -162,46 +163,20 @@ private fun DayEntryContent(
     ) {
         Text(text = stringResource(Res.string.day_entry_section_how_i_felt), style = DSTheme.typography.textLg, color = DSTheme.colors.text)
 
-        MetricScoreCard(
-            title = stringResource(Res.string.day_entry_metric_energy_title),
-            lowLabel = stringResource(Res.string.day_entry_metric_energy_low),
-            highLabel = stringResource(Res.string.day_entry_metric_energy_high),
-            score = uiData.energy.score,
-            note = uiData.energy.note,
-            notePlaceholder = stringResource(Res.string.day_entry_note_placeholder),
-            onScoreChange = { onUiAction(DayEntryContract.UiAction.OnScoreChange(DayEntryContract.MetricKind.Energy, it)) },
-            onNoteChange = { onUiAction(DayEntryContract.UiAction.OnNoteChange(DayEntryContract.MetricKind.Energy, it)) },
-        )
-        MetricScoreCard(
-            title = stringResource(Res.string.day_entry_metric_mood_title),
-            lowLabel = stringResource(Res.string.day_entry_metric_mood_low),
-            highLabel = stringResource(Res.string.day_entry_metric_mood_high),
-            score = uiData.mood.score,
-            note = uiData.mood.note,
-            notePlaceholder = stringResource(Res.string.day_entry_note_placeholder),
-            onScoreChange = { onUiAction(DayEntryContract.UiAction.OnScoreChange(DayEntryContract.MetricKind.Mood, it)) },
-            onNoteChange = { onUiAction(DayEntryContract.UiAction.OnNoteChange(DayEntryContract.MetricKind.Mood, it)) },
-        )
-        MetricScoreCard(
-            title = stringResource(Res.string.day_entry_metric_sleep_title),
-            lowLabel = stringResource(Res.string.day_entry_metric_sleep_low),
-            highLabel = stringResource(Res.string.day_entry_metric_sleep_high),
-            score = uiData.sleep.score,
-            note = uiData.sleep.note,
-            notePlaceholder = stringResource(Res.string.day_entry_note_placeholder),
-            onScoreChange = { onUiAction(DayEntryContract.UiAction.OnScoreChange(DayEntryContract.MetricKind.Sleep, it)) },
-            onNoteChange = { onUiAction(DayEntryContract.UiAction.OnNoteChange(DayEntryContract.MetricKind.Sleep, it)) },
-        )
-        MetricScoreCard(
-            title = stringResource(Res.string.day_entry_metric_cravings_title),
-            lowLabel = stringResource(Res.string.day_entry_metric_cravings_low),
-            highLabel = stringResource(Res.string.day_entry_metric_cravings_high),
-            score = uiData.cravings.score,
-            note = uiData.cravings.note,
-            notePlaceholder = stringResource(Res.string.day_entry_note_placeholder),
-            onScoreChange = { onUiAction(DayEntryContract.UiAction.OnScoreChange(DayEntryContract.MetricKind.Cravings, it)) },
-            onNoteChange = { onUiAction(DayEntryContract.UiAction.OnNoteChange(DayEntryContract.MetricKind.Cravings, it)) },
-        )
+        val notePlaceholder = stringResource(Res.string.day_entry_note_placeholder)
+        METRIC_CARD_CONFIGS.forEach { config ->
+            val entry = uiData.entryFor(config.kind)
+            MetricScoreCard(
+                title = stringResource(config.titleRes),
+                lowLabel = stringResource(config.lowRes),
+                highLabel = stringResource(config.highRes),
+                score = entry.score,
+                note = entry.note,
+                notePlaceholder = notePlaceholder,
+                onScoreChange = { onUiAction(DayEntryContract.UiAction.OnScoreChange(config.kind, it)) },
+                onNoteChange = { onUiAction(DayEntryContract.UiAction.OnNoteChange(config.kind, it)) },
+            )
+        }
         OverallScoreCard(score = uiData.overallScore)
 
         AchievementsSection(
@@ -233,6 +208,47 @@ private fun DayEntryContent(
             )
         }
     }
+}
+
+private class MetricCardConfig(
+    val kind: DayEntryContract.MetricKind,
+    val titleRes: StringResource,
+    val lowRes: StringResource,
+    val highRes: StringResource,
+)
+
+private val METRIC_CARD_CONFIGS = listOf(
+    MetricCardConfig(
+        kind = DayEntryContract.MetricKind.Energy,
+        titleRes = Res.string.day_entry_metric_energy_title,
+        lowRes = Res.string.day_entry_metric_energy_low,
+        highRes = Res.string.day_entry_metric_energy_high,
+    ),
+    MetricCardConfig(
+        kind = DayEntryContract.MetricKind.Mood,
+        titleRes = Res.string.day_entry_metric_mood_title,
+        lowRes = Res.string.day_entry_metric_mood_low,
+        highRes = Res.string.day_entry_metric_mood_high,
+    ),
+    MetricCardConfig(
+        kind = DayEntryContract.MetricKind.Sleep,
+        titleRes = Res.string.day_entry_metric_sleep_title,
+        lowRes = Res.string.day_entry_metric_sleep_low,
+        highRes = Res.string.day_entry_metric_sleep_high,
+    ),
+    MetricCardConfig(
+        kind = DayEntryContract.MetricKind.Cravings,
+        titleRes = Res.string.day_entry_metric_cravings_title,
+        lowRes = Res.string.day_entry_metric_cravings_low,
+        highRes = Res.string.day_entry_metric_cravings_high,
+    ),
+)
+
+private fun DayEntryContract.UiData.entryFor(kind: DayEntryContract.MetricKind): DayEntryContract.MetricEntry = when (kind) {
+    DayEntryContract.MetricKind.Energy -> energy
+    DayEntryContract.MetricKind.Mood -> mood
+    DayEntryContract.MetricKind.Sleep -> sleep
+    DayEntryContract.MetricKind.Cravings -> cravings
 }
 
 private fun previewUiData(): DayEntryContract.UiData = DayEntryContract.UiData(

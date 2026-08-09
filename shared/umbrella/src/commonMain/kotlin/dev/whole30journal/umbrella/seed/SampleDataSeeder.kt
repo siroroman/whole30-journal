@@ -5,6 +5,7 @@ import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import dev.whole30journal.feature.dayentry.domain.model.Meal
 import dev.whole30journal.feature.dayentry.domain.model.Metric
 import dev.whole30journal.feature.dayentry.domain.model.MetricTitle
+import dev.whole30journal.feature.dayentry.domain.model.overallScore
 import dev.whole30journal.feature.dayentry.domain.usecase.SaveDayEntryUseCase
 import dev.whole30journal.feature.program.domain.usecase.ConfigureProgramUseCase
 import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
@@ -57,7 +58,7 @@ private fun buildSampleDayEntry(dayNumber: Int, startDate: LocalDate): DayEntry 
     val mood = trendingScore(dayNumber, random)
     val sleep = trendingScore(dayNumber, random)
     val cravings = trendingScore(dayNumber, random)
-    val overall = listOf(energy, mood, sleep, cravings).average().roundToInt().coerceIn(1, MAX_SCORE)
+    val overall = overallScore(listOf(energy, mood, sleep, cravings)) ?: MAX_SCORE
 
     return DayEntry(
         dayNumber = dayNumber.toLong(),

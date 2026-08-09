@@ -11,6 +11,7 @@ import dev.whole30journal.feature.dayentry.domain.model.DayEntry
 import dev.whole30journal.feature.dayentry.domain.model.Meal
 import dev.whole30journal.feature.dayentry.domain.model.Metric
 import dev.whole30journal.feature.dayentry.domain.model.MetricTitle
+import dev.whole30journal.feature.dayentry.domain.model.overallScore
 import dev.whole30journal.feature.dayentry.domain.usecase.GetDayEntryUseCase
 import dev.whole30journal.feature.dayentry.domain.usecase.SaveDayEntryUseCase
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.Res
@@ -24,7 +25,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import org.jetbrains.compose.resources.getString
-import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -44,6 +44,7 @@ class DayEntryViewModel(
 ) {
 
     private var isLoaded = false
+    private var isAddingMeal = false
 
     override suspend fun applyUiAction(uiAction: DayEntryContract.UiAction) {
         when (uiAction) {
@@ -135,9 +136,15 @@ class DayEntryViewModel(
     }
 
     private suspend fun addMeal() {
-        val label = getString(Res.string.day_entry_meal_label_numbered, currentUiData.meals.size + 1)
-        updateUiData {
-            copy(meals = meals + DayEntryContract.MealEntry(id = "day-$dayNumber-meal-added-${meals.size}", label = label))
+        if (isAddingMeal) return
+        isAddingMeal = true
+        try {
+            val label = getString(Res.string.day_entry_meal_label_numbered, currentUiData.meals.size + 1)
+            updateUiData {
+                copy(meals = meals + DayEntryContract.MealEntry(id = "day-$dayNumber-meal-added-${meals.size}", label = label))
+            }
+        } finally {
+            isAddingMeal = false
         }
     }
 
@@ -229,11 +236,8 @@ private const val DEFAULT_TOTAL_DAYS = 30
 private const val DEFAULT_ACHIEVEMENT_SLOTS = 1
 private const val MAX_SCORE = 10L
 
-private fun computeOverall(vararg entries: DayEntryContract.MetricEntry): Int? {
-    val scores = entries.mapNotNull { it.score }
-    if (scores.isEmpty()) return null
-    return (scores.sum().toDouble() / scores.size).roundToInt()
-}
+private fun computeOverall(vararg entries: DayEntryContract.MetricEntry): Int? =
+    overallScore(entries.map { it.score })
 
 private fun DayEntryContract.UiData.withScore(metric: DayEntryContract.MetricKind, score: Int): DayEntryContract.UiData {
     val updated = when (metric) {

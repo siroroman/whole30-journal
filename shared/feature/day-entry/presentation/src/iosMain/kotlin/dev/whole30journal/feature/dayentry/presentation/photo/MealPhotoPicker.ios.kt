@@ -25,6 +25,7 @@ import platform.UIKit.UIImagePickerControllerOriginalImage
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.UIKit.UIViewController
+import platform.UniformTypeIdentifiers.UTTypeImage
 import platform.UniformTypeIdentifiers.UTTypeJPEG
 import platform.darwin.NSObject
 import platform.darwin.dispatch_async
@@ -44,10 +45,13 @@ private class IosMealPhotoPicker(
     private var activeDelegate: NSObject? = null
 
     override fun launchCamera() {
+        val sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
+        if (!UIImagePickerController.isSourceTypeAvailable(sourceType)) return
+
         val delegate = CameraDelegate(::handleResult)
         activeDelegate = delegate
         val picker = UIImagePickerController()
-        picker.sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
+        picker.sourceType = sourceType
         picker.delegate = delegate
         presenter.presentViewController(picker, animated = true, completion = null)
     }
@@ -91,12 +95,18 @@ private class LibraryDelegate(
     override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
         val provider = (didFinishPicking.firstOrNull() as? PHPickerResult)?.itemProvider
         picker.dismissViewControllerAnimated(true) {
-            if (provider != null && provider.hasItemConformingToTypeIdentifier(UTTypeJPEG.identifier)) {
-                provider.loadDataRepresentationForTypeIdentifier(UTTypeJPEG.identifier) { data, _ ->
-                    dispatch_async(dispatch_get_main_queue()) { onResult(data) }
-                }
-            } else {
-                onResult(null)
+            when {
+                provider == null -> onResult(null)
+                provider.hasItemConformingToTypeIdentifier(UTTypeJPEG.identifier) ->
+                    provider.loadDataRepresentationForTypeIdentifier(UTTypeJPEG.identifier) { data, _ ->
+                        dispatch_async(dispatch_get_main_queue()) { onResult(data) }
+                    }
+                provider.hasItemConformingToTypeIdentifier(UTTypeImage.identifier) ->
+                    provider.loadDataRepresentationForTypeIdentifier(UTTypeImage.identifier) { data, _ ->
+                        val jpegData = data?.let { UIImage(data = it) }?.let { UIImageJPEGRepresentation(it, 0.9) }
+                        dispatch_async(dispatch_get_main_queue()) { onResult(jpegData) }
+                    }
+                else -> onResult(null)
             }
         }
     }

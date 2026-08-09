@@ -1,12 +1,17 @@
 package dev.whole30journal.android
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import dev.whole30journal.feature.dayentry.presentation.ui.DayEntryScreen
 import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryContract
 import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryViewModel
@@ -31,25 +36,36 @@ fun App() {
 
     val dayNumber = editingDay
     if (dayNumber != null) {
-        val dayEntryViewModel: DayEntryViewModel = koinViewModel(key = "day-entry-$dayNumber")
-        val dayEntryState by dayEntryViewModel.state.collectAsStateWithLifecycle()
-
-        LaunchedEffect(dayNumber) {
-            dayEntryViewModel.onUiAction(DayEntryContract.UiAction.OnAppear(dayNumber))
-        }
-        LaunchedEffect(dayEntryViewModel) {
-            dayEntryViewModel.outputEvents.collect { event ->
-                when (event) {
-                    DayEntryContract.OutputEvent.Close -> editingDay = null
-                }
+        val dayEntryViewModelStoreOwner = remember {
+            object : ViewModelStoreOwner {
+                override val viewModelStore = ViewModelStore()
             }
         }
+        DisposableEffect(Unit) {
+            onDispose { dayEntryViewModelStoreOwner.viewModelStore.clear() }
+        }
 
-        DayEntryScreen(
-            state = dayEntryState,
-            onUiAction = { dayEntryViewModel.onUiAction(it) },
-            onUiEventConsume = { dayEntryViewModel.onUiEventConsumed(it) },
-        )
+        CompositionLocalProvider(LocalViewModelStoreOwner provides dayEntryViewModelStoreOwner) {
+            val dayEntryViewModel: DayEntryViewModel = koinViewModel()
+            val dayEntryState by dayEntryViewModel.state.collectAsStateWithLifecycle()
+
+            LaunchedEffect(dayNumber) {
+                dayEntryViewModel.onUiAction(DayEntryContract.UiAction.OnAppear(dayNumber))
+            }
+            LaunchedEffect(dayEntryViewModel) {
+                dayEntryViewModel.outputEvents.collect { event ->
+                    when (event) {
+                        DayEntryContract.OutputEvent.Close -> editingDay = null
+                    }
+                }
+            }
+
+            DayEntryScreen(
+                state = dayEntryState,
+                onUiAction = { dayEntryViewModel.onUiAction(it) },
+                onUiEventConsume = { dayEntryViewModel.onUiEventConsumed(it) },
+            )
+        }
     } else {
         HomeScreen(
             state = homeState,
