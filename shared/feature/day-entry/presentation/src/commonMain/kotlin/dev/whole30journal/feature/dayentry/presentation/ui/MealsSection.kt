@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,8 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
 import dev.whole30journal.core.designsystem.components.DSCard
 import dev.whole30journal.core.designsystem.components.DSTextField
@@ -42,7 +45,9 @@ import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_photo_source_library
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_photo_source_title
 import dev.whole30journal.feature.dayentry.presentation.photo.rememberMealPhotoPicker
+import dev.whole30journal.feature.dayentry.presentation.ui.icons.CameraIcon
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.HeartIcon
+import dev.whole30journal.feature.dayentry.presentation.ui.icons.LibraryIcon
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.PlusIcon
 import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryContract
 import org.jetbrains.compose.resources.stringResource
@@ -100,24 +105,67 @@ fun MealsSection(
 
 @Composable
 private fun PhotoSourceDialog(onCameraClick: () -> Unit, onLibraryClick: () -> Unit, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = stringResource(Res.string.day_entry_photo_source_title)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
+    val colors = DSTheme.colors
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Box(modifier = Modifier.fillMaxSize().padding(DSSpacing.space10), contentAlignment = Alignment.Center) {
+            Column(
+                modifier = Modifier
+                    .widthIn(max = 280.dp)
+                    .fillMaxWidth()
+                    .clip(DSShapes.xxl)
+                    .background(colors.surface)
+                    .padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space10),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space6),
+            ) {
                 Text(
+                    text = stringResource(Res.string.day_entry_photo_source_title),
+                    style = DSTheme.typography.textXl,
+                    color = colors.text,
+                    modifier = Modifier.padding(bottom = DSSpacing.space3),
+                )
+                PhotoSourceOption(
                     text = stringResource(Res.string.day_entry_photo_source_camera),
-                    modifier = Modifier.fillMaxWidth().clickable(onClick = onCameraClick),
+                    icon = { CameraIcon(tint = colors.text, modifier = Modifier.size(18.dp)) },
+                    onClick = onCameraClick,
+                )
+                PhotoSourceOption(
+                    text = stringResource(Res.string.day_entry_photo_source_library),
+                    icon = { LibraryIcon(tint = colors.text, modifier = Modifier.size(18.dp)) },
+                    onClick = onLibraryClick,
                 )
                 Text(
-                    text = stringResource(Res.string.day_entry_photo_source_library),
-                    modifier = Modifier.fillMaxWidth().clickable(onClick = onLibraryClick),
+                    text = stringResource(Res.string.day_entry_cancel_button),
+                    style = DSTheme.typography.textMd,
+                    color = colors.textSecondary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(DSShapes.md)
+                        .clickable(onClick = onDismiss)
+                        .padding(DSSpacing.space6),
                 )
             }
-        },
-        confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text(text = stringResource(Res.string.day_entry_cancel_button)) } },
-    )
+        }
+    }
+}
+
+@Composable
+private fun PhotoSourceOption(text: String, icon: @Composable () -> Unit, onClick: () -> Unit) {
+    val colors = DSTheme.colors
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(DSShapes.md)
+            .background(colors.surface2)
+            .clickable(onClick = onClick)
+            .padding(DSSpacing.space6),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        icon()
+        Text(text = text, style = DSTheme.typography.textMd, color = colors.text, modifier = Modifier.padding(start = DSSpacing.space4))
+    }
 }
 
 @Composable
@@ -219,5 +267,21 @@ private fun MealsSectionPreviewDark() {
                 modifier = Modifier.padding(DSSpacing.space7),
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PhotoSourceDialogPreviewLight() {
+    DSTheme(darkTheme = false) {
+        PhotoSourceDialog(onCameraClick = {}, onLibraryClick = {}, onDismiss = {})
+    }
+}
+
+@Preview
+@Composable
+private fun PhotoSourceDialogPreviewDark() {
+    DSTheme(darkTheme = true) {
+        PhotoSourceDialog(onCameraClick = {}, onLibraryClick = {}, onDismiss = {})
     }
 }
