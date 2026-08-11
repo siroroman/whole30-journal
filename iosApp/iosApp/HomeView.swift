@@ -6,11 +6,35 @@ extension Int: @retroactive Identifiable {
 }
 
 struct HomeView: View {
-    let viewModel: HomeViewModel
-    let onOpenSettings: () -> Void
+    private let viewModel: HomeViewModel = KoinResolver.get(HomeViewModel.self)
+    @State private var isLoading = true
+    @State private var needsSetup = false
     @State private var editingDay: Int?
+    let onOpenSettings: () -> Void
 
     var body: some View {
+        Group {
+            if isLoading {
+                ProgressView()
+            } else if needsSetup {
+                SettingsView()
+            } else {
+                homeContent
+            }
+        }
+        .task {
+            for await state in viewModel.state {
+                if isLoading != state.isLoading {
+                    isLoading = state.isLoading
+                }
+                if needsSetup != state.uiData.needsSetup {
+                    needsSetup = state.uiData.needsSetup
+                }
+            }
+        }
+    }
+
+    private var homeContent: some View {
         ComposeViewController {
             HomeScreenViewController(viewModel: viewModel)
         }
