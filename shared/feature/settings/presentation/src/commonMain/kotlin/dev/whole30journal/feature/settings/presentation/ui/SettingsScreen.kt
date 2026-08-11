@@ -99,6 +99,7 @@ fun SettingsScreen(
                 if (!isEditMode) {
                     SettingsFooter(
                         isSaving = state.uiData.isSaving,
+                        isLoading = state.isLoading,
                         onConfirmClick = { onUiAction(SettingsContract.UiAction.OnConfirmClick) },
                     )
                 }
@@ -318,12 +319,12 @@ private fun StepperButton(onClick: () -> Unit, enabled: Boolean, modifier: Modif
 }
 
 @Composable
-private fun SettingsFooter(isSaving: Boolean, onConfirmClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun SettingsFooter(isSaving: Boolean, isLoading: Boolean, onConfirmClick: () -> Unit, modifier: Modifier = Modifier) {
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth().background(colors.bg).navigationBarsPadding()) {
         HorizontalDivider(color = colors.divider)
         Box(modifier = Modifier.padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space6)) {
-            DSButton(onClick = onConfirmClick, fullWidth = true, enabled = !isSaving) {
+            DSButton(onClick = onConfirmClick, fullWidth = true, enabled = !isSaving && !isLoading) {
                 Text(stringResource(Res.string.settings_start_button))
             }
         }
@@ -407,8 +408,7 @@ private fun LocalDate.toUtcMillis(): Long = this.toEpochDays() * MILLIS_PER_DAY
 
 private fun Long.toLocalDate(): LocalDate = LocalDate.fromEpochDays(this / MILLIS_PER_DAY)
 
-private fun LocalDate.toPillLabel(): String =
-    "${day.toString().padStart(2, '0')}.${(month.ordinal + 1).toString().padStart(2, '0')}.$year"
+private fun LocalDate.toPillLabel(): String = "$day.${month.ordinal + 1}.$year"
 
 private fun previewUiData(mode: SettingsContract.Mode): SettingsContract.UiData = SettingsContract.UiData(
     mode = mode,

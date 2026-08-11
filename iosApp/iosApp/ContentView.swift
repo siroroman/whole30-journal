@@ -7,12 +7,15 @@ private struct SettingsRoute: Hashable {
 
 struct ContentView: View {
     @State private var homeViewModel = KoinResolver.get(HomeViewModel.self)
+    @State private var isLoading = true
     @State private var needsSetup = false
     @State private var path: [SettingsRoute] = []
 
     var body: some View {
         Group {
-            if needsSetup {
+            if isLoading {
+                EmptyView()
+            } else if needsSetup {
                 SettingsView(onDone: {})
             } else {
                 NavigationStack(path: $path) {
@@ -30,7 +33,12 @@ struct ContentView: View {
         }
         .task {
             for await state in homeViewModel.state {
-                needsSetup = state.uiData.needsSetup
+                if isLoading != state.isLoading {
+                    isLoading = state.isLoading
+                }
+                if needsSetup != state.uiData.needsSetup {
+                    needsSetup = state.uiData.needsSetup
+                }
             }
         }
     }

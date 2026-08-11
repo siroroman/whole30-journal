@@ -74,7 +74,7 @@ class HomeViewModel(
         val totalDays = program.durationDays.toInt()
         val currentDay = program.currentDayNumber.toInt()
         val metricsByDay = entriesByDay.mapNotNull { (day, entry) -> entry?.toDayMetrics()?.let { day to it } }.toMap()
-        val resolvedSelectedDay = currentUiData.selectedDay.takeIf { it != 0 } ?: currentDay
+        val resolvedSelectedDay = (currentUiData.selectedDay.takeIf { it != 0 } ?: currentDay).coerceIn(1, totalDays)
 
         val days = (1..totalDays).map { day ->
             HomeContract.DayCell(

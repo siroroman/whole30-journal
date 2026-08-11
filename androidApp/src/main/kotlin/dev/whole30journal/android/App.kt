@@ -41,19 +41,11 @@ fun App() {
 
     val dayNumber = editingDay
     when {
+        homeState.isLoading -> Unit
         homeState.uiData.needsSetup -> SettingsOverlay(onDone = {})
         isSettingsOpen -> SettingsOverlay(onDone = { isSettingsOpen = false })
         dayNumber != null -> {
-            val dayEntryViewModelStoreOwner = remember {
-                object : ViewModelStoreOwner {
-                    override val viewModelStore = ViewModelStore()
-                }
-            }
-            DisposableEffect(Unit) {
-                onDispose { dayEntryViewModelStoreOwner.viewModelStore.clear() }
-            }
-
-            CompositionLocalProvider(LocalViewModelStoreOwner provides dayEntryViewModelStoreOwner) {
+            CompositionLocalProvider(LocalViewModelStoreOwner provides rememberScopedViewModelStoreOwner()) {
                 val dayEntryViewModel: DayEntryViewModel = koinViewModel()
                 val dayEntryState by dayEntryViewModel.state.collectAsStateWithLifecycle()
 
@@ -85,16 +77,7 @@ fun App() {
 
 @Composable
 private fun SettingsOverlay(onDone: () -> Unit) {
-    val settingsViewModelStoreOwner = remember {
-        object : ViewModelStoreOwner {
-            override val viewModelStore = ViewModelStore()
-        }
-    }
-    DisposableEffect(Unit) {
-        onDispose { settingsViewModelStoreOwner.viewModelStore.clear() }
-    }
-
-    CompositionLocalProvider(LocalViewModelStoreOwner provides settingsViewModelStoreOwner) {
+    CompositionLocalProvider(LocalViewModelStoreOwner provides rememberScopedViewModelStoreOwner()) {
         val settingsViewModel: SettingsViewModel = koinViewModel()
         val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
 
@@ -112,4 +95,17 @@ private fun SettingsOverlay(onDone: () -> Unit) {
             onUiEventConsume = { settingsViewModel.onUiEventConsumed(it) },
         )
     }
+}
+
+@Composable
+private fun rememberScopedViewModelStoreOwner(): ViewModelStoreOwner {
+    val owner = remember {
+        object : ViewModelStoreOwner {
+            override val viewModelStore = ViewModelStore()
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose { owner.viewModelStore.clear() }
+    }
+    return owner
 }
