@@ -34,6 +34,7 @@ kotlin {
             export(projects.shared.feature.program.domain)
             export(projects.shared.feature.home.presentation)
             export(projects.shared.feature.dayEntry.presentation)
+            export(projects.shared.feature.settings.presentation)
         }
     }
 
@@ -48,6 +49,7 @@ kotlin {
             implementation(projects.shared.feature.program.data)
             api(projects.shared.feature.home.presentation)
             api(projects.shared.feature.dayEntry.presentation)
+            api(projects.shared.feature.settings.presentation)
 
             implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutines.core)

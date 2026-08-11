@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_setup_title">Vítejte ve Whole30</string>
+    <string name="settings_setup_subtitle">Než začnete, nastavte datum začátku a délku programu.</string>
+    <string name="settings_edit_title">Nastavení</string>
+
+    <string name="settings_section_program">PROGRAM</string>
+
+    <string name="settings_start_day_title">Den zahájení</string>
+    <string name="settings_duration_title">Délka programu</string>
+    <string name="settings_duration_subtitle">Počet dní ke sledování</string>
+
+    <string name="settings_date_picker_done">Hotovo</string>
+    <string name="settings_cancel_button">Zrušit</string>
+    <string name="settings_start_button">Začít Whole30</string>
+    <string name="settings_save_error">Nastavení se nepodařilo uložit. Zkuste to znovu.</string>
+
+    <string name="settings_back_content_description">Zpět</string>
+    <string name="settings_decrease_duration_content_description">Zkrátit délku programu</string>
+    <string name="settings_increase_duration_content_description">Prodloužit délku programu</string>
+</resources>

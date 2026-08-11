@@ -42,5 +42,8 @@ include(":shared:feature:program:data")
 // Feature: home (presentation only - hardcoded UI data, no domain/data layer yet)
 include(":shared:feature:home:presentation")
 
+// Feature: settings (presentation only - reuses the program feature's domain layer)
+include(":shared:feature:settings:presentation")
+
 // Umbrella - combines everything into one XCFramework for iOS
 include(":shared:umbrella")

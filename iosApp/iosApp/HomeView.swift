@@ -5,25 +5,61 @@ extension Int: @retroactive Identifiable {
     public var id: Int { self }
 }
 
+private struct SettingsNavigation: Hashable {}
+
 struct HomeView: View {
-    private let viewModel = KoinResolver.get(HomeViewModel.self)
+    @State private var isLoading = true
+    @State private var needsSetup = false
     @State private var editingDay: Int?
+    @State private var settingsPath: [SettingsNavigation] = []
+    
+    private let viewModel: HomeViewModel = KoinResolver.get(HomeViewModel.self)
 
     var body: some View {
-        ComposeViewController {
-            HomeScreenViewController(viewModel: viewModel)
+        Group {
+            if isLoading {
+                ProgressView()
+            } else if needsSetup {
+                SettingsView()
+            } else {
+                homeContent
+            }
         }
-        .ignoresSafeArea()
         .task {
-            for await event in viewModel.outputEvents {
-                switch onEnum(of: event) {
-                case let .navigateToDayEntry(data):
-                    editingDay = Int(data.dayNumber)
+            for await state in viewModel.state {
+                if isLoading != state.isLoading {
+                    isLoading = state.isLoading
+                }
+                if needsSetup != state.uiData.needsSetup {
+                    needsSetup = state.uiData.needsSetup
                 }
             }
         }
-        .sheet(item: $editingDay) { day in
-            DayEntryView(dayNumber: day, onClose: { editingDay = nil })
+    }
+
+    private var homeContent: some View {
+        NavigationStack(path: $settingsPath) {
+            ComposeViewController {
+                HomeScreenViewController(viewModel: viewModel)
+            }
+            .ignoresSafeArea()
+            .navigationDestination(for: SettingsNavigation.self) { _ in
+                SettingsView()
+                    .toolbar(.hidden, for: .navigationBar)
+            }
+            .task {
+                for await event in viewModel.outputEvents {
+                    switch onEnum(of: event) {
+                    case let .navigateToDayEntry(data):
+                        editingDay = Int(data.dayNumber)
+                    case .navigateToSettings:
+                        settingsPath = [SettingsNavigation()]
+                    }
+                }
+            }
+            .sheet(item: $editingDay) { day in
+                DayEntryView(dayNumber: day, onClose: { editingDay = nil })
+            }
         }
     }
 }
