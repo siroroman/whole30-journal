@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="day_entry_cancel_button">Cancel</string>
+    <string name="day_entry_day_title">Day %1$d</string>
+    <string name="day_entry_save_button_short">Save</string>
+    <string name="day_entry_section_how_i_felt">How I felt today</string>
+
+    <string name="day_entry_metric_energy_title">Energy</string>
+    <string name="day_entry_metric_energy_low">Worst</string>
+    <string name="day_entry_metric_energy_high">Best</string>
+    <string name="day_entry_metric_mood_title">Mood</string>
+    <string name="day_entry_metric_mood_low">Low</string>
+    <string name="day_entry_metric_mood_high">Great</string>
+    <string name="day_entry_metric_sleep_title">Sleep quality</string>
+    <string name="day_entry_metric_sleep_low">Worst</string>
+    <string name="day_entry_metric_sleep_high">Best</string>
+    <string name="day_entry_metric_cravings_title">Cravings</string>
+    <string name="day_entry_metric_cravings_low">Strong</string>
+    <string name="day_entry_metric_cravings_high">In control</string>
+    <string name="day_entry_note_placeholder">Note</string>
+
+    <string name="day_entry_overall_title">Overall rating</string>
+    <string name="day_entry_overall_caption">Auto-calculated from Energy, Mood, Sleep and Cravings</string>
+
+    <string name="day_entry_nsv_title">Non-scale victories</string>
+    <string name="day_entry_nsv_placeholder">Non-scale victory</string>
+    <string name="day_entry_add_achievement_button">Add victory</string>
+
+    <string name="day_entry_meals_title">What I ate</string>
+    <string name="day_entry_meal_label_numbered">Meal %1$d</string>
+    <string name="day_entry_meal_description_placeholder">What did you eat?</string>
+    <string name="day_entry_meal_add_photo_content_description">Add photo</string>
+    <string name="day_entry_meal_photo_content_description">Meal photo</string>
+    <string name="day_entry_meal_loved_content_description">Loved it</string>
+    <string name="day_entry_add_meal_button">Add meal</string>
+    <string name="day_entry_photo_source_title">Add Meal Photo</string>
+    <string name="day_entry_photo_source_camera">Take Photo</string>
+    <string name="day_entry_photo_source_library">Choose from Library</string>
+
+    <string name="day_entry_notes_title">Today's notes</string>
+    <string name="day_entry_notes_placeholder">What are you thinking about today?</string>
+
+    <string name="day_entry_complete_toggle_label">Day complete — I've got this!</string>
+    <string name="day_entry_save_button">Save Day %1$d</string>
+    <string name="day_entry_save_error">Couldn't save this day. Try again.</string>
+</resources>

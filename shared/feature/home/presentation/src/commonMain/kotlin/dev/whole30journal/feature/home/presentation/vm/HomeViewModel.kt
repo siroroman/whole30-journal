@@ -4,16 +4,20 @@ import androidx.lifecycle.viewModelScope
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.core.uistate.vm.StateFlowViewModel
 import dev.whole30journal.core.utils.DateFormatter
+import dev.whole30journal.core.utils.dateForDay
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
-import dev.whole30journal.feature.dayentry.domain.usecase.GetDayEntryUseCase
-import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import dev.whole30journal.feature.dayentry.domain.model.MetricTitle
+import dev.whole30journal.feature.dayentry.domain.usecase.ObserveDayEntryUseCase
+import dev.whole30journal.feature.program.domain.model.Program
+import dev.whole30journal.feature.program.domain.usecase.ObserveProgramUseCase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import kotlin.math.roundToInt
 import kotlin.time.Clock
@@ -21,8 +25,8 @@ import kotlin.time.ExperimentalTime
 
 class HomeViewModel(
     private val dateFormatter: DateFormatter,
-    private val getProgram: GetProgramUseCase,
-    private val getDayEntry: GetDayEntryUseCase,
+    private val observeProgram: ObserveProgramUseCase,
+    private val observeDayEntry: ObserveDayEntryUseCase,
     @OptIn(ExperimentalTime::class)
     private val clock: Clock = Clock.System,
 ) : StateFlowViewModel<HomeContract.UiData, HomeContract.UiAction, HomeContract.UiEvent, HomeContract.OutputEvent>(
@@ -30,37 +34,45 @@ class HomeViewModel(
 ) {
 
     init {
-        viewModelScope.launch { loadHomeData() }
+        viewModelScope.launch { observeHomeData() }
     }
 
     override suspend fun applyUiAction(uiAction: HomeContract.UiAction) {
         when (uiAction) {
             is HomeContract.UiAction.OnDayClick -> selectDay(uiAction.dayNumber)
-            is HomeContract.UiAction.OnEditDayClick,
-            is HomeContract.UiAction.OnViewDayDetailsClick,
-            -> Unit // No Detail/Entry screen exists yet - documents intent for future navigation.
+            is HomeContract.UiAction.OnEditDayClick ->
+                emitOutputEvent(HomeContract.OutputEvent.NavigateToDayEntry(uiAction.dayNumber))
+            // No Detail screen exists yet - intentionally a no-op until one is added.
+            is HomeContract.UiAction.OnViewDayDetailsClick -> Unit
             is HomeContract.UiAction.OnTrendMetricSelected ->
                 updateUiData { copy(selectedTrendMetric = uiAction.metric) }
         }
     }
 
-    private suspend fun loadHomeData() {
-        val program = getProgram().getOrNull()
-        if (program == null) {
-            updateIsLoading(false)
-            return
+    private suspend fun observeHomeData() {
+        observeProgram().collectLatest { programResult ->
+            val program = programResult.getOrNull()
+            if (program == null) {
+                updateIsLoading(false)
+                return@collectLatest
+            }
+            observeEntriesByDay(program.currentDayNumber.toInt()).collect { entriesByDay ->
+                applyHomeData(program, entriesByDay)
+            }
         }
+    }
 
+    private fun observeEntriesByDay(currentDay: Int): Flow<Map<Int, DayEntry?>> {
+        if (currentDay <= 0) return flowOf(emptyMap())
+        val entryFlows = (1..currentDay).map { day -> observeDayEntry(day.toLong()).map { day to it.getOrNull() } }
+        return combine(entryFlows) { pairs -> pairs.toMap() }
+    }
+
+    private suspend fun applyHomeData(program: Program, entriesByDay: Map<Int, DayEntry?>) {
         val startDate = program.startDate
         val totalDays = program.durationDays.toInt()
         val currentDay = program.currentDayNumber.toInt()
-
-        val entries = coroutineScope {
-            (1..currentDay)
-                .map { day -> day to async { getDayEntry(day.toLong()).getOrNull() } }
-                .associate { (day, deferred) -> day to deferred.await() }
-        }
-        val metricsByDay = entries.mapNotNull { (day, entry) -> entry?.toDayMetrics()?.let { day to it } }.toMap()
+        val metricsByDay = entriesByDay.mapNotNull { (day, entry) -> entry?.toDayMetrics()?.let { day to it } }.toMap()
 
         val days = (1..totalDays).map { day ->
             HomeContract.DayCell(
@@ -78,12 +90,12 @@ class HomeViewModel(
                 totalDays = totalDays,
                 progressPercent = currentDay * PROGRESS_PERCENT_SCALE / totalDays,
                 days = days,
-                selectedDay = currentDay,
+                selectedDay = if (selectedDay == 0) currentDay else selectedDay,
                 metricsByDay = metricsByDay,
                 trendSeries = buildTrendSeries(metricsByDay),
             )
         }
-        refreshDateLabels(currentDay, startDate, totalDays)
+        refreshDateLabels(currentUiData.selectedDay, startDate, totalDays)
     }
 
     private suspend fun selectDay(dayNumber: Int) {
@@ -116,8 +128,6 @@ class HomeViewModel(
     private fun today(): LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
 }
 
-private fun dateForDay(dayNumber: Int, startDate: LocalDate): LocalDate = startDate.plus(dayNumber - 1, DateTimeUnit.DAY)
-
 private const val PROGRESS_PERCENT_SCALE = 100
 private const val NORMALIZED_SCORE_SCALE = 10.0
 
@@ -129,11 +139,11 @@ private fun DayEntry.toDayMetrics(): HomeContract.DayMetrics? {
         (value.toDouble() / metric.maxValue * NORMALIZED_SCORE_SCALE).roundToInt()
     }
     return HomeContract.DayMetrics(
-        overall = scoreFor(HomeContract.MetricTitle.OVERALL),
-        energy = scoreFor(HomeContract.MetricTitle.ENERGY),
-        mood = scoreFor(HomeContract.MetricTitle.MOOD),
-        sleep = scoreFor(HomeContract.MetricTitle.SLEEP),
-        cravings = scoreFor(HomeContract.MetricTitle.CRAVINGS),
+        overall = scoreFor(MetricTitle.OVERALL),
+        energy = scoreFor(MetricTitle.ENERGY),
+        mood = scoreFor(MetricTitle.MOOD),
+        sleep = scoreFor(MetricTitle.SLEEP),
+        cravings = scoreFor(MetricTitle.CRAVINGS),
     )
 }
 

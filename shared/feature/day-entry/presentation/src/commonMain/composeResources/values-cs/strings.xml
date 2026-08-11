@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="day_entry_cancel_button">Zrušit</string>
+    <string name="day_entry_day_title">%1$d. den</string>
+    <string name="day_entry_save_button_short">Uložit</string>
+    <string name="day_entry_section_how_i_felt">Jak jsem se dnes cítil/a</string>
+
+    <string name="day_entry_metric_energy_title">Energie</string>
+    <string name="day_entry_metric_energy_low">Nejhorší</string>
+    <string name="day_entry_metric_energy_high">Nejlepší</string>
+    <string name="day_entry_metric_mood_title">Nálada</string>
+    <string name="day_entry_metric_mood_low">Špatná</string>
+    <string name="day_entry_metric_mood_high">Skvělá</string>
+    <string name="day_entry_metric_sleep_title">Kvalita spánku</string>
+    <string name="day_entry_metric_sleep_low">Nejhorší</string>
+    <string name="day_entry_metric_sleep_high">Nejlepší</string>
+    <string name="day_entry_metric_cravings_title">Chutě</string>
+    <string name="day_entry_metric_cravings_low">Silné</string>
+    <string name="day_entry_metric_cravings_high">Pod kontrolou</string>
+    <string name="day_entry_note_placeholder">Poznámka</string>
+
+    <string name="day_entry_overall_title">Celkové hodnocení</string>
+    <string name="day_entry_overall_caption">Automaticky vypočteno z energie, nálady, spánku a chutí</string>
+
+    <string name="day_entry_nsv_title">Vítězství mimo váhu</string>
+    <string name="day_entry_nsv_placeholder">Vítězství mimo váhu</string>
+    <string name="day_entry_add_achievement_button">Přidat vítězství</string>
+
+    <string name="day_entry_meals_title">Co jsem jedl/a</string>
+    <string name="day_entry_meal_label_numbered">%1$d. jídlo</string>
+    <string name="day_entry_meal_description_placeholder">Co jsi jedl/a?</string>
+    <string name="day_entry_meal_add_photo_content_description">Přidat fotku</string>
+    <string name="day_entry_meal_photo_content_description">Fotka jídla</string>
+    <string name="day_entry_meal_loved_content_description">Nejvíc mi chutnalo</string>
+    <string name="day_entry_add_meal_button">Přidat jídlo</string>
+    <string name="day_entry_photo_source_title">Přidat fotku jídla</string>
+    <string name="day_entry_photo_source_camera">Vyfotit</string>
+    <string name="day_entry_photo_source_library">Vybrat z knihovny</string>
+
+    <string name="day_entry_notes_title">Dnešní poznámky</string>
+    <string name="day_entry_notes_placeholder">Nad čím dnes přemýšlíš?</string>
+
+    <string name="day_entry_complete_toggle_label">Den splněn — mám to!</string>
+    <string name="day_entry_save_button">Uložit %1$d. den</string>
+    <string name="day_entry_save_error">Den se nepodařilo uložit. Zkus to znovu.</string>
+</resources>

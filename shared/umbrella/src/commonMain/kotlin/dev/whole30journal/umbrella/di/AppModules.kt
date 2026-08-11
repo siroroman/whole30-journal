@@ -4,6 +4,7 @@ import dev.whole30journal.core.database.di.databaseModule
 import dev.whole30journal.core.network.di.networkModule
 import dev.whole30journal.feature.dayentry.data.di.dayEntryDataModule
 import dev.whole30journal.feature.dayentry.domain.di.dayEntryDomainModule
+import dev.whole30journal.feature.dayentry.presentation.di.dayEntryPresentationModule
 import dev.whole30journal.feature.home.presentation.di.homePresentationModule
 import dev.whole30journal.feature.program.data.di.programDataModule
 import dev.whole30journal.feature.program.domain.di.programDomainModule
@@ -20,4 +21,5 @@ val appModules: List<Module> = listOf(
     programDomainModule,
     programDataModule,
     homePresentationModule,
+    dayEntryPresentationModule,
 )

@@ -4,5 +4,7 @@
 <dict>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
+    <key>NSCameraUsageDescription</key>
+    <string>Used to take photos of your meals.</string>
 </dict>
 </plist>
