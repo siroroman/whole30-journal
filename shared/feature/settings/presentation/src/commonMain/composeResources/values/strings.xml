@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_setup_title">Welcome to your Whole30</string>
+    <string name="settings_setup_subtitle">Set your start date and program length to begin your journal.</string>
+    <string name="settings_edit_title">Settings</string>
+
+    <string name="settings_section_program">PROGRAM</string>
+
+    <string name="settings_start_day_title">Start day</string>
+    <string name="settings_duration_title">Program duration</string>
+    <string name="settings_duration_subtitle">Number of days to track</string>
+
+    <string name="settings_date_picker_done">Done</string>
+    <string name="settings_cancel_button">Cancel</string>
+    <string name="settings_start_button">Start my Whole30</string>
+    <string name="settings_save_error">Couldn't save your settings. Try again.</string>
+
+    <string name="settings_back_content_description">Back</string>
+    <string name="settings_decrease_duration_content_description">Decrease program duration</string>
+    <string name="settings_increase_duration_content_description">Increase program duration</string>
+</resources>
