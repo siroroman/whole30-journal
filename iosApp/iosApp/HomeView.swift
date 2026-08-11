@@ -8,11 +8,12 @@ extension Int: @retroactive Identifiable {
 private struct SettingsNavigation: Hashable {}
 
 struct HomeView: View {
-    private let viewModel: HomeViewModel = KoinResolver.get(HomeViewModel.self)
     @State private var isLoading = true
     @State private var needsSetup = false
     @State private var editingDay: Int?
     @State private var settingsPath: [SettingsNavigation] = []
+    
+    private let viewModel: HomeViewModel = KoinResolver.get(HomeViewModel.self)
 
     var body: some View {
         Group {

@@ -4,6 +4,7 @@ import SharedKit
 struct DayEntryView: View {
     let dayNumber: Int
     let onClose: () -> Void
+
     private let viewModel: DayEntryViewModel = KoinResolver.get(DayEntryViewModel.self)
 
     var body: some View {
