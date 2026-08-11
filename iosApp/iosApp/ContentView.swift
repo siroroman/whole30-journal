@@ -7,7 +7,6 @@ private struct SettingsRoute: Hashable {
 
 struct ContentView: View {
     private let homeViewModel = KoinResolver.get(HomeViewModel.self)
-    private let settingsViewModel = KoinResolver.get(SettingsViewModel.self)
     @State private var isLoading = true
     @State private var needsSetup = false
     @State private var path: [SettingsRoute] = []
@@ -18,7 +17,7 @@ struct ContentView: View {
                 if isLoading {
                     ProgressView()
                 } else if needsSetup {
-                    SettingsView(viewModel: settingsViewModel)
+                    SettingsView()
                 } else {
                     HomeView(
                         viewModel: homeViewModel,
@@ -28,7 +27,7 @@ struct ContentView: View {
             }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: SettingsRoute.self) { _ in
-                SettingsView(viewModel: settingsViewModel)
+                SettingsView()
                     .toolbar(.hidden, for: .navigationBar)
             }
         }

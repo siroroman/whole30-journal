@@ -73,7 +73,10 @@ class SettingsViewModel(
         val startDate = data.startDate ?: return
         updateUiData { copy(isSaving = true) }
         configureProgram(startDate = startDate, durationDays = data.durationDays.toLong()).fold(
-            onSuccess = { emitOutputEvent(SettingsContract.OutputEvent.Saved) },
+            onSuccess = {
+                updateUiData { copy(isSaving = false) }
+                emitOutputEvent(SettingsContract.OutputEvent.Saved)
+            },
             onFailure = {
                 val message = getString(Res.string.settings_save_error)
                 updateUiData { copy(isSaving = false) }
