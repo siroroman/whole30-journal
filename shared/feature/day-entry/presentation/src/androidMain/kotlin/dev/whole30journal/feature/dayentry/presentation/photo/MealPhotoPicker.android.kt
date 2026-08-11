@@ -20,10 +20,10 @@ actual fun rememberMealPhotoPicker(onPhotoSave: (String) -> Unit): MealPhotoPick
     val pendingCameraPath = rememberSaveable { mutableStateOf<String?>(null) }
 
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success) pendingCameraPath.value?.let(onPhotoSave)
+        if (success) pendingCameraPath.value?.let { onPhotoSave(File(it).name) }
     }
     val libraryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        uri?.let { copyToMealPhotosDir(context, it)?.let { file -> onPhotoSave(file.absolutePath) } }
+        uri?.let { copyToMealPhotosDir(context, it)?.let { file -> onPhotoSave(file.name) } }
     }
 
     return remember {
@@ -39,6 +39,12 @@ actual fun rememberMealPhotoPicker(onPhotoSave: (String) -> Unit): MealPhotoPick
             }
         }
     }
+}
+
+@Composable
+actual fun rememberMealPhotoResolver(): (String) -> String {
+    val context = LocalContext.current
+    return remember(context) { { filename -> File(mealPhotosDir(context), filename).absolutePath } }
 }
 
 private fun mealPhotosDir(context: Context): File = File(context.filesDir, "meal-photos").apply { mkdirs() }
