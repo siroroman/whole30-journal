@@ -18,6 +18,9 @@ import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryViewModel
 import dev.whole30journal.feature.home.presentation.ui.HomeScreen
 import dev.whole30journal.feature.home.presentation.vm.HomeContract
 import dev.whole30journal.feature.home.presentation.vm.HomeViewModel
+import dev.whole30journal.feature.settings.presentation.ui.SettingsScreen
+import dev.whole30journal.feature.settings.presentation.vm.SettingsContract
+import dev.whole30journal.feature.settings.presentation.vm.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -25,52 +28,88 @@ fun App() {
     val homeViewModel: HomeViewModel = koinViewModel()
     val homeState by homeViewModel.state.collectAsStateWithLifecycle()
     var editingDay by remember { mutableStateOf<Int?>(null) }
+    var isSettingsOpen by remember { mutableStateOf(false) }
 
     LaunchedEffect(homeViewModel) {
         homeViewModel.outputEvents.collect { event ->
             when (event) {
                 is HomeContract.OutputEvent.NavigateToDayEntry -> editingDay = event.dayNumber
+                HomeContract.OutputEvent.NavigateToSettings -> isSettingsOpen = true
             }
         }
     }
 
     val dayNumber = editingDay
-    if (dayNumber != null) {
-        val dayEntryViewModelStoreOwner = remember {
-            object : ViewModelStoreOwner {
-                override val viewModelStore = ViewModelStore()
-            }
-        }
-        DisposableEffect(Unit) {
-            onDispose { dayEntryViewModelStoreOwner.viewModelStore.clear() }
-        }
-
-        CompositionLocalProvider(LocalViewModelStoreOwner provides dayEntryViewModelStoreOwner) {
-            val dayEntryViewModel: DayEntryViewModel = koinViewModel()
-            val dayEntryState by dayEntryViewModel.state.collectAsStateWithLifecycle()
-
-            LaunchedEffect(dayNumber) {
-                dayEntryViewModel.onUiAction(DayEntryContract.UiAction.OnAppear(dayNumber))
-            }
-            LaunchedEffect(dayEntryViewModel) {
-                dayEntryViewModel.outputEvents.collect { event ->
-                    when (event) {
-                        DayEntryContract.OutputEvent.Close -> editingDay = null
-                    }
+    when {
+        homeState.uiData.needsSetup -> SettingsOverlay(onDone = {})
+        isSettingsOpen -> SettingsOverlay(onDone = { isSettingsOpen = false })
+        dayNumber != null -> {
+            val dayEntryViewModelStoreOwner = remember {
+                object : ViewModelStoreOwner {
+                    override val viewModelStore = ViewModelStore()
                 }
             }
+            DisposableEffect(Unit) {
+                onDispose { dayEntryViewModelStoreOwner.viewModelStore.clear() }
+            }
 
-            DayEntryScreen(
-                state = dayEntryState,
-                onUiAction = { dayEntryViewModel.onUiAction(it) },
-                onUiEventConsume = { dayEntryViewModel.onUiEventConsumed(it) },
-            )
+            CompositionLocalProvider(LocalViewModelStoreOwner provides dayEntryViewModelStoreOwner) {
+                val dayEntryViewModel: DayEntryViewModel = koinViewModel()
+                val dayEntryState by dayEntryViewModel.state.collectAsStateWithLifecycle()
+
+                LaunchedEffect(dayNumber) {
+                    dayEntryViewModel.onUiAction(DayEntryContract.UiAction.OnAppear(dayNumber))
+                }
+                LaunchedEffect(dayEntryViewModel) {
+                    dayEntryViewModel.outputEvents.collect { event ->
+                        when (event) {
+                            DayEntryContract.OutputEvent.Close -> editingDay = null
+                        }
+                    }
+                }
+
+                DayEntryScreen(
+                    state = dayEntryState,
+                    onUiAction = { dayEntryViewModel.onUiAction(it) },
+                    onUiEventConsume = { dayEntryViewModel.onUiEventConsumed(it) },
+                )
+            }
         }
-    } else {
-        HomeScreen(
+        else -> HomeScreen(
             state = homeState,
             onUiAction = { homeViewModel.onUiAction(it) },
             onUiEventConsume = { homeViewModel.onUiEventConsumed(it) },
+        )
+    }
+}
+
+@Composable
+private fun SettingsOverlay(onDone: () -> Unit) {
+    val settingsViewModelStoreOwner = remember {
+        object : ViewModelStoreOwner {
+            override val viewModelStore = ViewModelStore()
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose { settingsViewModelStoreOwner.viewModelStore.clear() }
+    }
+
+    CompositionLocalProvider(LocalViewModelStoreOwner provides settingsViewModelStoreOwner) {
+        val settingsViewModel: SettingsViewModel = koinViewModel()
+        val settingsState by settingsViewModel.state.collectAsStateWithLifecycle()
+
+        LaunchedEffect(settingsViewModel) {
+            settingsViewModel.outputEvents.collect { event ->
+                when (event) {
+                    SettingsContract.OutputEvent.Saved, SettingsContract.OutputEvent.Cancelled -> onDone()
+                }
+            }
+        }
+
+        SettingsScreen(
+            state = settingsState,
+            onUiAction = { settingsViewModel.onUiAction(it) },
+            onUiEventConsume = { settingsViewModel.onUiEventConsumed(it) },
         )
     }
 }

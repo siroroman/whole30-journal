@@ -2,8 +2,9 @@ import SwiftUI
 import SharedKit
 
 struct HomeView: View {
-    @State private var viewModel = KoinResolver.get(HomeViewModel.self)
+    let viewModel: HomeViewModel
     let onEditDay: (Int) -> Void
+    let onOpenSettings: () -> Void
 
     var body: some View {
         ComposeViewController {
@@ -15,6 +16,8 @@ struct HomeView: View {
                 switch onEnum(of: event) {
                 case let .navigateToDayEntry(data):
                     onEditDay(Int(data.dayNumber))
+                case .navigateToSettings:
+                    onOpenSettings()
                 }
             }
         }
