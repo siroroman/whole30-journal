@@ -1,7 +1,7 @@
 import SwiftUI
 import SharedKit
 
-private final class DayEntryViewModelHolder: ObservableObject {
+private final class DayEntryViewModelHolder {
     let viewModel: DayEntryViewModel
 
     init(viewModel: DayEntryViewModel) {
@@ -17,7 +17,7 @@ private final class DayEntryViewModelHolder: ObservableObject {
 struct DayEntryView: View {
     let dayNumber: Int
     let onClose: () -> Void
-    @StateObject private var holder = DayEntryViewModelHolder(
+    @State private var holder = DayEntryViewModelHolder(
         viewModel: KoinResolver.get(DayEntryViewModel.self)
     )
 
