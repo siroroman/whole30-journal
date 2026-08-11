@@ -1,27 +1,10 @@
 import SwiftUI
 import SharedKit
 
-private final class DayEntryViewModelHolder {
-    let viewModel: DayEntryViewModel
-
-    init(viewModel: DayEntryViewModel) {
-        self.viewModel = viewModel
-    }
-
-    deinit {
-        let viewModel = self.viewModel
-        Task { @MainActor in viewModel.clearScope() }
-    }
-}
-
 struct DayEntryView: View {
     let dayNumber: Int
     let onClose: () -> Void
-    @State private var holder = DayEntryViewModelHolder(
-        viewModel: KoinResolver.get(DayEntryViewModel.self)
-    )
-
-    private var viewModel: DayEntryViewModel { holder.viewModel }
+    private let viewModel: DayEntryViewModel = KoinResolver.get(DayEntryViewModel.self)
 
     var body: some View {
         ComposeViewController {

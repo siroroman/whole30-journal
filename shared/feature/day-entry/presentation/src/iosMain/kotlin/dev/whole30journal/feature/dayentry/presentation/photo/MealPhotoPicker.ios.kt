@@ -37,6 +37,9 @@ actual fun rememberMealPhotoPicker(onPhotoSave: (String) -> Unit): MealPhotoPick
     return remember { IosMealPhotoPicker(presenter, onPhotoSave) }
 }
 
+@Composable
+actual fun rememberMealPhotoResolver(): (String) -> String = remember { { filename -> "${mealPhotosDirectory()}/$filename" } }
+
 private class IosMealPhotoPicker(
     private val presenter: UIViewController,
     private val onPhotoSave: (String) -> Unit,
@@ -114,8 +117,9 @@ private class LibraryDelegate(
 
 @OptIn(ExperimentalForeignApi::class)
 private fun writeMealPhoto(data: NSData): String? {
-    val path = "${mealPhotosDirectory()}/${NSUUID().UUIDString}.jpg"
-    return if (data.writeToFile(path, atomically = true)) path else null
+    val filename = "${NSUUID().UUIDString}.jpg"
+    val path = "${mealPhotosDirectory()}/$filename"
+    return if (data.writeToFile(path, atomically = true)) filename else null
 }
 
 @OptIn(ExperimentalForeignApi::class)

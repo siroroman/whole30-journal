@@ -45,6 +45,7 @@ import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_photo_source_library
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_photo_source_title
 import dev.whole30journal.feature.dayentry.presentation.photo.rememberMealPhotoPicker
+import dev.whole30journal.feature.dayentry.presentation.photo.rememberMealPhotoResolver
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.CameraIcon
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.HeartIcon
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.LibraryIcon
@@ -71,6 +72,7 @@ fun MealsSection(
         awaitingPhotoMealId?.let { onPhotoPick(it, token) }
         awaitingPhotoMealId = null
     }
+    val resolvePhotoToken = rememberMealPhotoResolver()
 
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
@@ -78,6 +80,7 @@ fun MealsSection(
         meals.forEach { meal ->
             MealRow(
                 meal = meal,
+                resolvePhotoToken = resolvePhotoToken,
                 onDescriptionChange = onDescriptionChange,
                 onLovedToggle = onLovedToggle,
                 onAddPhotoClick = onAddPhotoClick,
@@ -171,6 +174,7 @@ private fun PhotoSourceOption(text: String, icon: @Composable () -> Unit, onClic
 @Composable
 private fun MealRow(
     meal: DayEntryContract.MealEntry,
+    resolvePhotoToken: (String) -> String,
     onDescriptionChange: (id: String, description: String) -> Unit,
     onLovedToggle: (id: String) -> Unit,
     onAddPhotoClick: (id: String) -> Unit,
@@ -180,7 +184,7 @@ private fun MealRow(
         Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space5), verticalAlignment = Alignment.CenterVertically) {
             if (meal.photoToken != null) {
                 AsyncImage(
-                    model = meal.photoToken,
+                    model = resolvePhotoToken(meal.photoToken),
                     contentDescription = stringResource(Res.string.day_entry_meal_photo_content_description),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
