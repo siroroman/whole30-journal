@@ -18,10 +18,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -330,22 +333,71 @@ private fun SettingsFooter(isSaving: Boolean, onConfirmClick: () -> Unit, modifi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StartDateDialog(startDate: LocalDate?, onDateSelect: (LocalDate) -> Unit, onDismiss: () -> Unit) {
+    val colors = DSTheme.colors
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = startDate?.toUtcMillis())
+    val accentButtonColors = ButtonDefaults.textButtonColors(contentColor = colors.accent)
+    val datePickerColors = DatePickerDefaults.colors(
+        containerColor = colors.surface,
+        titleContentColor = colors.textSecondary,
+        headlineContentColor = colors.text,
+        weekdayContentColor = colors.textSecondary,
+        subheadContentColor = colors.textSecondary,
+        navigationContentColor = colors.text,
+        yearContentColor = colors.text,
+        disabledYearContentColor = colors.textTertiary,
+        currentYearContentColor = colors.accent,
+        selectedYearContentColor = colors.accentOn,
+        disabledSelectedYearContentColor = colors.textTertiary,
+        selectedYearContainerColor = colors.accent,
+        disabledSelectedYearContainerColor = colors.surface2,
+        dayContentColor = colors.text,
+        disabledDayContentColor = colors.textTertiary,
+        selectedDayContentColor = colors.accentOn,
+        disabledSelectedDayContentColor = colors.textTertiary,
+        selectedDayContainerColor = colors.accent,
+        disabledSelectedDayContainerColor = colors.surface2,
+        todayContentColor = colors.accent,
+        todayDateBorderColor = colors.accent,
+        dayInSelectionRangeContentColor = colors.text,
+        dayInSelectionRangeContainerColor = colors.accentTint,
+        dividerColor = colors.divider,
+        dateTextFieldColors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = colors.text,
+            unfocusedTextColor = colors.text,
+            cursorColor = colors.accent,
+            focusedBorderColor = colors.accent,
+            unfocusedBorderColor = colors.divider,
+            focusedLabelColor = colors.accent,
+            unfocusedLabelColor = colors.textSecondary,
+            focusedPlaceholderColor = colors.textTertiary,
+            unfocusedPlaceholderColor = colors.textTertiary,
+            focusedSupportingTextColor = colors.textSecondary,
+            unfocusedSupportingTextColor = colors.textSecondary,
+            errorTextColor = colors.scoreLow,
+            errorBorderColor = colors.scoreLow,
+            errorLabelColor = colors.scoreLow,
+            errorSupportingTextColor = colors.scoreLow,
+        ),
+    )
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(onClick = { datePickerState.selectedDateMillis?.let { onDateSelect(it.toLocalDate()) } ?: onDismiss() }) {
+            TextButton(
+                onClick = { datePickerState.selectedDateMillis?.let { onDateSelect(it.toLocalDate()) } ?: onDismiss() },
+                colors = accentButtonColors,
+            ) {
                 Text(stringResource(Res.string.settings_date_picker_done))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss, colors = accentButtonColors) {
                 Text(stringResource(Res.string.settings_cancel_button))
             }
         },
         shape = DSShapes.xl,
+        colors = datePickerColors,
     ) {
-        DatePicker(state = datePickerState)
+        DatePicker(state = datePickerState, colors = datePickerColors)
     }
 }
 
