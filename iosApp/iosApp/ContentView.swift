@@ -6,29 +6,30 @@ private struct SettingsRoute: Hashable {
 }
 
 struct ContentView: View {
-    @State private var homeViewModel = KoinResolver.get(HomeViewModel.self)
+    private let homeViewModel = KoinResolver.get(HomeViewModel.self)
+    private let settingsViewModel = KoinResolver.get(SettingsViewModel.self)
     @State private var isLoading = true
     @State private var needsSetup = false
     @State private var path: [SettingsRoute] = []
 
     var body: some View {
-        Group {
-            if isLoading {
-                EmptyView()
-            } else if needsSetup {
-                SettingsView(onDone: {})
-            } else {
-                NavigationStack(path: $path) {
+        NavigationStack(path: $path) {
+            Group {
+                if isLoading {
+                    ProgressView()
+                } else if needsSetup {
+                    SettingsView(viewModel: settingsViewModel)
+                } else {
                     HomeView(
                         viewModel: homeViewModel,
                         onOpenSettings: { path = [SettingsRoute()] }
                     )
-                    .toolbar(.hidden, for: .navigationBar)
-                    .navigationDestination(for: SettingsRoute.self) { _ in
-                        SettingsView(onDone: { path = [] })
-                            .toolbar(.hidden, for: .navigationBar)
-                    }
                 }
+            }
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(for: SettingsRoute.self) { _ in
+                SettingsView(viewModel: settingsViewModel)
+                    .toolbar(.hidden, for: .navigationBar)
             }
         }
         .task {
