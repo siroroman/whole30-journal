@@ -1,21 +1,13 @@
 import SwiftUI
 import SharedKit
 
-private struct SettingsRoute: Hashable {
-    let id = UUID()
-}
-
 struct ContentView: View {
-    @State private var path: [SettingsRoute] = []
+    @State private var showingSettings = false
 
     var body: some View {
-        NavigationStack(path: $path) {
-            HomeView(onOpenSettings: { path = [SettingsRoute()] })
-                .toolbar(.hidden, for: .navigationBar)
-                .navigationDestination(for: SettingsRoute.self) { _ in
-                    SettingsView()
-                        .toolbar(.hidden, for: .navigationBar)
-                }
-        }
+        HomeView(onOpenSettings: { showingSettings = true })
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
+            }
     }
 }
