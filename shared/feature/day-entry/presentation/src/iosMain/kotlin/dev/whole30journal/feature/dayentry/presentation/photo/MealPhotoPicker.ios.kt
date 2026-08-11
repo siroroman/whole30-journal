@@ -38,9 +38,7 @@ actual fun rememberMealPhotoPicker(onPhotoSave: (String) -> Unit): MealPhotoPick
 }
 
 @Composable
-actual fun rememberMealPhotoResolver(): (String) -> String = remember {
-    { filename -> "${mealPhotosDirectory()}/$filename" }
-}
+actual fun rememberMealPhotoResolver(): (String) -> String = remember { { filename -> "${mealPhotosDirectory()}/$filename" } }
 
 private class IosMealPhotoPicker(
     private val presenter: UIViewController,
