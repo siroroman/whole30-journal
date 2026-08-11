@@ -15,7 +15,6 @@ import dev.whole30journal.feature.dayentry.domain.model.overallScore
 import dev.whole30journal.feature.dayentry.domain.usecase.GetDayEntryUseCase
 import dev.whole30journal.feature.dayentry.domain.usecase.SaveDayEntryUseCase
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.Res
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_extra_label
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_label_numbered
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_save_error
 import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
@@ -175,7 +174,6 @@ class DayEntryViewModel(
         DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-1", label = getString(Res.string.day_entry_meal_label_numbered, 1)),
         DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-2", label = getString(Res.string.day_entry_meal_label_numbered, 2)),
         DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-3", label = getString(Res.string.day_entry_meal_label_numbered, 3)),
-        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-4", label = getString(Res.string.day_entry_meal_extra_label)),
     )
 
     private fun defaultAchievements(dayNumber: Int): List<DayEntryContract.AchievementEntry> =

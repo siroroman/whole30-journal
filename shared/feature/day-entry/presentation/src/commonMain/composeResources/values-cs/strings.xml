@@ -28,7 +28,6 @@
 
     <string name="day_entry_meals_title">Co jsem jedl/a</string>
     <string name="day_entry_meal_label_numbered">%1$d. jídlo</string>
-    <string name="day_entry_meal_extra_label">Navíc / svačina</string>
     <string name="day_entry_meal_description_placeholder">Co jsi jedl/a?</string>
     <string name="day_entry_meal_add_photo_content_description">Přidat fotku</string>
     <string name="day_entry_meal_photo_content_description">Fotka jídla</string>
