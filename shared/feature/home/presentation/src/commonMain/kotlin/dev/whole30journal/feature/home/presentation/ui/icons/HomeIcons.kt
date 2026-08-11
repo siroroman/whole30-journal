@@ -26,6 +26,16 @@ private object HomeIconPaths {
     const val CIRCLE_CHECK = "M3,12 a9,9 0 1,0 18,0 a9,9 0 1,0 -18,0 M9 12l2 2 4-4"
     const val PENCIL = "M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"
     const val CHEVRON_RIGHT = "m9 18 6-6-6-6"
+    const val GEAR = "M4.8,12 a7.2,7.2 0 1,0 14.4,0 a7.2,7.2 0 1,0 -14.4,0 " +
+        "M9,12 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0 " +
+        "M19.2,12 L21.7,12 " +
+        "M17.09,17.09 L18.86,18.86 " +
+        "M12,19.2 L12,21.7 " +
+        "M6.91,17.09 L5.14,18.86 " +
+        "M4.8,12 L2.3,12 " +
+        "M6.91,6.91 L5.14,5.14 " +
+        "M12,4.8 L12,2.3 " +
+        "M17.09,6.91 L18.86,5.14"
 }
 
 private fun outlineIcon(name: String, pathData: String, strokeWidth: Float): ImageVector =
@@ -48,6 +58,7 @@ private object HomeIcons {
     val CircleCheck: ImageVector by lazy { outlineIcon("CircleCheck", HomeIconPaths.CIRCLE_CHECK, 2f) }
     val Pencil: ImageVector by lazy { outlineIcon("Pencil", HomeIconPaths.PENCIL, 2.2f) }
     val ChevronRight: ImageVector by lazy { outlineIcon("ChevronRight", HomeIconPaths.CHEVRON_RIGHT, 2.2f) }
+    val Gear: ImageVector by lazy { outlineIcon("Gear", HomeIconPaths.GEAR, 1.8f) }
 }
 
 @Composable
@@ -83,4 +94,9 @@ fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.curr
 @Composable
 fun ViewDetailsIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current, contentDescription: String? = null) {
     Icon(HomeIcons.ChevronRight, contentDescription, modifier, tint)
+}
+
+@Composable
+fun SettingsIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current, contentDescription: String? = null) {
+    Icon(HomeIcons.Gear, contentDescription, modifier, tint)
 }

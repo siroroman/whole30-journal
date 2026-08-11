@@ -46,6 +46,7 @@ class HomeViewModel(
             is HomeContract.UiAction.OnViewDayDetailsClick -> Unit
             is HomeContract.UiAction.OnTrendMetricSelected ->
                 updateUiData { copy(selectedTrendMetric = uiAction.metric) }
+            HomeContract.UiAction.OnSettingsClick -> emitOutputEvent(HomeContract.OutputEvent.NavigateToSettings)
         }
     }
 
@@ -53,7 +54,7 @@ class HomeViewModel(
         observeProgram().collectLatest { programResult ->
             val program = programResult.getOrNull()
             if (program == null) {
-                updateIsLoading(false)
+                updateUiData(isLoading = false) { copy(needsSetup = true) }
                 return@collectLatest
             }
             observeEntriesByDay(program.currentDayNumber.toInt()).collect { entriesByDay ->
@@ -73,6 +74,7 @@ class HomeViewModel(
         val totalDays = program.durationDays.toInt()
         val currentDay = program.currentDayNumber.toInt()
         val metricsByDay = entriesByDay.mapNotNull { (day, entry) -> entry?.toDayMetrics()?.let { day to it } }.toMap()
+        val resolvedSelectedDay = currentUiData.selectedDay.takeIf { it != 0 } ?: currentDay
 
         val days = (1..totalDays).map { day ->
             HomeContract.DayCell(
@@ -85,17 +87,18 @@ class HomeViewModel(
 
         updateUiData(isLoading = false) {
             copy(
+                needsSetup = false,
                 programStartDate = startDate,
                 currentDay = currentDay,
                 totalDays = totalDays,
                 progressPercent = currentDay * PROGRESS_PERCENT_SCALE / totalDays,
                 days = days,
-                selectedDay = if (selectedDay == 0) currentDay else selectedDay,
+                selectedDay = resolvedSelectedDay,
                 metricsByDay = metricsByDay,
                 trendSeries = buildTrendSeries(metricsByDay),
             )
         }
-        refreshDateLabels(currentUiData.selectedDay, startDate, totalDays)
+        refreshDateLabels(resolvedSelectedDay, startDate, totalDays)
     }
 
     private suspend fun selectDay(dayNumber: Int) {

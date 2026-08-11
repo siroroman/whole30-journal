@@ -66,6 +66,7 @@ private fun HomeContent(
             progressPercent = uiData.progressPercent,
             progressStartLabel = uiData.progressStartLabel,
             progressEndLabel = uiData.progressEndLabel,
+            onSettingsClick = { onUiAction(HomeContract.UiAction.OnSettingsClick) },
         )
         DayStrip(
             days = uiData.days,

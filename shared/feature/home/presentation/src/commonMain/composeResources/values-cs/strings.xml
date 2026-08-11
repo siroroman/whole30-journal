@@ -4,6 +4,7 @@
     <string name="home_today_label">Dnes</string>
     <string name="home_edit_today_content_description">Upravit záznam</string>
     <string name="home_view_today_details_content_description">Zobrazit podrobnosti</string>
+    <string name="home_settings_content_description">Nastavení</string>
     <string name="home_metric_overall">Celkově</string>
     <string name="home_metric_energy">Energie</string>
     <string name="home_metric_mood">Nálada</string>

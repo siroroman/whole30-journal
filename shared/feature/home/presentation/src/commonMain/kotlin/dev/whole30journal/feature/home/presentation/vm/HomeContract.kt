@@ -38,6 +38,7 @@ object HomeContract {
 
     @Immutable
     data class UiData(
+        val needsSetup: Boolean = false,
         val programStartDate: LocalDate? = null,
         val currentDay: Int = 0,
         val totalDays: Int = 30,
@@ -58,6 +59,7 @@ object HomeContract {
         data class OnEditDayClick(val dayNumber: Int) : UiAction
         data class OnViewDayDetailsClick(val dayNumber: Int) : UiAction
         data class OnTrendMetricSelected(val metric: TrendMetric) : UiAction
+        data object OnSettingsClick : UiAction
     }
 
     /** No cases yet - nothing async, nothing that can fail with hardcoded data. */
@@ -65,5 +67,6 @@ object HomeContract {
 
     sealed interface OutputEvent : UiStateAware.OutputEvent {
         data class NavigateToDayEntry(val dayNumber: Int) : OutputEvent
+        data object NavigateToSettings : OutputEvent
     }
 }
