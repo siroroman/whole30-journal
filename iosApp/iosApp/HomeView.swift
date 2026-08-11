@@ -5,12 +5,14 @@ extension Int: @retroactive Identifiable {
     public var id: Int { self }
 }
 
+private struct SettingsNavigation: Hashable {}
+
 struct HomeView: View {
     private let viewModel: HomeViewModel = KoinResolver.get(HomeViewModel.self)
     @State private var isLoading = true
     @State private var needsSetup = false
     @State private var editingDay: Int?
-    let onOpenSettings: () -> Void
+    @State private var settingsPath: [SettingsNavigation] = []
 
     var body: some View {
         Group {
@@ -35,22 +37,28 @@ struct HomeView: View {
     }
 
     private var homeContent: some View {
-        ComposeViewController {
-            HomeScreenViewController(viewModel: viewModel)
-        }
-        .ignoresSafeArea()
-        .task {
-            for await event in viewModel.outputEvents {
-                switch onEnum(of: event) {
-                case let .navigateToDayEntry(data):
-                    editingDay = Int(data.dayNumber)
-                case .navigateToSettings:
-                    onOpenSettings()
+        NavigationStack(path: $settingsPath) {
+            ComposeViewController {
+                HomeScreenViewController(viewModel: viewModel)
+            }
+            .ignoresSafeArea()
+            .navigationDestination(for: SettingsNavigation.self) { _ in
+                SettingsView()
+                    .toolbar(.hidden, for: .navigationBar)
+            }
+            .task {
+                for await event in viewModel.outputEvents {
+                    switch onEnum(of: event) {
+                    case let .navigateToDayEntry(data):
+                        editingDay = Int(data.dayNumber)
+                    case .navigateToSettings:
+                        settingsPath = [SettingsNavigation()]
+                    }
                 }
             }
-        }
-        .sheet(item: $editingDay) { day in
-            DayEntryView(dayNumber: day, onClose: { editingDay = nil })
+            .sheet(item: $editingDay) { day in
+                DayEntryView(dayNumber: day, onClose: { editingDay = nil })
+            }
         }
     }
 }
