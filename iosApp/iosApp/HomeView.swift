@@ -1,7 +1,7 @@
 import SwiftUI
 import SharedKit
 
-extension Int: Identifiable {
+extension Int: @retroactive Identifiable {
     public var id: Int { self }
 }
 
