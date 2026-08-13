@@ -19,4 +19,10 @@
     <string name="day_detail_meals_title">Co jsem jedl/a</string>
     <string name="day_detail_meal_photo_content_description">Fotka jídla</string>
     <string name="day_detail_meal_loved_content_description">Nejvíc mi chutnalo</string>
+
+    <string name="day_detail_notes_title">Poznámky</string>
+
+    <string name="day_detail_empty_title">Pro tento den zatím nic nezaznamenáno</string>
+    <string name="day_detail_empty_message">Zaznamenej energii, náladu, spánek, chutě a jídlo pro %1$d. den.</string>
+    <string name="day_detail_log_button">Zaznamenat %1$d. den</string>
 </resources>

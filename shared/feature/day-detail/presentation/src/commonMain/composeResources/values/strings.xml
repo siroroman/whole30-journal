@@ -19,4 +19,10 @@
     <string name="day_detail_meals_title">What I ate</string>
     <string name="day_detail_meal_photo_content_description">Meal photo</string>
     <string name="day_detail_meal_loved_content_description">Loved it</string>
+
+    <string name="day_detail_notes_title">Notes</string>
+
+    <string name="day_detail_empty_title">No entry for this day yet</string>
+    <string name="day_detail_empty_message">Log energy, mood, sleep, cravings and meals for Day %1$d.</string>
+    <string name="day_detail_log_button">Log Day %1$d</string>
 </resources>

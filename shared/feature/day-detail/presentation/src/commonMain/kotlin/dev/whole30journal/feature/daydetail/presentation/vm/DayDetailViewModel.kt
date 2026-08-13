@@ -62,11 +62,13 @@ class DayDetailViewModel(
                 copy(
                     dayNumber = dayNumber,
                     dateLabel = dateLabel,
+                    hasEntry = entry != null,
                     isComplete = entry?.isComplete ?: false,
                     overallScore = entry?.scoreFor(MetricTitle.OVERALL),
                     metrics = entry?.let { metricSummaries(it, metricTitles) }.orEmpty(),
                     meals = entry?.meals.orEmpty().filter { it.mealDescription.isNotBlank() }.map { it.toMealSummary() },
                     achievements = entry?.achievements.orEmpty().map { it.text }.filter { it.isNotBlank() },
+                    notes = entry?.notes.orEmpty(),
                 )
             }
         }

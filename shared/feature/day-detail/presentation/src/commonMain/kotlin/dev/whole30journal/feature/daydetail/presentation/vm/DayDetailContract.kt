@@ -22,11 +22,13 @@ object DayDetailContract {
     data class UiData(
         val dayNumber: Int = 0,
         val dateLabel: String = "",
+        val hasEntry: Boolean = false,
         val isComplete: Boolean = false,
         val overallScore: Int? = null,
         val metrics: List<MetricSummary> = emptyList(),
         val meals: List<MealSummary> = emptyList(),
         val achievements: List<String> = emptyList(),
+        val notes: String = "",
     ) : UiStateAware.UiData
 
     sealed interface UiAction : UiActionAware.UiAction {

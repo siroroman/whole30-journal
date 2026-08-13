@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -52,7 +54,12 @@ fun DayDetailScreen(
                 )
             },
         ) { contentPadding ->
-            DayDetailContent(uiData = state.uiData, contentPadding = contentPadding, modifier = Modifier.fillMaxSize())
+            DayDetailContent(
+                uiData = state.uiData,
+                onUiAction = onUiAction,
+                contentPadding = contentPadding,
+                modifier = Modifier.fillMaxSize(),
+            )
             HandleUiEvents(events = state.uiEvents, onConsume = onUiEventConsume)
         }
     }
@@ -98,9 +105,15 @@ private fun DayDetailTopBar(
 }
 
 @Composable
-private fun DayDetailContent(uiData: DayDetailContract.UiData, contentPadding: PaddingValues, modifier: Modifier = Modifier) {
+private fun DayDetailContent(
+    uiData: DayDetailContract.UiData,
+    onUiAction: (DayDetailContract.UiAction) -> Unit,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
+            .verticalScroll(rememberScrollState())
             .padding(contentPadding)
             .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
         verticalArrangement = Arrangement.spacedBy(DSSpacing.space8),
@@ -108,19 +121,27 @@ private fun DayDetailContent(uiData: DayDetailContract.UiData, contentPadding: P
         if (uiData.isComplete) {
             DSTag(text = stringResource(Res.string.day_detail_complete_tag))
         }
-        OverallScoreSummaryCard(score = uiData.overallScore)
-        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
-            uiData.metrics.forEach { summary -> MetricSummaryRow(summary = summary) }
+        if (uiData.hasEntry) {
+            OverallScoreSummaryCard(score = uiData.overallScore)
+            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+                uiData.metrics.forEach { summary -> MetricSummaryRow(summary = summary) }
+            }
+            AchievementsSummaryList(achievements = uiData.achievements)
+            MealsSummarySection(meals = uiData.meals)
+            NotesSummaryCard(notes = uiData.notes)
+        } else {
+            DayDetailEmptyState(
+                dayNumber = uiData.dayNumber,
+                onLogClick = { onUiAction(DayDetailContract.UiAction.OnEditClick) },
+            )
         }
-        AchievementsSummaryList(achievements = uiData.achievements)
-        MealsSummarySection(meals = uiData.meals)
-        // Notes and the not-filled empty state land here in a follow-up commit.
     }
 }
 
 private fun previewUiData(): DayDetailContract.UiData = DayDetailContract.UiData(
     dayNumber = 12,
     dateLabel = "27.7.2026",
+    hasEntry = true,
     isComplete = true,
     overallScore = 8,
     metrics = listOf(
@@ -134,7 +155,10 @@ private fun previewUiData(): DayDetailContract.UiData = DayDetailContract.UiData
         DayDetailContract.MealSummary(id = "1", label = "Meal 1", description = "Sweet potato hash with chorizo", photoToken = null, lovedIt = true),
         DayDetailContract.MealSummary(id = "2", label = "Meal 2", description = "Grilled chicken salad", photoToken = null, lovedIt = false),
     ),
+    notes = "Almost done with the 30 days and it genuinely feels sustainable now.",
 )
+
+private fun previewEmptyUiData(): DayDetailContract.UiData = DayDetailContract.UiData(dayNumber = 18, dateLabel = "2.8.2026", hasEntry = false)
 
 private const val UI_MODE_NIGHT_YES = 0x20
 
@@ -153,6 +177,26 @@ private fun DayDetailScreenPreview() {
 private fun DayDetailScreenPreviewDark() {
     DayDetailScreen(
         state = UiStateAware.UiState(isLoading = false, uiData = previewUiData()),
+        onUiAction = {},
+        onUiEventConsume = {},
+    )
+}
+
+@Preview
+@Composable
+private fun DayDetailScreenEmptyPreview() {
+    DayDetailScreen(
+        state = UiStateAware.UiState(isLoading = false, uiData = previewEmptyUiData()),
+        onUiAction = {},
+        onUiEventConsume = {},
+    )
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun DayDetailScreenEmptyPreviewDark() {
+    DayDetailScreen(
+        state = UiStateAware.UiState(isLoading = false, uiData = previewEmptyUiData()),
         onUiAction = {},
         onUiEventConsume = {},
     )
