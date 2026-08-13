@@ -67,6 +67,7 @@ object HomeContract {
 
     sealed interface OutputEvent : UiStateAware.OutputEvent {
         data class NavigateToDayEntry(val dayNumber: Int) : OutputEvent
+        data class NavigateToDayDetail(val dayNumber: Int) : OutputEvent
         data object NavigateToSettings : OutputEvent
     }
 }
