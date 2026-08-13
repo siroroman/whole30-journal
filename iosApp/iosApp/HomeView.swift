@@ -18,7 +18,7 @@ struct HomeView: View {
     var body: some View {
         Group {
             if isLoading {
-                ProgressView()
+                SplashView()
             } else if needsSetup {
                 SettingsView()
             } else {

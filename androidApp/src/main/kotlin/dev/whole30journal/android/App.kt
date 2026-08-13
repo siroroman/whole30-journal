@@ -41,7 +41,7 @@ fun App() {
 
     val dayNumber = editingDay
     when {
-        homeState.isLoading -> Unit
+        homeState.isLoading -> SplashScreen()
         homeState.uiData.needsSetup -> SettingsOverlay(onDone = {})
         isSettingsOpen -> SettingsOverlay(onDone = { isSettingsOpen = false })
         dayNumber != null -> {
