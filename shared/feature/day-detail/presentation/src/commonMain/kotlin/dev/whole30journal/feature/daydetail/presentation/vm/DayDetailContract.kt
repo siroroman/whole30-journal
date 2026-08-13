@@ -7,9 +7,15 @@ import dev.whole30journal.core.uistate.UiStateAware
 object DayDetailContract {
 
     @Immutable
+    data class MetricSummary(val title: String, val note: String, val score: Int?)
+
+    @Immutable
     data class UiData(
         val dayNumber: Int = 0,
         val dateLabel: String = "",
+        val isComplete: Boolean = false,
+        val overallScore: Int? = null,
+        val metrics: List<MetricSummary> = emptyList(),
     ) : UiStateAware.UiData
 
     sealed interface UiAction : UiActionAware.UiAction {

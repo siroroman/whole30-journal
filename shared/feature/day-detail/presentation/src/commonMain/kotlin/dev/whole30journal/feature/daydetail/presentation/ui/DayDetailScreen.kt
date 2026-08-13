@@ -19,11 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import dev.whole30journal.core.designsystem.components.DSTag
 import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.Res
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_back_content_description
+import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_complete_tag
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_edit_button
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_title
 import dev.whole30journal.feature.daydetail.presentation.ui.icons.ChevronLeftIcon
@@ -50,7 +52,7 @@ fun DayDetailScreen(
                 )
             },
         ) { contentPadding ->
-            DayDetailContent(contentPadding = contentPadding, modifier = Modifier.fillMaxSize())
+            DayDetailContent(uiData = state.uiData, contentPadding = contentPadding, modifier = Modifier.fillMaxSize())
             HandleUiEvents(events = state.uiEvents, onConsume = onUiEventConsume)
         }
     }
@@ -96,18 +98,36 @@ private fun DayDetailTopBar(
 }
 
 @Composable
-private fun DayDetailContent(contentPadding: PaddingValues, modifier: Modifier = Modifier) {
+private fun DayDetailContent(uiData: DayDetailContract.UiData, contentPadding: PaddingValues, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .padding(contentPadding)
             .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
         verticalArrangement = Arrangement.spacedBy(DSSpacing.space8),
     ) {
-        // Score, meals, NSV, notes and empty-state content land here in follow-up commits.
+        if (uiData.isComplete) {
+            DSTag(text = stringResource(Res.string.day_detail_complete_tag))
+        }
+        OverallScoreSummaryCard(score = uiData.overallScore)
+        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+            uiData.metrics.forEach { summary -> MetricSummaryRow(summary = summary) }
+        }
+        // Meals, NSV, notes and empty-state content land here in follow-up commits.
     }
 }
 
-private fun previewUiData(): DayDetailContract.UiData = DayDetailContract.UiData(dayNumber = 12, dateLabel = "27.7.2026")
+private fun previewUiData(): DayDetailContract.UiData = DayDetailContract.UiData(
+    dayNumber = 12,
+    dateLabel = "27.7.2026",
+    isComplete = true,
+    overallScore = 8,
+    metrics = listOf(
+        DayDetailContract.MetricSummary(title = "Energy", note = "Great energy all day, even woke up early on my own.", score = 8),
+        DayDetailContract.MetricSummary(title = "Mood", note = "Feeling optimistic and calm.", score = 8),
+        DayDetailContract.MetricSummary(title = "Sleep quality", note = "Best sleep of the month.", score = 8),
+        DayDetailContract.MetricSummary(title = "Cravings", note = "Passed a bakery without a second thought.", score = 6),
+    ),
+)
 
 private const val UI_MODE_NIGHT_YES = 0x20
 

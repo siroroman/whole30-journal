@@ -3,4 +3,14 @@
     <string name="day_detail_title">Day %1$d</string>
     <string name="day_detail_edit_button">Edit</string>
     <string name="day_detail_back_content_description">Back</string>
+
+    <string name="day_detail_complete_tag">Day completed</string>
+
+    <string name="day_detail_overall_title">Overall score</string>
+    <string name="day_detail_overall_caption">Average of Energy, Mood, Sleep and Cravings</string>
+
+    <string name="day_detail_metric_energy_title">Energy</string>
+    <string name="day_detail_metric_mood_title">Mood</string>
+    <string name="day_detail_metric_sleep_title">Sleep quality</string>
+    <string name="day_detail_metric_cravings_title">Cravings</string>
 </resources>

@@ -3,4 +3,14 @@
     <string name="day_detail_title">%1$d. den</string>
     <string name="day_detail_edit_button">Upravit</string>
     <string name="day_detail_back_content_description">Zpět</string>
+
+    <string name="day_detail_complete_tag">Den splněn</string>
+
+    <string name="day_detail_overall_title">Celkové skóre</string>
+    <string name="day_detail_overall_caption">Průměr energie, nálady, spánku a chutí</string>
+
+    <string name="day_detail_metric_energy_title">Energie</string>
+    <string name="day_detail_metric_mood_title">Nálada</string>
+    <string name="day_detail_metric_sleep_title">Kvalita spánku</string>
+    <string name="day_detail_metric_cravings_title">Chutě</string>
 </resources>

@@ -6,13 +6,24 @@ import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.core.uistate.vm.StateFlowViewModel
 import dev.whole30journal.core.utils.DateFormatter
 import dev.whole30journal.core.utils.dateForDay
+import dev.whole30journal.feature.daydetail.presentation.generated.resources.Res
+import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_metric_cravings_title
+import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_metric_energy_title
+import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_metric_mood_title
+import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_metric_sleep_title
+import dev.whole30journal.feature.dayentry.domain.model.DayEntry
+import dev.whole30journal.feature.dayentry.domain.model.MetricTitle
+import dev.whole30journal.feature.dayentry.domain.usecase.ObserveDayEntryUseCase
 import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import org.jetbrains.compose.resources.getString
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class DayDetailViewModel(
+    private val observeDayEntry: ObserveDayEntryUseCase,
     private val getProgram: GetProgramUseCase,
     private val dateFormatter: DateFormatter,
     private val clock: Clock = Clock.System,
@@ -25,25 +36,53 @@ class DayDetailViewModel(
     initialState = UiStateAware.UiState(isLoading = true, uiData = DayDetailContract.UiData()),
 ) {
 
-    private var isLoaded = false
+    private var isObserving = false
 
     override suspend fun applyUiAction(uiAction: DayDetailContract.UiAction) {
         when (uiAction) {
-            is DayDetailContract.UiAction.OnAppear -> if (!isLoaded) loadDay(uiAction.dayNumber)
+            is DayDetailContract.UiAction.OnAppear -> if (!isObserving) observeDay(uiAction.dayNumber)
             DayDetailContract.UiAction.OnBackClick -> emitOutputEvent(DayDetailContract.OutputEvent.Close)
             DayDetailContract.UiAction.OnEditClick ->
                 emitOutputEvent(DayDetailContract.OutputEvent.EditRequested(currentUiData.dayNumber))
         }
     }
 
-    private suspend fun loadDay(dayNumber: Int) {
+    private suspend fun observeDay(dayNumber: Int) {
+        isObserving = true
         val startDate = getProgram().getOrNull()?.startDate
         val dateLabel = startDate
             ?.let { dateFormatter(dateForDay(dayNumber, it), today(), DateFormatter.Style.Short) }
             .orEmpty()
-        updateUiData(isLoading = false) { copy(dayNumber = dayNumber, dateLabel = dateLabel) }
-        isLoaded = true
+        val metricTitles = metricTitleLabels()
+
+        observeDayEntry(dayNumber.toLong()).collectLatest { result ->
+            val entry = result.getOrNull()
+            updateUiData(isLoading = false) {
+                copy(
+                    dayNumber = dayNumber,
+                    dateLabel = dateLabel,
+                    isComplete = entry?.isComplete ?: false,
+                    overallScore = entry?.scoreFor(MetricTitle.OVERALL),
+                    metrics = entry?.let { metricSummaries(it, metricTitles) }.orEmpty(),
+                )
+            }
+        }
     }
+
+    private suspend fun metricTitleLabels(): Map<String, String> = mapOf(
+        MetricTitle.ENERGY to getString(Res.string.day_detail_metric_energy_title),
+        MetricTitle.MOOD to getString(Res.string.day_detail_metric_mood_title),
+        MetricTitle.SLEEP to getString(Res.string.day_detail_metric_sleep_title),
+        MetricTitle.CRAVINGS to getString(Res.string.day_detail_metric_cravings_title),
+    )
+
+    private fun metricSummaries(entry: DayEntry, titleLabels: Map<String, String>): List<DayDetailContract.MetricSummary> =
+        titleLabels.mapNotNull { (key, label) ->
+            val metric = entry.metrics.firstOrNull { it.title == key } ?: return@mapNotNull null
+            DayDetailContract.MetricSummary(title = label, note = metric.note, score = metric.value?.toInt())
+        }
 
     private fun today() = clock.todayIn(TimeZone.currentSystemDefault())
 }
+
+private fun DayEntry.scoreFor(title: String): Int? = metrics.firstOrNull { it.title == title }?.value?.toInt()
