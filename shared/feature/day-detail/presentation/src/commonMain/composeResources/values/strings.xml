@@ -13,4 +13,10 @@
     <string name="day_detail_metric_mood_title">Mood</string>
     <string name="day_detail_metric_sleep_title">Sleep quality</string>
     <string name="day_detail_metric_cravings_title">Cravings</string>
+
+    <string name="day_detail_nsv_title">Non-scale victories</string>
+
+    <string name="day_detail_meals_title">What I ate</string>
+    <string name="day_detail_meal_photo_content_description">Meal photo</string>
+    <string name="day_detail_meal_loved_content_description">Loved it</string>
 </resources>

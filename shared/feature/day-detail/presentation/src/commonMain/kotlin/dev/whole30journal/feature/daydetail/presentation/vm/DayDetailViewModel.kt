@@ -12,6 +12,7 @@ import dev.whole30journal.feature.daydetail.presentation.generated.resources.day
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_metric_mood_title
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_metric_sleep_title
 import dev.whole30journal.feature.dayentry.domain.model.DayEntry
+import dev.whole30journal.feature.dayentry.domain.model.Meal
 import dev.whole30journal.feature.dayentry.domain.model.MetricTitle
 import dev.whole30journal.feature.dayentry.domain.usecase.ObserveDayEntryUseCase
 import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
@@ -64,6 +65,8 @@ class DayDetailViewModel(
                     isComplete = entry?.isComplete ?: false,
                     overallScore = entry?.scoreFor(MetricTitle.OVERALL),
                     metrics = entry?.let { metricSummaries(it, metricTitles) }.orEmpty(),
+                    meals = entry?.meals.orEmpty().filter { it.mealDescription.isNotBlank() }.map { it.toMealSummary() },
+                    achievements = entry?.achievements.orEmpty().map { it.text }.filter { it.isNotBlank() },
                 )
             }
         }
@@ -86,3 +89,11 @@ class DayDetailViewModel(
 }
 
 private fun DayEntry.scoreFor(title: String): Int? = metrics.firstOrNull { it.title == title }?.value?.toInt()
+
+private fun Meal.toMealSummary() = DayDetailContract.MealSummary(
+    id = id,
+    label = label,
+    description = mealDescription,
+    photoToken = photoToken,
+    lovedIt = lovedIt,
+)

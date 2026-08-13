@@ -112,7 +112,9 @@ private fun DayDetailContent(uiData: DayDetailContract.UiData, contentPadding: P
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
             uiData.metrics.forEach { summary -> MetricSummaryRow(summary = summary) }
         }
-        // Meals, NSV, notes and empty-state content land here in follow-up commits.
+        AchievementsSummaryList(achievements = uiData.achievements)
+        MealsSummarySection(meals = uiData.meals)
+        // Notes and the not-filled empty state land here in a follow-up commit.
     }
 }
 
@@ -126,6 +128,11 @@ private fun previewUiData(): DayDetailContract.UiData = DayDetailContract.UiData
         DayDetailContract.MetricSummary(title = "Mood", note = "Feeling optimistic and calm.", score = 8),
         DayDetailContract.MetricSummary(title = "Sleep quality", note = "Best sleep of the month.", score = 8),
         DayDetailContract.MetricSummary(title = "Cravings", note = "Passed a bakery without a second thought.", score = 6),
+    ),
+    achievements = listOf("Walked past a bakery and felt nothing", "More confident in my clothes"),
+    meals = listOf(
+        DayDetailContract.MealSummary(id = "1", label = "Meal 1", description = "Sweet potato hash with chorizo", photoToken = null, lovedIt = true),
+        DayDetailContract.MealSummary(id = "2", label = "Meal 2", description = "Grilled chicken salad", photoToken = null, lovedIt = false),
     ),
 )
 

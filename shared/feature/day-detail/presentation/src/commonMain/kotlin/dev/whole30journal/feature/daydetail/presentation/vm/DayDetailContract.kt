@@ -10,12 +10,23 @@ object DayDetailContract {
     data class MetricSummary(val title: String, val note: String, val score: Int?)
 
     @Immutable
+    data class MealSummary(
+        val id: String,
+        val label: String,
+        val description: String,
+        val photoToken: String?,
+        val lovedIt: Boolean,
+    )
+
+    @Immutable
     data class UiData(
         val dayNumber: Int = 0,
         val dateLabel: String = "",
         val isComplete: Boolean = false,
         val overallScore: Int? = null,
         val metrics: List<MetricSummary> = emptyList(),
+        val meals: List<MealSummary> = emptyList(),
+        val achievements: List<String> = emptyList(),
     ) : UiStateAware.UiData
 
     sealed interface UiAction : UiActionAware.UiAction {

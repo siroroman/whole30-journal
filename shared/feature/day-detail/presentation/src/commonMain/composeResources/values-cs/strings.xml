@@ -13,4 +13,10 @@
     <string name="day_detail_metric_mood_title">Nálada</string>
     <string name="day_detail_metric_sleep_title">Kvalita spánku</string>
     <string name="day_detail_metric_cravings_title">Chutě</string>
+
+    <string name="day_detail_nsv_title">Vítězství mimo váhu</string>
+
+    <string name="day_detail_meals_title">Co jsem jedl/a</string>
+    <string name="day_detail_meal_photo_content_description">Fotka jídla</string>
+    <string name="day_detail_meal_loved_content_description">Nejvíc mi chutnalo</string>
 </resources>
