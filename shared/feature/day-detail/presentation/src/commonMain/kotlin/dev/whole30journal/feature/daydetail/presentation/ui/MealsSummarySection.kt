@@ -31,6 +31,7 @@ import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.Res
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_meal_loved_content_description
+import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_meal_not_loved_content_description
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_meal_photo_content_description
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_meals_title
 import dev.whole30journal.feature.daydetail.presentation.vm.DayDetailContract
@@ -73,7 +74,11 @@ private fun MealSummaryRow(meal: DayDetailContract.MealSummary, resolvePhotoToke
             HeartIcon(
                 filled = meal.lovedIt,
                 tint = if (meal.lovedIt) colors.scoreLow else colors.textTertiary,
-                contentDescription = stringResource(Res.string.day_detail_meal_loved_content_description),
+                contentDescription = if (meal.lovedIt) {
+                    stringResource(Res.string.day_detail_meal_loved_content_description)
+                } else {
+                    stringResource(Res.string.day_detail_meal_not_loved_content_description)
+                },
                 modifier = Modifier.size(16.dp),
             )
         }
