@@ -45,5 +45,8 @@ include(":shared:feature:home:presentation")
 // Feature: settings (presentation only - reuses the program feature's domain layer)
 include(":shared:feature:settings:presentation")
 
+// Feature: day-detail (presentation only - reuses the day-entry feature's domain layer)
+include(":shared:feature:day-detail:presentation")
+
 // Umbrella - combines everything into one XCFramework for iOS
 include(":shared:umbrella")

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="day_detail_title">%1$d. den</string>
+    <string name="day_detail_edit_button">Upravit</string>
+    <string name="day_detail_back_content_description">Zpět</string>
+</resources>
