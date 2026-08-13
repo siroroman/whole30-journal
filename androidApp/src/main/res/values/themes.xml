@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.Whole30Journal" parent="android:Theme.Material.Light.NoActionBar" />
-
-    <style name="Theme.Whole30Journal.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/splash_background</item>
-        <item name="postSplashScreenTheme">@style/Theme.Whole30Journal</item>
-    </style>
-</resources>

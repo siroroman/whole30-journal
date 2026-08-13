@@ -53,8 +53,6 @@ dependencies {
     implementation(projects.shared.umbrella)
     // Needed directly (not re-exported by umbrella) to wire androidDatabaseModule into startKoin{}
     implementation(projects.shared.core.database)
-    // Needed directly (not re-exported by umbrella) for the branded SplashScreen composable
-    implementation(projects.shared.core.designSystem)
 
     implementation(libs.kotlinx.coroutines.core)
 
@@ -64,7 +62,6 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.koin.core)
     implementation(libs.koin.android)
