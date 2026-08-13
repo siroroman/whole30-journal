@@ -38,13 +38,17 @@ class DayDetailViewModel(
 ) {
 
     private var isObserving = false
+    private var requestedDayNumber: Int? = null
 
     override suspend fun applyUiAction(uiAction: DayDetailContract.UiAction) {
         when (uiAction) {
-            is DayDetailContract.UiAction.OnAppear -> if (!isObserving) observeDay(uiAction.dayNumber)
+            is DayDetailContract.UiAction.OnAppear -> {
+                requestedDayNumber = uiAction.dayNumber
+                if (!isObserving) observeDay(uiAction.dayNumber)
+            }
             DayDetailContract.UiAction.OnBackClick -> emitOutputEvent(DayDetailContract.OutputEvent.Close)
             DayDetailContract.UiAction.OnEditClick ->
-                emitOutputEvent(DayDetailContract.OutputEvent.EditRequested(currentUiData.dayNumber))
+                requestedDayNumber?.let { emitOutputEvent(DayDetailContract.OutputEvent.EditRequested(it)) }
         }
     }
 
