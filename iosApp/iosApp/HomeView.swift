@@ -5,14 +5,17 @@ extension Int: @retroactive Identifiable {
     public var id: Int { self }
 }
 
-private struct SettingsNavigation: Hashable {}
+private enum HomeRoute: Hashable {
+    case settings
+    case dayDetail(Int)
+}
 
 struct HomeView: View {
     @State private var isLoading = true
     @State private var needsSetup = false
     @State private var editingDay: Int?
-    @State private var settingsPath: [SettingsNavigation] = []
-    
+    @State private var path: [HomeRoute] = []
+
     private let viewModel: HomeViewModel = KoinResolver.get(HomeViewModel.self)
 
     var body: some View {
@@ -38,22 +41,30 @@ struct HomeView: View {
     }
 
     private var homeContent: some View {
-        NavigationStack(path: $settingsPath) {
+        NavigationStack(path: $path) {
             ComposeViewController {
                 HomeScreenViewController(viewModel: viewModel)
             }
             .ignoresSafeArea()
-            .navigationDestination(for: SettingsNavigation.self) { _ in
-                SettingsView()
-                    .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(for: HomeRoute.self) { route in
+                switch route {
+                case .settings:
+                    SettingsView()
+                        .toolbar(.hidden, for: .navigationBar)
+                case let .dayDetail(dayNumber):
+                    DayDetailView(dayNumber: dayNumber)
+                        .toolbar(.hidden, for: .navigationBar)
+                }
             }
             .task {
                 for await event in viewModel.outputEvents {
                     switch onEnum(of: event) {
                     case let .navigateToDayEntry(data):
                         editingDay = Int(data.dayNumber)
+                    case let .navigateToDayDetail(data):
+                        path.append(.dayDetail(Int(data.dayNumber)))
                     case .navigateToSettings:
-                        settingsPath = [SettingsNavigation()]
+                        path = [.settings]
                     }
                 }
             }

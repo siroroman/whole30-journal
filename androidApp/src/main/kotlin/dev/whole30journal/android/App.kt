@@ -12,6 +12,9 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import dev.whole30journal.feature.daydetail.presentation.ui.DayDetailScreen
+import dev.whole30journal.feature.daydetail.presentation.vm.DayDetailContract
+import dev.whole30journal.feature.daydetail.presentation.vm.DayDetailViewModel
 import dev.whole30journal.feature.dayentry.presentation.ui.DayEntryScreen
 import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryContract
 import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryViewModel
@@ -28,18 +31,21 @@ fun App() {
     val homeViewModel: HomeViewModel = koinViewModel()
     val homeState by homeViewModel.state.collectAsStateWithLifecycle()
     var editingDay by remember { mutableStateOf<Int?>(null) }
+    var detailDay by remember { mutableStateOf<Int?>(null) }
     var isSettingsOpen by remember { mutableStateOf(false) }
 
     LaunchedEffect(homeViewModel) {
         homeViewModel.outputEvents.collect { event ->
             when (event) {
                 is HomeContract.OutputEvent.NavigateToDayEntry -> editingDay = event.dayNumber
+                is HomeContract.OutputEvent.NavigateToDayDetail -> detailDay = event.dayNumber
                 HomeContract.OutputEvent.NavigateToSettings -> isSettingsOpen = true
             }
         }
     }
 
     val dayNumber = editingDay
+    val dayNumberForDetail = detailDay
     when {
         homeState.isLoading -> Unit
         homeState.uiData.needsSetup -> SettingsOverlay(onDone = {})
@@ -64,6 +70,30 @@ fun App() {
                     state = dayEntryState,
                     onUiAction = { dayEntryViewModel.onUiAction(it) },
                     onUiEventConsume = { dayEntryViewModel.onUiEventConsumed(it) },
+                )
+            }
+        }
+        dayNumberForDetail != null -> {
+            CompositionLocalProvider(LocalViewModelStoreOwner provides rememberScopedViewModelStoreOwner()) {
+                val dayDetailViewModel: DayDetailViewModel = koinViewModel()
+                val dayDetailState by dayDetailViewModel.state.collectAsStateWithLifecycle()
+
+                LaunchedEffect(dayNumberForDetail) {
+                    dayDetailViewModel.onUiAction(DayDetailContract.UiAction.OnAppear(dayNumberForDetail))
+                }
+                LaunchedEffect(dayDetailViewModel) {
+                    dayDetailViewModel.outputEvents.collect { event ->
+                        when (event) {
+                            DayDetailContract.OutputEvent.Close -> detailDay = null
+                            is DayDetailContract.OutputEvent.EditRequested -> editingDay = event.dayNumber
+                        }
+                    }
+                }
+
+                DayDetailScreen(
+                    state = dayDetailState,
+                    onUiAction = { dayDetailViewModel.onUiAction(it) },
+                    onUiEventConsume = { dayDetailViewModel.onUiEventConsumed(it) },
                 )
             }
         }

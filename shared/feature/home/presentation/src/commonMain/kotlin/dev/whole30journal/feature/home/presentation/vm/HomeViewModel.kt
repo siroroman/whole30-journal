@@ -42,8 +42,8 @@ class HomeViewModel(
             is HomeContract.UiAction.OnDayClick -> selectDay(uiAction.dayNumber)
             is HomeContract.UiAction.OnEditDayClick ->
                 emitOutputEvent(HomeContract.OutputEvent.NavigateToDayEntry(uiAction.dayNumber))
-            // No Detail screen exists yet - intentionally a no-op until one is added.
-            is HomeContract.UiAction.OnViewDayDetailsClick -> Unit
+            is HomeContract.UiAction.OnViewDayDetailsClick ->
+                emitOutputEvent(HomeContract.OutputEvent.NavigateToDayDetail(uiAction.dayNumber))
             is HomeContract.UiAction.OnTrendMetricSelected ->
                 updateUiData { copy(selectedTrendMetric = uiAction.metric) }
             HomeContract.UiAction.OnSettingsClick -> emitOutputEvent(HomeContract.OutputEvent.NavigateToSettings)
