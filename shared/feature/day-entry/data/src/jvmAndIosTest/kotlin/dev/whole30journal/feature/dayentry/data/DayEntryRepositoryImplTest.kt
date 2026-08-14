@@ -16,6 +16,13 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.minutes
+
+// runTest's default 60s wall-clock timeout can be too tight for these DB-backed tests under CI's
+// parallel Gradle execution on constrained runners, where the real dbDispatcher thread can be
+// starved rather than the coroutine itself being stuck - see the "Fix flaky observeDayEntry" and
+// "Use TestScope.backgroundScope" commits for prior (insufficient) attempts at this same flake.
+private val DB_TEST_TIMEOUT = 2.minutes
 
 /** Runs against a real in-memory SQLite DB (via [createTestDriver]) rather than mocks, since the
  * behaviour worth verifying here is the SQL/mapping/transaction logic itself. Runs on the JVM and
@@ -31,7 +38,7 @@ class DayEntryRepositoryImplTest {
     }
 
     @Test
-    fun `getDayEntry returns success with null when nothing was ever saved`() = runTest {
+    fun `getDayEntry returns success with null when nothing was ever saved`() = runTest(timeout = DB_TEST_TIMEOUT) {
         val result = repository.getDayEntry(dayNumber = 1L)
 
         assertTrue(result.isSuccess)
@@ -39,7 +46,7 @@ class DayEntryRepositoryImplTest {
     }
 
     @Test
-    fun `saveDayEntry then getDayEntry round-trips the full aggregate`() = runTest {
+    fun `saveDayEntry then getDayEntry round-trips the full aggregate`() = runTest(timeout = DB_TEST_TIMEOUT) {
         val entry = sampleDayEntry(dayNumber = 1L)
 
         repository.saveDayEntry(entry).getOrThrow()
@@ -48,7 +55,7 @@ class DayEntryRepositoryImplTest {
     }
 
     @Test
-    fun `saveDayEntry keeps entries for different day numbers independent`() = runTest {
+    fun `saveDayEntry keeps entries for different day numbers independent`() = runTest(timeout = DB_TEST_TIMEOUT) {
         val day1 = sampleDayEntry(dayNumber = 1L)
         val day2 = sampleDayEntry(dayNumber = 2L)
 
@@ -60,7 +67,7 @@ class DayEntryRepositoryImplTest {
     }
 
     @Test
-    fun `saveDayEntry replaces previously saved metrics meals and achievements`() = runTest {
+    fun `saveDayEntry replaces previously saved metrics meals and achievements`() = runTest(timeout = DB_TEST_TIMEOUT) {
         val original = sampleDayEntry(dayNumber = 1L)
         repository.saveDayEntry(original).getOrThrow()
 
@@ -77,7 +84,7 @@ class DayEntryRepositoryImplTest {
     }
 
     @Test
-    fun `observeDayEntry reflects the current state whenever it's collected`() = runTest {
+    fun `observeDayEntry reflects the current state whenever it's collected`() = runTest(timeout = DB_TEST_TIMEOUT) {
         assertNull(repository.observeDayEntry(1L).first().getOrThrow())
 
         val entry = sampleDayEntry(dayNumber = 1L)
@@ -87,7 +94,7 @@ class DayEntryRepositoryImplTest {
     }
 
     @Test
-    fun `observeDayEntry pushes a new emission when saveDayEntry changes the row`() = runTest {
+    fun `observeDayEntry pushes a new emission when saveDayEntry changes the row`() = runTest(timeout = DB_TEST_TIMEOUT) {
         val emissions = Channel<Result<DayEntry?>>(Channel.UNLIMITED)
         backgroundScope.launch { repository.observeDayEntry(1L).collect { emissions.send(it) } }
 
@@ -100,7 +107,7 @@ class DayEntryRepositoryImplTest {
     }
 
     @Test
-    fun `concurrent saves and reads never observe a torn intermediate state`() = runTest {
+    fun `concurrent saves and reads never observe a torn intermediate state`() = runTest(timeout = DB_TEST_TIMEOUT) {
         val versionA = sampleDayEntry(dayNumber = 1L)
         val versionB = versionA.copy(
             notes = "Version B",
