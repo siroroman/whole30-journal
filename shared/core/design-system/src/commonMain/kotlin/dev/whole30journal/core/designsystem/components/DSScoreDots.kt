@@ -29,6 +29,7 @@ import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.designsystem.theme.scoreColor
 
 private val DotGap = 5.dp
+private val MaxDotSize = 32.dp
 
 @Composable
 fun DSScoreDots(
@@ -46,7 +47,7 @@ fun DSScoreDots(
             .alpha(if (enabled) 1f else 0.45f),
     ) {
         val cellWidth = maxWidth / max
-        val dotSize = cellWidth - DotGap
+        val dotSize = (cellWidth - DotGap).coerceAtMost(MaxDotSize)
         Row(modifier = Modifier.fillMaxWidth()) {
             for (dotValue in 1..max) {
                 val filled = score != null && dotValue <= score
