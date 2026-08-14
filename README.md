@@ -14,9 +14,8 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for a full walkthrough of both patterns w
 
 ## Tech stack
 
-Kotlin 2.4.0 · Compose Multiplatform 1.11.1 (Material3 1.9.0) · Molecule 2.2.0 (state engine for
-the ViewModel) · Koin 4.2.2 · SKIE 0.10.13 · kotlinx.coroutines 1.11.0 · androidx.lifecycle 2.11.0
-· Android Gradle Plugin 9.3.1.
+Kotlin 2.4.0 · Compose Multiplatform 1.11.1 (Material3 1.9.0) · Koin 4.2.2 · SKIE 0.10.13 ·
+kotlinx.coroutines 1.11.0 · androidx.lifecycle 2.11.0 · Android Gradle Plugin 9.3.1.
 
 See [gradle/libs.versions.toml](gradle/libs.versions.toml) for the full, always up-to-date version
 catalog.

@@ -1,17 +1,26 @@
 package dev.whole30journal.core.uistate.vm
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dev.whole30journal.core.uistate.UiActionAware
 import dev.whole30journal.core.uistate.UiStateAware
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 /**
- * Base ViewModel for straightforward reactive state management: holds a [MutableStateFlow] seeded
- * with [initialState] and exposes small helpers ([updateUiData], [updateIsLoading], ...) to mutate
- * it. This is what most feature ViewModels extend (see ARCHITECTURE.md).
+ * Base ViewModel for every feature: a real `androidx.lifecycle.ViewModel` on Android, the same
+ * class instantiated as a plain Kotlin object owned by Swift on iOS - no expect/actual split
+ * needed, since `androidx.lifecycle.ViewModel`/`viewModelScope` are ordinary KMP APIs on both
+ * platforms. Holds a [MutableStateFlow] seeded with [initialState] and exposes small helpers
+ * ([updateUiData], [updateIsLoading], [updateUiEvents]) to mutate it, wires action dispatch
+ * (`onUiAction` -> [applyUiAction]), and exposes one-shot [outputEvents].
  */
 abstract class StateFlowViewModel<
     S : UiStateAware.UiData,
@@ -19,15 +28,33 @@ abstract class StateFlowViewModel<
     E : UiStateAware.UiEvent,
     O : UiStateAware.OutputEvent
     >(
-    private val initialState: UiStateAware.UiState<S, E>
-) : ComposeStateViewModel<S, I, E, O>() {
+    initialState: UiStateAware.UiState<S, E>
+) : ViewModel(), UiActionAware<I> {
 
     private val _uiState = MutableStateFlow(initialState)
+    val state: StateFlow<UiStateAware.UiState<S, E>> = _uiState.asStateFlow()
 
-    @Composable
-    override fun getState(): UiStateAware.UiState<S, E> {
-        val state by _uiState.collectAsState()
-        return state
+    private val _outputEvents = MutableSharedFlow<O>()
+    val outputEvents: SharedFlow<O> = _outputEvents.asSharedFlow()
+
+    protected val currentUiState: UiStateAware.UiState<S, E>
+        get() = _uiState.value
+
+    protected val currentUiData: S
+        get() = _uiState.value.uiData
+
+    override fun onUiAction(uiAction: I) {
+        viewModelScope.launch {
+            applyUiAction(uiAction)
+        }
+    }
+
+    protected abstract suspend fun applyUiAction(uiAction: I)
+
+    fun onUiEventConsumed(uiEvent: E) {
+        _uiState.update { uiState ->
+            uiState.copy(uiEvents = uiState.uiEvents - uiEvent)
+        }
     }
 
     protected fun updateUi(
@@ -44,21 +71,29 @@ abstract class StateFlowViewModel<
         }
     }
 
-    protected fun updateIsLoading(isLoading: Boolean) {
-        updateUi(isLoading = isLoading)
-    }
+    protected fun updateIsLoading(isLoading: Boolean) = updateUi(isLoading = isLoading)
 
-    protected fun updateUiData(isLoading: Boolean? = null, uiData: S.() -> S) {
+    protected fun updateUiData(isLoading: Boolean? = null, uiData: S.() -> S) =
         updateUi(isLoading = isLoading, uiData = uiData)
-    }
 
-    protected fun updateUiEvents(isLoading: Boolean? = null, uiEvents: (uiEvents: List<E>) -> List<E>) {
+    protected fun updateUiEvents(isLoading: Boolean? = null, uiEvents: (uiEvents: List<E>) -> List<E>) =
         updateUi(isLoading = isLoading, uiEvents = uiEvents)
+
+    protected fun emitOutputEvent(event: O) {
+        viewModelScope.launch {
+            _outputEvents.emit(event)
+        }
     }
 
-    override fun onUiEventConsumed(uiEvent: E) {
-        _uiState.update { uiState ->
-            uiState.copy(uiEvents = uiState.uiEvents - uiEvent)
-        }
+    /**
+     * Cancels in-flight [applyUiAction]/[emitOutputEvent] work. Call from SwiftUI's
+     * `.onDisappear` when the owning screen is popped, since iOS has no AndroidX-managed
+     * ViewModelStore to do this automatically - the *presenter* should own this call, not the
+     * view itself. Android never needs to call this manually; its ViewModelStore already
+     * clears/cancels `viewModelScope` on its own.
+     */
+    fun clearScope() {
+        viewModelScope.coroutineContext.cancelChildren()
+        onCleared()
     }
 }

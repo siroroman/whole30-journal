@@ -7,7 +7,6 @@ sdk-compile = "37"
 sdk-target = "34"
 sdk-min = "26"
 koin = "4.2.2"
-molecule = "2.2.0"
 skie = "0.10.13"
 coroutines = "1.11.0"
 lifecycle = "2.11.0"
@@ -30,8 +29,6 @@ androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmode
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
-
-molecule-runtime = { module = "app.cash.molecule:molecule-runtime", version.ref = "molecule" }
 
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }

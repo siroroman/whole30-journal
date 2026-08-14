@@ -114,15 +114,14 @@ Both patterns sit on top of `shared/core/ui-uistate`, which is unaffected by any
 source directly:
 - `UiContract.kt` - the MVI marker types every feature contract implements: `UiStateAware.{UiData,
   UiEvent, OutputEvent, UiState}` and `UiActionAware.UiAction`.
-- `vm/BaseViewModel.kt` - `expect/actual`: a real `androidx.lifecycle.ViewModel` on Android, a
-  plain Kotlin object owned by Swift on iOS. Both `actual`s turn a `@Composable getState()` into a
-  `StateFlow` via **Molecule** - this is what lets one VM subclass run unmodified on both
-  platforms without a hand-rolled reducer.
-- `vm/ComposeStateViewModel.kt` - wires action dispatch (`onUiAction` -> `applyUiAction`) and the
-  one-shot `outputEvents: SharedFlow<O>`.
-- `vm/StateFlowViewModel.kt` - the convenience base almost every feature VM extends: holds a
-  `MutableStateFlow`, exposes `updateUiData {}` / `updateIsLoading()` / `updateUiEvents {}` /
-  `emitOutputEvent()` helpers instead of making you touch the flow directly.
+- `vm/StateFlowViewModel.kt` - the base every feature VM extends: a real
+  `androidx.lifecycle.ViewModel` on Android, the same class instantiated as a plain Kotlin object
+  owned by Swift on iOS - no expect/actual split needed, since `androidx.lifecycle.ViewModel` and
+  `viewModelScope` are ordinary Kotlin Multiplatform APIs on both platforms. It holds a
+  `MutableStateFlow` directly, exposing it as `state`, and wires action dispatch (`onUiAction` ->
+  `applyUiAction`) plus the one-shot `outputEvents: SharedFlow<O>`. Use its `updateUiData {}` /
+  `updateIsLoading()` / `updateUiEvents {}` / `emitOutputEvent()` helpers instead of touching the
+  flow directly.
 
 ## Localizing strings
 
