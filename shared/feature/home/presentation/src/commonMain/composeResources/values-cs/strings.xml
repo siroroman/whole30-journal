@@ -14,4 +14,6 @@
     <string name="home_days_title">Dny</string>
     <string name="home_day_future_message">Tento den ještě nenastal</string>
     <string name="home_day_no_entry_message">Pro tento den zatím není žádný záznam</string>
+    <string name="home_day_complete_tag">Den splněn</string>
+    <string name="home_day_not_complete_tag">Den nesplněn</string>
 </resources>

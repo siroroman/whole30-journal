@@ -142,6 +142,7 @@ private fun DayEntry.toDayMetrics(): HomeContract.DayMetrics? {
         (value.toDouble() / metric.maxValue * NORMALIZED_SCORE_SCALE).roundToInt()
     }
     return HomeContract.DayMetrics(
+        isComplete = isComplete,
         overall = scoreFor(MetricTitle.OVERALL),
         energy = scoreFor(MetricTitle.ENERGY),
         mood = scoreFor(MetricTitle.MOOD),

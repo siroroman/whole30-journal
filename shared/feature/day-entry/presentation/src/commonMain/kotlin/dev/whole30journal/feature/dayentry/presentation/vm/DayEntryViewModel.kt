@@ -87,7 +87,10 @@ class DayEntryViewModel(
         val dateLabel = startDate?.let { dateFormatter(dateForDay(dayNumber, it), today(), DateFormatter.Style.Short) }.orEmpty()
         val totalDays = program?.durationDays?.toInt() ?: DEFAULT_TOTAL_DAYS
 
-        val draft = entry?.toUiData(dayNumber, dateLabel, totalDays, startDate)
+        // A program's day rows are pre-seeded (see ProgramRepositoryImpl.configureProgram) so
+        // `entry` is non-null for every in-range day even before it's ever been logged - only
+        // saved metrics distinguish a real entry from that bare seed row.
+        val draft = entry?.takeIf { it.metrics.isNotEmpty() }?.toUiData(dayNumber, dateLabel, totalDays, startDate)
             ?: defaultUiData(dayNumber, dateLabel, totalDays, startDate)
         updateUiData(isLoading = false) { draft }
         isLoaded = true

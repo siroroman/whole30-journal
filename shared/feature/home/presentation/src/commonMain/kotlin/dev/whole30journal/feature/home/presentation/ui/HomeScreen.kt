@@ -116,6 +116,7 @@ private fun previewUiData(): HomeContract.UiData {
         trendAxisLabels = HomeContract.TrendAxisLabels(start = "25.7.2026", middle = "8.8.2026", end = "23.8.2026"),
         metricsByDay = (1..currentDay).associateWith { day ->
             HomeContract.DayMetrics(
+                isComplete = true,
                 overall = trendValues[(day - 1) % trendValues.size],
                 energy = 7,
                 mood = 8,

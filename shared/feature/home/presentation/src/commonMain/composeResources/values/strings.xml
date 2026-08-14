@@ -14,4 +14,6 @@
     <string name="home_days_title">Days</string>
     <string name="home_day_future_message">This day hasn't happened yet</string>
     <string name="home_day_no_entry_message">No entry logged for this day yet</string>
+    <string name="home_day_complete_tag">Day completed</string>
+    <string name="home_day_not_complete_tag">Day not completed</string>
 </resources>

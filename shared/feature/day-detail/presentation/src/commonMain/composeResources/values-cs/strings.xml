@@ -5,6 +5,7 @@
     <string name="day_detail_back_content_description">Zpět</string>
 
     <string name="day_detail_complete_tag">Den splněn</string>
+    <string name="day_detail_not_complete_tag">Den nesplněn</string>
 
     <string name="day_detail_overall_title">Celkové skóre</string>
     <string name="day_detail_overall_caption">Průměr energie, nálady, spánku a chutí</string>

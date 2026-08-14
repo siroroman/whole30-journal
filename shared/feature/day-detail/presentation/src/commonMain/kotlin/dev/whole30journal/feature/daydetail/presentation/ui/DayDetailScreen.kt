@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import dev.whole30journal.core.designsystem.components.DSTag
+import dev.whole30journal.core.designsystem.components.DSTagTone
 import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.uistate.UiStateAware
@@ -29,6 +30,7 @@ import dev.whole30journal.feature.daydetail.presentation.generated.resources.Res
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_back_content_description
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_complete_tag
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_edit_button
+import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_not_complete_tag
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_title
 import dev.whole30journal.feature.daydetail.presentation.ui.icons.ChevronLeftIcon
 import dev.whole30journal.feature.daydetail.presentation.vm.DayDetailContract
@@ -118,10 +120,15 @@ private fun DayDetailContent(
             .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
         verticalArrangement = Arrangement.spacedBy(DSSpacing.space8),
     ) {
-        if (uiData.isComplete) {
-            DSTag(text = stringResource(Res.string.day_detail_complete_tag))
-        }
         if (uiData.hasEntry) {
+            DSTag(
+                text = if (uiData.isComplete) {
+                    stringResource(Res.string.day_detail_complete_tag)
+                } else {
+                    stringResource(Res.string.day_detail_not_complete_tag)
+                },
+                tone = if (uiData.isComplete) DSTagTone.Accent else DSTagTone.Neutral,
+            )
             OverallScoreSummaryCard(score = uiData.overallScore)
             Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
                 uiData.metrics.forEach { summary -> MetricSummaryRow(summary = summary) }

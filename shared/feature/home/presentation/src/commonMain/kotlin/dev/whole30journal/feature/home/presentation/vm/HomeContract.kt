@@ -19,6 +19,7 @@ object HomeContract {
 
     @Immutable
     data class DayMetrics(
+        val isComplete: Boolean,
         val overall: Int?,
         val energy: Int?,
         val mood: Int?,
