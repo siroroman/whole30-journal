@@ -32,7 +32,7 @@ kotlin {
         }
         // Shared between jvmTest and iosTest only (not androidUnitTest, since Android's
         // DatabaseDriverFactory actual needs a Context that common test code can't supply).
-        val jvmAndIosTest by creating {
+        val jvmAndIosTest = create("jvmAndIosTest") {
             dependsOn(commonTest.get())
             dependencies {
                 implementation(kotlin("test"))
