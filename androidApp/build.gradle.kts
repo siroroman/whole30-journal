@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.detekt)
 }
 
@@ -55,6 +56,7 @@ dependencies {
     implementation(projects.shared.core.database)
 
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
@@ -62,6 +64,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.koin.core)
     implementation(libs.koin.android)

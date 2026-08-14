@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 
 private object DayEntryIconPaths {
+    const val CHEVRON_LEFT = "m15 18-6-6 6-6"
     const val HEART = "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2" +
         "-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
     const val PLUS = "M5 12h14 M12 5v14"
@@ -52,6 +53,9 @@ private fun heartVector(name: String, filled: Boolean): ImageVector =
         .build()
 
 private object DayEntryIcons {
+    val ChevronLeft: ImageVector by lazy {
+        outlineVector("ChevronLeft", DayEntryIconPaths.CHEVRON_LEFT, strokeLineWidth = 2.2f)
+    }
     val HeartOutline: ImageVector by lazy { heartVector("HeartOutline", filled = false) }
     val HeartFilled: ImageVector by lazy { heartVector("HeartFilled", filled = true) }
     val Plus: ImageVector by lazy {
@@ -70,6 +74,11 @@ private object DayEntryIcons {
     val Library: ImageVector by lazy {
         outlineVector("Library", DayEntryIconPaths.LIBRARY_FRAME, DayEntryIconPaths.LIBRARY_DOT, DayEntryIconPaths.LIBRARY_MOUNTAIN)
     }
+}
+
+@Composable
+fun ChevronLeftIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current, contentDescription: String? = null) {
+    Icon(DayEntryIcons.ChevronLeft, contentDescription, modifier, tint)
 }
 
 @Composable

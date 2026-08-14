@@ -3,8 +3,8 @@ import SharedKit
 
 struct DayEntryView: View {
     let dayNumber: Int
-    let onClose: () -> Void
 
+    @Environment(\.dismiss) private var dismiss
     private let viewModel: DayEntryViewModel = KoinResolver.get(DayEntryViewModel.self)
 
     var body: some View {
@@ -19,7 +19,7 @@ struct DayEntryView: View {
             for await event in viewModel.outputEvents {
                 switch onEnum(of: event) {
                 case .close:
-                    onClose()
+                    dismiss()
                 }
             }
         }

@@ -3,9 +3,9 @@ import SharedKit
 
 struct DayDetailView: View {
     let dayNumber: Int
+    let onEditRequested: (Int) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var editingDay: Int?
     private let viewModel: DayDetailViewModel = KoinResolver.get(DayDetailViewModel.self)
 
     var body: some View {
@@ -22,12 +22,9 @@ struct DayDetailView: View {
                 case .close:
                     dismiss()
                 case let .editRequested(data):
-                    editingDay = Int(data.dayNumber)
+                    onEditRequested(Int(data.dayNumber))
                 }
             }
-        }
-        .sheet(item: $editingDay) { day in
-            DayEntryView(dayNumber: day, onClose: { editingDay = nil })
         }
     }
 }

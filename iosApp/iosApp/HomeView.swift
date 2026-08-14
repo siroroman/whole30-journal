@@ -1,19 +1,15 @@
 import SwiftUI
 import SharedKit
 
-extension Int: @retroactive Identifiable {
-    public var id: Int { self }
-}
-
 private enum HomeRoute: Hashable {
     case settings
     case dayDetail(Int)
+    case dayEntry(Int)
 }
 
 struct HomeView: View {
     @State private var isLoading = true
     @State private var needsSetup = false
-    @State private var editingDay: Int?
     @State private var path: [HomeRoute] = []
 
     private let viewModel: HomeViewModel = KoinResolver.get(HomeViewModel.self)
@@ -46,13 +42,17 @@ struct HomeView: View {
                 HomeScreenViewController(viewModel: viewModel)
             }
             .ignoresSafeArea()
+            .interactivePopGestureEnabled()
             .navigationDestination(for: HomeRoute.self) { route in
                 switch route {
                 case .settings:
                     SettingsView()
                         .toolbar(.hidden, for: .navigationBar)
                 case let .dayDetail(dayNumber):
-                    DayDetailView(dayNumber: dayNumber)
+                    DayDetailView(dayNumber: dayNumber, onEditRequested: { push(.dayEntry($0)) })
+                        .toolbar(.hidden, for: .navigationBar)
+                case let .dayEntry(dayNumber):
+                    DayEntryView(dayNumber: dayNumber)
                         .toolbar(.hidden, for: .navigationBar)
                 }
             }
@@ -60,17 +60,22 @@ struct HomeView: View {
                 for await event in viewModel.outputEvents {
                     switch onEnum(of: event) {
                     case let .navigateToDayEntry(data):
-                        editingDay = Int(data.dayNumber)
+                        push(.dayEntry(Int(data.dayNumber)))
                     case let .navigateToDayDetail(data):
-                        path.append(.dayDetail(Int(data.dayNumber)))
+                        push(.dayDetail(Int(data.dayNumber)))
                     case .navigateToSettings:
                         path = [.settings]
                     }
                 }
             }
-            .sheet(item: $editingDay) { day in
-                DayEntryView(dayNumber: day, onClose: { editingDay = nil })
-            }
         }
+    }
+
+    // Output events and edit-requested callbacks can each fire twice for one tap (e.g. a fast
+    // double-tap dispatches two UiActions before the first navigation lands), so guard against
+    // pushing the same route the stack is already showing.
+    private func push(_ route: HomeRoute) {
+        guard path.last != route else { return }
+        path.append(route)
     }
 }

@@ -1,10 +1,11 @@
 package dev.whole30journal.feature.dayentry.presentation.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,7 +29,7 @@ import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.Res
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_cancel_button
+import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_back_content_description
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_day_title
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_metric_cravings_high
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_metric_cravings_low
@@ -47,6 +48,7 @@ import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_notes_title
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_save_button_short
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_section_how_i_felt
+import dev.whole30journal.feature.dayentry.presentation.ui.icons.ChevronLeftIcon
 import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryContract
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -120,19 +122,14 @@ private fun DayEntryTopBar(
     modifier: Modifier = Modifier,
 ) {
     val colors = DSTheme.colors
-    Column(modifier = modifier.fillMaxWidth().statusBarsPadding()) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space6),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(Res.string.day_entry_cancel_button),
-                style = DSTheme.typography.textLg,
-                color = colors.textSecondary,
-                modifier = Modifier.clickable(onClick = onCancelClick),
+    Column(modifier = modifier.fillMaxWidth().background(colors.bg).statusBarsPadding()) {
+        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space6)) {
+            ChevronLeftIcon(
+                tint = colors.textSecondary,
+                contentDescription = stringResource(Res.string.day_entry_back_content_description),
+                modifier = Modifier.align(Alignment.CenterStart).clickable(onClick = onCancelClick),
             )
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.align(Alignment.Center)) {
                 Text(text = stringResource(Res.string.day_entry_day_title, dayNumber), style = DSTheme.typography.textMd, color = colors.text)
                 Text(text = dateLabel, style = DSTheme.typography.textXs, color = colors.textTertiary)
             }
@@ -140,7 +137,7 @@ private fun DayEntryTopBar(
                 text = stringResource(Res.string.day_entry_save_button_short),
                 style = DSTheme.typography.textLg.copy(fontWeight = FontWeight.Bold),
                 color = colors.accent,
-                modifier = Modifier.clickable(onClick = onSaveClick),
+                modifier = Modifier.align(Alignment.CenterEnd).clickable(onClick = onSaveClick),
             )
         }
         HorizontalDivider(color = colors.divider)

@@ -12,6 +12,7 @@ skie = "0.10.13"
 coroutines = "1.11.0"
 lifecycle = "2.11.0"
 activityCompose = "1.9.2"
+navigationCompose = "2.9.8"
 ktor = "3.5.1"
 kotlinxSerializationJson = "1.11.0"
 kotlinxDatetime = "0.7.1"
@@ -28,6 +29,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
 molecule-runtime = { module = "app.cash.molecule:molecule-runtime", version.ref = "molecule" }
 
