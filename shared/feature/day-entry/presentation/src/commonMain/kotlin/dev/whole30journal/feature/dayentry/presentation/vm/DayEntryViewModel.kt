@@ -87,7 +87,7 @@ class DayEntryViewModel(
         val dateLabel = startDate?.let { dateFormatter(dateForDay(dayNumber, it), today(), DateFormatter.Style.Short) }.orEmpty()
         val totalDays = program?.durationDays?.toInt() ?: DEFAULT_TOTAL_DAYS
 
-        val draft = entry?.toUiData(dayNumber, dateLabel, totalDays, startDate)
+        val draft = entry?.takeIf { it.isLogged }?.toUiData(dayNumber, dateLabel, totalDays, startDate)
             ?: defaultUiData(dayNumber, dateLabel, totalDays, startDate)
         updateUiData(isLoading = false) { draft }
         isLoaded = true

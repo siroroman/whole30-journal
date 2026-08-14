@@ -24,12 +24,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.whole30journal.core.designsystem.components.DSCard
 import dev.whole30journal.core.designsystem.components.DSProgressRing
+import dev.whole30journal.core.designsystem.components.DSTag
+import dev.whole30journal.core.designsystem.components.DSTagTone
 import dev.whole30journal.core.designsystem.theme.DSShapes
 import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
+import dev.whole30journal.feature.home.presentation.generated.resources.home_day_complete_tag
 import dev.whole30journal.feature.home.presentation.generated.resources.home_day_future_message
 import dev.whole30journal.feature.home.presentation.generated.resources.home_day_no_entry_message
+import dev.whole30journal.feature.home.presentation.generated.resources.home_day_not_complete_tag
 import dev.whole30journal.feature.home.presentation.generated.resources.home_edit_today_content_description
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_cravings
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_energy
@@ -107,6 +111,14 @@ fun DayOverviewCard(
             }
         }
         if (metrics != null) {
+            DSTag(
+                text = if (metrics.isComplete) {
+                    stringResource(Res.string.home_day_complete_tag)
+                } else {
+                    stringResource(Res.string.home_day_not_complete_tag)
+                },
+                tone = if (metrics.isComplete) DSTagTone.Accent else DSTagTone.Neutral,
+            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -210,7 +222,8 @@ private val METRIC_RING_SIZE = 64.dp
 private val METRIC_RING_STROKE = 4.dp
 private val METRIC_ICON_SIZE = 12.dp
 
-private fun previewMetrics() = HomeContract.DayMetrics(overall = 4, energy = 3, mood = 4, sleep = 5, cravings = 3)
+private fun previewMetrics() =
+    HomeContract.DayMetrics(isComplete = true, overall = 4, energy = 3, mood = 4, sleep = 5, cravings = 3)
 
 @Preview
 @Composable

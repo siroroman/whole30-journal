@@ -66,7 +66,7 @@ class DayDetailViewModel(
                 copy(
                     dayNumber = dayNumber,
                     dateLabel = dateLabel,
-                    hasEntry = entry != null,
+                    hasEntry = entry?.isLogged == true,
                     isComplete = entry?.isComplete ?: false,
                     overallScore = entry?.scoreFor(MetricTitle.OVERALL),
                     metrics = entry?.let { metricSummaries(it, metricTitles) }.orEmpty(),

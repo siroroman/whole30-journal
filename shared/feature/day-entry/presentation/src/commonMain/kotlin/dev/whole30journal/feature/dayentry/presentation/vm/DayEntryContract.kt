@@ -39,7 +39,7 @@ object DayEntryContract {
         val meals: List<MealEntry> = emptyList(),
         val pendingPhotoMealId: String? = null,
         val notes: String = "",
-        val isComplete: Boolean = false,
+        val isComplete: Boolean = true,
         val isSaving: Boolean = false,
     ) : UiStateAware.UiData
 

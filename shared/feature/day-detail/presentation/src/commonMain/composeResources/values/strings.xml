@@ -5,6 +5,7 @@
     <string name="day_detail_back_content_description">Back</string>
 
     <string name="day_detail_complete_tag">Day completed</string>
+    <string name="day_detail_not_complete_tag">Day not completed</string>
 
     <string name="day_detail_overall_title">Overall score</string>
     <string name="day_detail_overall_caption">Average of Energy, Mood, Sleep and Cravings</string>
