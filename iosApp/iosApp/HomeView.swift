@@ -49,7 +49,7 @@ struct HomeView: View {
                     SettingsView()
                         .toolbar(.hidden, for: .navigationBar)
                 case let .dayDetail(dayNumber):
-                    DayDetailView(dayNumber: dayNumber, onEditRequested: { path.append(.dayEntry($0)) })
+                    DayDetailView(dayNumber: dayNumber, onEditRequested: { push(.dayEntry($0)) })
                         .toolbar(.hidden, for: .navigationBar)
                 case let .dayEntry(dayNumber):
                     DayEntryView(dayNumber: dayNumber)
@@ -60,14 +60,22 @@ struct HomeView: View {
                 for await event in viewModel.outputEvents {
                     switch onEnum(of: event) {
                     case let .navigateToDayEntry(data):
-                        path.append(.dayEntry(Int(data.dayNumber)))
+                        push(.dayEntry(Int(data.dayNumber)))
                     case let .navigateToDayDetail(data):
-                        path.append(.dayDetail(Int(data.dayNumber)))
+                        push(.dayDetail(Int(data.dayNumber)))
                     case .navigateToSettings:
                         path = [.settings]
                     }
                 }
             }
         }
+    }
+
+    // Output events and edit-requested callbacks can each fire twice for one tap (e.g. a fast
+    // double-tap dispatches two UiActions before the first navigation lands), so guard against
+    // pushing the same route the stack is already showing.
+    private func push(_ route: HomeRoute) {
+        guard path.last != route else { return }
+        path.append(route)
     }
 }

@@ -43,12 +43,13 @@ fun App() {
         homeViewModel.outputEvents.collect { event ->
             when (event) {
                 is HomeContract.OutputEvent.NavigateToDayEntry ->
-                    navController.navigate(DayEntryRoute(event.dayNumber))
+                    navController.navigate(DayEntryRoute(event.dayNumber)) { launchSingleTop = true }
 
                 is HomeContract.OutputEvent.NavigateToDayDetail ->
-                    navController.navigate(DayDetailRoute(event.dayNumber))
+                    navController.navigate(DayDetailRoute(event.dayNumber)) { launchSingleTop = true }
 
-                HomeContract.OutputEvent.NavigateToSettings -> navController.navigate(SettingsRoute)
+                HomeContract.OutputEvent.NavigateToSettings ->
+                    navController.navigate(SettingsRoute) { launchSingleTop = true }
             }
         }
     }
@@ -101,7 +102,7 @@ private fun AppNavHost(
                     when (event) {
                         DayDetailContract.OutputEvent.Close -> navController.popBackStack()
                         is DayDetailContract.OutputEvent.EditRequested ->
-                            navController.navigate(DayEntryRoute(event.dayNumber))
+                            navController.navigate(DayEntryRoute(event.dayNumber)) { launchSingleTop = true }
                     }
                 }
             }
