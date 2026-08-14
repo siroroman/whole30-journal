@@ -14,7 +14,7 @@ struct SettingsView: View {
         .task {
             for await event in viewModel.outputEvents {
                 switch onEnum(of: event) {
-                    case .saved, .cancelled:
+                case .saved, .cancelled:
                     dismiss()
                 }
             }
