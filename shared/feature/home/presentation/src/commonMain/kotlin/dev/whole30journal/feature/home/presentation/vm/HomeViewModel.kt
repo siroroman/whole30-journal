@@ -135,7 +135,7 @@ private const val PROGRESS_PERCENT_SCALE = 100
 private const val NORMALIZED_SCORE_SCALE = 10.0
 
 private fun DayEntry.toDayMetrics(): HomeContract.DayMetrics? {
-    if (metrics.isEmpty()) return null
+    if (!isLogged) return null
     fun scoreFor(title: String): Int? = metrics.firstOrNull { it.title == title }?.let { metric ->
         val value = metric.value ?: return@let null
         if (metric.maxValue <= 0) return@let null

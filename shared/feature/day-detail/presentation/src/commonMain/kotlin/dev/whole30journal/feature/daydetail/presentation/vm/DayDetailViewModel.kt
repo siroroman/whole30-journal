@@ -66,10 +66,7 @@ class DayDetailViewModel(
                 copy(
                     dayNumber = dayNumber,
                     dateLabel = dateLabel,
-                    // A program's day rows are pre-seeded (see ProgramRepositoryImpl.configureProgram)
-                    // so `entry` is non-null for every in-range day even before it's ever been logged -
-                    // only saved metrics distinguish a real entry from that bare seed row.
-                    hasEntry = entry?.metrics?.isNotEmpty() == true,
+                    hasEntry = entry?.isLogged == true,
                     isComplete = entry?.isComplete ?: false,
                     overallScore = entry?.scoreFor(MetricTitle.OVERALL),
                     metrics = entry?.let { metricSummaries(it, metricTitles) }.orEmpty(),
