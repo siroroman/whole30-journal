@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="day_entry_back_content_description">Zpět</string>
     <string name="day_entry_cancel_button">Zrušit</string>
     <string name="day_entry_day_title">%1$d. den</string>
     <string name="day_entry_save_button_short">Uložit</string>

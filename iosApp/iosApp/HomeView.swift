@@ -1,19 +1,15 @@
 import SwiftUI
 import SharedKit
 
-extension Int: @retroactive Identifiable {
-    public var id: Int { self }
-}
-
 private enum HomeRoute: Hashable {
     case settings
     case dayDetail(Int)
+    case dayEntry(Int)
 }
 
 struct HomeView: View {
     @State private var isLoading = true
     @State private var needsSetup = false
-    @State private var editingDay: Int?
     @State private var path: [HomeRoute] = []
 
     private let viewModel: HomeViewModel = KoinResolver.get(HomeViewModel.self)
@@ -52,7 +48,10 @@ struct HomeView: View {
                     SettingsView()
                         .toolbar(.hidden, for: .navigationBar)
                 case let .dayDetail(dayNumber):
-                    DayDetailView(dayNumber: dayNumber)
+                    DayDetailView(dayNumber: dayNumber, onEditRequested: { path.append(.dayEntry($0)) })
+                        .toolbar(.hidden, for: .navigationBar)
+                case let .dayEntry(dayNumber):
+                    DayEntryView(dayNumber: dayNumber)
                         .toolbar(.hidden, for: .navigationBar)
                 }
             }
@@ -60,16 +59,13 @@ struct HomeView: View {
                 for await event in viewModel.outputEvents {
                     switch onEnum(of: event) {
                     case let .navigateToDayEntry(data):
-                        editingDay = Int(data.dayNumber)
+                        path.append(.dayEntry(Int(data.dayNumber)))
                     case let .navigateToDayDetail(data):
                         path.append(.dayDetail(Int(data.dayNumber)))
                     case .navigateToSettings:
                         path = [.settings]
                     }
                 }
-            }
-            .sheet(item: $editingDay) { day in
-                DayEntryView(dayNumber: day, onClose: { editingDay = nil })
             }
         }
     }

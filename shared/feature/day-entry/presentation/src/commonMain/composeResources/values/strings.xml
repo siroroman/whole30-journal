@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="day_entry_back_content_description">Back</string>
     <string name="day_entry_cancel_button">Cancel</string>
     <string name="day_entry_day_title">Day %1$d</string>
     <string name="day_entry_save_button_short">Save</string>
