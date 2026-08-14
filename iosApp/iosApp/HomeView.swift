@@ -42,6 +42,7 @@ struct HomeView: View {
                 HomeScreenViewController(viewModel: viewModel)
             }
             .ignoresSafeArea()
+            .interactivePopGestureEnabled()
             .navigationDestination(for: HomeRoute.self) { route in
                 switch route {
                 case .settings:
