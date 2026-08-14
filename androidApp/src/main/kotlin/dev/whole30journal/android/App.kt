@@ -1,5 +1,6 @@
 package dev.whole30journal.android
 
+import android.os.SystemClock
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
@@ -32,24 +33,21 @@ import dev.whole30journal.feature.settings.presentation.vm.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 private const val NAV_ANIM_DURATION_MS = 300
+private const val NAV_DEBOUNCE_MS = 1_000L
 
 @Composable
 fun App() {
     val homeViewModel: HomeViewModel = koinViewModel()
     val homeState by homeViewModel.state.collectAsStateWithLifecycle()
     val navController = rememberNavController()
+    val navigate = rememberDebouncedNavigate(navController)
 
-    LaunchedEffect(homeViewModel, navController) {
+    LaunchedEffect(homeViewModel, navigate) {
         homeViewModel.outputEvents.collect { event ->
             when (event) {
-                is HomeContract.OutputEvent.NavigateToDayEntry ->
-                    navController.navigate(DayEntryRoute(event.dayNumber)) { launchSingleTop = true }
-
-                is HomeContract.OutputEvent.NavigateToDayDetail ->
-                    navController.navigate(DayDetailRoute(event.dayNumber)) { launchSingleTop = true }
-
-                HomeContract.OutputEvent.NavigateToSettings ->
-                    navController.navigate(SettingsRoute) { launchSingleTop = true }
+                is HomeContract.OutputEvent.NavigateToDayEntry -> navigate(DayEntryRoute(event.dayNumber))
+                is HomeContract.OutputEvent.NavigateToDayDetail -> navigate(DayDetailRoute(event.dayNumber))
+                HomeContract.OutputEvent.NavigateToSettings -> navigate(SettingsRoute)
             }
         }
     }
@@ -59,6 +57,7 @@ fun App() {
         homeState.uiData.needsSetup -> SettingsOverlay(onDone = {})
         else -> AppNavHost(
             navController = navController,
+            navigate = navigate,
             homeContent = {
                 HomeScreen(
                     state = homeState,
@@ -71,8 +70,23 @@ fun App() {
 }
 
 @Composable
+private fun rememberDebouncedNavigate(navController: NavHostController): (Any) -> Unit {
+    val lastNavigateAtMs = remember { LongArray(1) }
+    return remember(navController) {
+        { route: Any ->
+            val now = SystemClock.elapsedRealtime()
+            if (now - lastNavigateAtMs[0] >= NAV_DEBOUNCE_MS) {
+                lastNavigateAtMs[0] = now
+                navController.navigate(route)
+            }
+        }
+    }
+}
+
+@Composable
 private fun AppNavHost(
     navController: NavHostController,
+    navigate: (Any) -> Unit,
     homeContent: @Composable () -> Unit,
 ) {
     NavHost(
@@ -97,12 +111,11 @@ private fun AppNavHost(
             LaunchedEffect(dayNumber) {
                 dayDetailViewModel.onUiAction(DayDetailContract.UiAction.OnAppear(dayNumber))
             }
-            LaunchedEffect(dayDetailViewModel) {
+            LaunchedEffect(dayDetailViewModel, navigate) {
                 dayDetailViewModel.outputEvents.collect { event ->
                     when (event) {
                         DayDetailContract.OutputEvent.Close -> navController.popBackStack()
-                        is DayDetailContract.OutputEvent.EditRequested ->
-                            navController.navigate(DayEntryRoute(event.dayNumber)) { launchSingleTop = true }
+                        is DayDetailContract.OutputEvent.EditRequested -> navigate(DayEntryRoute(event.dayNumber))
                     }
                 }
             }
