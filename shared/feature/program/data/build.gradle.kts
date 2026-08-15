@@ -27,7 +27,7 @@ kotlin {
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.koin.core)
         }
-        val jvmAndIosTest by creating {
+        val jvmAndIosTest = create("jvmAndIosTest") {
             dependsOn(commonTest.get())
             dependencies {
                 implementation(kotlin("test"))

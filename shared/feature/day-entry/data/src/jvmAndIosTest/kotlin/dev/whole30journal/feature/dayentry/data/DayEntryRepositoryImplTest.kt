@@ -22,7 +22,10 @@ import kotlin.time.Duration.Companion.minutes
 // parallel Gradle execution on constrained runners, where the real dbDispatcher thread can be
 // starved rather than the coroutine itself being stuck - see the "Fix flaky observeDayEntry" and
 // "Use TestScope.backgroundScope" commits for prior (insufficient) attempts at this same flake.
-private val DB_TEST_TIMEOUT = 2.minutes
+// 2 minutes still wasn't enough headroom under CI contention (observeDayEntry pushes a new
+// emission... failed with UncompletedCoroutinesError twice in a row on PR #18); the "Kotlin tests"
+// job has a 20-minute budget and this suite finishes in ~4-5 minutes, so there's plenty of room.
+private val DB_TEST_TIMEOUT = 5.minutes
 
 /** Runs against a real in-memory SQLite DB (via [createTestDriver]) rather than mocks, since the
  * behaviour worth verifying here is the SQL/mapping/transaction logic itself. Runs on the JVM and

@@ -4,6 +4,8 @@ import androidx.compose.runtime.Immutable
 import dev.whole30journal.core.uistate.UiActionAware
 import dev.whole30journal.core.uistate.UiStateAware
 import kotlinx.datetime.LocalDate
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 
 object DayEntryContract {
 
@@ -15,11 +17,12 @@ object DayEntryContract {
     @Immutable
     data class AchievementEntry(val id: String, val text: String)
 
+    @OptIn(ExperimentalObjCName::class)
     @Immutable
     data class MealEntry(
         val id: String,
         val label: String,
-        val description: String = "",
+        @property:ObjCName("mealDescription") val description: String = "",
         val photoToken: String? = null,
         val lovedIt: Boolean = false,
     )
@@ -50,7 +53,13 @@ object DayEntryContract {
         data class OnAchievementTextChange(val id: String, val text: String) : UiAction
         data object OnAddAchievementClick : UiAction
         data object OnAddMealClick : UiAction
-        data class OnMealDescriptionChange(val id: String, val description: String) : UiAction
+
+        @OptIn(ExperimentalObjCName::class)
+        data class OnMealDescriptionChange(
+            val id: String,
+            @property:ObjCName("mealDescription") val description: String,
+        ) : UiAction
+
         data class OnMealLovedToggle(val id: String) : UiAction
         data class OnAddMealPhotoClick(val id: String) : UiAction
         data class OnMealPhotoPick(val mealId: String, val token: String) : UiAction

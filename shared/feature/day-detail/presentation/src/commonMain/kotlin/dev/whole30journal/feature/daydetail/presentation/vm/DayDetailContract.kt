@@ -3,17 +3,20 @@ package dev.whole30journal.feature.daydetail.presentation.vm
 import androidx.compose.runtime.Immutable
 import dev.whole30journal.core.uistate.UiActionAware
 import dev.whole30journal.core.uistate.UiStateAware
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.native.ObjCName
 
 object DayDetailContract {
 
     @Immutable
     data class MetricSummary(val title: String, val note: String, val score: Int?)
 
+    @OptIn(ExperimentalObjCName::class)
     @Immutable
     data class MealSummary(
         val id: String,
         val label: String,
-        val description: String,
+        @property:ObjCName("mealDescription") val description: String,
         val photoToken: String?,
         val lovedIt: Boolean,
     )
