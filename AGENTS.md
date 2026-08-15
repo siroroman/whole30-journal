@@ -44,7 +44,7 @@ reference project, not a production multi-market app (see "Deliberate Simplifica
   `UiActionAware`), `StateFlowViewModel`. See ARCHITECTURE.md.
 - `shared:umbrella` — combines all shared feature modules into the `SharedKit` XCFramework for
   iOS; hosts `KoinIOS` (Koin bootstrap for iOS) and `appModules` (the one list of Koin modules both
-  platforms start from — currently just `networkModule`, until a feature is scaffolded).
+  platforms start from).
 - `androidApp` — Jetpack Compose app; starts Koin in `Whole30JournalApp` (`Application.onCreate`).
   `App.kt` currently renders an empty `Scaffold` — no feature is wired in yet.
 - `iosApp` — SwiftUI app; `ContentView.swift` currently renders a placeholder — no feature is wired
