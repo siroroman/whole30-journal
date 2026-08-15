@@ -13,8 +13,6 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            // ViewModel is part of StateFlowViewModel's public supertype, so it must be `api` to
-            // stay resolvable for every module that extends it.
             api(libs.androidx.lifecycle.viewmodel)
             implementation(libs.kotlinx.coroutines.core)
         }

@@ -14,14 +14,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * Base ViewModel for every feature: a real `androidx.lifecycle.ViewModel` on Android, the same
- * class instantiated as a plain Kotlin object owned by Swift on iOS - no expect/actual split
- * needed, since `androidx.lifecycle.ViewModel`/`viewModelScope` are ordinary KMP APIs on both
- * platforms. Holds a [MutableStateFlow] seeded with [initialState] and exposes small helpers
- * ([updateUiData], [updateIsLoading], [updateUiEvents]) to mutate it, wires action dispatch
- * (`onUiAction` -> [applyUiAction]), and exposes one-shot [outputEvents].
- */
 abstract class StateFlowViewModel<
     S : UiStateAware.UiData,
     I : UiActionAware.UiAction,
@@ -85,13 +77,6 @@ abstract class StateFlowViewModel<
         }
     }
 
-    /**
-     * Cancels in-flight [applyUiAction]/[emitOutputEvent] work. Call from SwiftUI's
-     * `.onDisappear` when the owning screen is popped, since iOS has no AndroidX-managed
-     * ViewModelStore to do this automatically - the *presenter* should own this call, not the
-     * view itself. Android never needs to call this manually; its ViewModelStore already
-     * clears/cancels `viewModelScope` on its own.
-     */
     fun clearScope() {
         viewModelScope.coroutineContext.cancelChildren()
         onCleared()

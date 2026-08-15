@@ -41,8 +41,6 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            // Aggregates feature presentation modules with Compose UI, so the compose-compiler
-            // plugin applied above needs compose-runtime on this module's own classpath too.
             implementation(libs.compose.runtime)
             api(projects.shared.core.uiUistate)
             implementation(projects.shared.core.network)
