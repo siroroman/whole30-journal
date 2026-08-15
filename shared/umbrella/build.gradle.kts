@@ -25,6 +25,7 @@ kotlin {
         target.binaries.framework {
             baseName = "SharedKit"
             isStatic = true
+            binaryOption("bundleId", "dev.whole30journal.SharedKit")
 
             // Only project modules can be exported (flattened into the framework's Swift
             // namespace) - third-party deps like Koin/coroutines stay linked-in but un-exported,

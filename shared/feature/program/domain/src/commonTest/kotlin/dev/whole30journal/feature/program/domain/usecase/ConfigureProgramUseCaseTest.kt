@@ -1,16 +1,19 @@
+@file:OptIn(ExperimentalTime::class)
+
 package dev.whole30journal.feature.program.domain.usecase
 
 import dev.whole30journal.feature.program.domain.model.Program
 import dev.whole30journal.feature.program.domain.repository.ProgramRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 class ConfigureProgramUseCaseTest {
 
