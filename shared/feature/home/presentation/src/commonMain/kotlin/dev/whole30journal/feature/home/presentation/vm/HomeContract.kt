@@ -7,7 +7,7 @@ import kotlinx.datetime.LocalDate
 
 object HomeContract {
 
-    enum class TrendMetric { Overall, Energy, Sleep, Cravings }
+    enum class TrendMetric { Overall, Energy, Mood, Sleep, Cravings }
 
     @Immutable
     data class DayCell(

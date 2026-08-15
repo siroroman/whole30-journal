@@ -38,6 +38,7 @@ import dev.whole30journal.core.designsystem.theme.scoreColor
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_cravings
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_energy
+import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_mood
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_overall
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_sleep
 import dev.whole30journal.feature.home.presentation.generated.resources.home_trends_title
@@ -130,6 +131,7 @@ private fun TrendMetricSelector(
 private fun trendMetricLabel(metric: HomeContract.TrendMetric): String = when (metric) {
     HomeContract.TrendMetric.Overall -> stringResource(Res.string.home_metric_overall)
     HomeContract.TrendMetric.Energy -> stringResource(Res.string.home_metric_energy)
+    HomeContract.TrendMetric.Mood -> stringResource(Res.string.home_metric_mood)
     HomeContract.TrendMetric.Sleep -> stringResource(Res.string.home_metric_sleep)
     HomeContract.TrendMetric.Cravings -> stringResource(Res.string.home_metric_cravings)
 }

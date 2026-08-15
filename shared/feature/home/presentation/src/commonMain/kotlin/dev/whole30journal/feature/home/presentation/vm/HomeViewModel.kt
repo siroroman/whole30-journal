@@ -162,6 +162,7 @@ private fun buildTrendSeries(
     return mapOf(
         HomeContract.TrendMetric.Overall to series { it.overall },
         HomeContract.TrendMetric.Energy to series { it.energy },
+        HomeContract.TrendMetric.Mood to series { it.mood },
         HomeContract.TrendMetric.Sleep to series { it.sleep },
         HomeContract.TrendMetric.Cravings to series { it.cravings },
     )
