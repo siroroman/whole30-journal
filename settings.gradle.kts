@@ -26,7 +26,6 @@ include(":androidApp")
 
 // Core
 include(":shared:core:ui-uistate")
-include(":shared:core:network")
 include(":shared:core:database")
 include(":shared:core:design-system")
 include(":shared:core:utils")

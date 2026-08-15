@@ -44,7 +44,6 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.compose.runtime)
             api(projects.shared.core.uiUistate)
-            implementation(projects.shared.core.network)
             implementation(projects.shared.core.database)
             api(projects.shared.feature.dayEntry.domain)
             implementation(projects.shared.feature.dayEntry.data)
