@@ -2,14 +2,17 @@ package dev.whole30journal.android
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-data object HomeRoute
+sealed interface AppRoute {
 
-@Serializable
-data object SettingsRoute
+    @Serializable
+    data object Home : AppRoute
 
-@Serializable
-data class DayDetailRoute(val dayNumber: Int)
+    @Serializable
+    data object Settings : AppRoute
 
-@Serializable
-data class DayEntryRoute(val dayNumber: Int)
+    @Serializable
+    data class DayDetail(val dayNumber: Int) : AppRoute
+
+    @Serializable
+    data class DayEntry(val dayNumber: Int) : AppRoute
+}
