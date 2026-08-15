@@ -42,6 +42,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.compose.runtime)
             api(projects.shared.core.uiUistate)
             implementation(projects.shared.core.network)
             implementation(projects.shared.core.database)

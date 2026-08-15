@@ -41,7 +41,7 @@ reference project, not a production multi-market app (see "Deliberate Simplifica
 ## Core Modules
 
 - `shared:core:ui-uistate` — the shared-VM foundation: MVI contract (`UiStateAware` /
-  `UiActionAware`), `expect/actual BaseViewModel`, `StateFlowViewModel`. See ARCHITECTURE.md.
+  `UiActionAware`), `StateFlowViewModel`. See ARCHITECTURE.md.
 - `shared:umbrella` — combines all shared feature modules into the `SharedKit` XCFramework for
   iOS; hosts `KoinIOS` (Koin bootstrap for iOS) and `appModules` (the one list of Koin modules both
   platforms start from — currently just `networkModule`, until a feature is scaffolded).
@@ -56,13 +56,14 @@ reference project, not a production multi-market app (see "Deliberate Simplifica
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full pattern with code. In short:
 - Each feature defines an MVI contract: `object <Feature>Contract { UiData, UiAction, UiEvent,
   OutputEvent }`.
-- `BaseViewModel` (`shared/core/ui-uistate`) is `expect/actual`: a real `androidx.lifecycle.ViewModel`
-  on Android, a plain Kotlin object owned by Swift on iOS. Both `actual`s turn a `@Composable
-  getState()` into a `StateFlow` via **Molecule**, which is what lets the exact same VM subclass
-  run unmodified on both platforms without a hand-rolled reducer.
-- Feature VMs extend `StateFlowViewModel` (a `MutableStateFlow`-backed convenience base) rather
-  than `BaseViewModel` directly — use its `updateUiData {}` / `updateIsLoading()` /
-  `updateUiEvents {}` / `emitOutputEvent()` helpers instead of touching the state flow.
+- `StateFlowViewModel` (`shared/core/ui-uistate`) is a plain class: a real
+  `androidx.lifecycle.ViewModel` on Android, the same class instantiated as a plain Kotlin object
+  owned by Swift on iOS — no expect/actual split needed, since `androidx.lifecycle.ViewModel` and
+  `viewModelScope` are ordinary KMP APIs on both platforms. It holds a `MutableStateFlow` directly
+  and exposes it as `state`, which is what lets the exact same VM subclass run unmodified on both
+  platforms.
+- Feature VMs extend `StateFlowViewModel` — use its `updateUiData {}` / `updateIsLoading()` /
+  `updateUiEvents {}` / `emitOutputEvent()` helpers instead of touching the state flow directly.
 - `UiEvent`s are transient and consumed once via `onUiEventConsumed` (e.g. a snackbar).
   `OutputEvent`s are one-shot side effects delivered over a `SharedFlow`, never replayed.
 
@@ -94,10 +95,9 @@ boilerplate script scaffolds the same shape (default locale only) for new featur
 
 ## Key Technologies
 
-Kotlin 2.4.0 (multiplatform) · Compose Multiplatform 1.11.1 (Material3 1.9.0) · Molecule 2.2.0
-(VM state engine) · Koin 4.2.2 (DI — shared + Android; iOS via `KoinIOS`/`KoinResolver`, no
-swift-dependencies) · SKIE 0.10.13 (Kotlin↔Swift interop) · kotlinx.coroutines 1.11.0 ·
-androidx.lifecycle 2.11.0 · AGP 9.3.1.
+Kotlin 2.4.0 (multiplatform) · Compose Multiplatform 1.11.1 (Material3 1.9.0) · Koin 4.2.2
+(DI — shared + Android; iOS via `KoinIOS`/`KoinResolver`, no swift-dependencies) · SKIE 0.10.13
+(Kotlin↔Swift interop) · kotlinx.coroutines 1.11.0 · androidx.lifecycle 2.11.0 · AGP 9.3.1.
 
 See [gradle/libs.versions.toml](gradle/libs.versions.toml) for the always up-to-date version
 catalog.
@@ -155,5 +155,4 @@ explicitly asked:
   small, deliberately-readable reference project, not a place to demonstrate other approaches.
 - Commit messages: short, imperative mood, no ticket prefix (e.g. `Rename BaseScopedViewModel to
   BaseViewModel`).
-- Verify against actual file contents before assuming architecture — the shared-VM/Molecule
-  mechanism in particular is easy to get subtly wrong.
+- Verify against actual file contents before assuming architecture.

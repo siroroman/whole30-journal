@@ -15,7 +15,7 @@ apply it.
 
 Read `CLAUDE.md`, which points to `ARCHITECTURE.md` and `AGENTS.md` — read both in full. They are
 the authoritative source for this project's layering (`domain → data → presentation`), the shared
-`BaseViewModel`/Molecule pattern, naming conventions, and the "Deliberate Simplifications" this
+`StateFlowViewModel` pattern, naming conventions, and the "Deliberate Simplifications" this
 project intentionally omits (no automated tests historically, no Ktor, no market flavors, etc.).
 Judge the diff against what these documents actually say, not against generic best practice —
 this is a small reference project, not a production app.
@@ -38,8 +38,8 @@ load skills for languages the diff doesn't touch:
   change touches `async`/`await`, actors, `@MainActor`, or Swift 6 concurrency checking.
 
 Use these skills to check idiomatic usage (state hoisting, `@Composable` invalidation,
-`ForEach`/`LazyColumn` identity, Molecule `getState()` usage, `@Observable` data flow, Swift
-concurrency correctness) — not just style.
+`ForEach`/`LazyColumn` identity, `@Observable` data flow, Swift concurrency correctness) — not just
+style.
 
 ## What to check
 
@@ -47,7 +47,7 @@ concurrency correctness) — not just style.
    (domain/data/presentation), the shared-ViewModel pattern (`StateFlowViewModel` helpers vs.
    touching the state flow directly), localization pattern (`stringResource` vs. suspend
    `getString`), and anything else called out in `ARCHITECTURE.md`/`AGENTS.md`.
-2. **Correctness** — logic errors, state races, incorrect Molecule/StateFlow usage (see the
+2. **Correctness** — logic errors, state races, incorrect StateFlow usage (see the
    stale-read pitfall of reading `currentUiData` right after this call's own `updateUiData`),
    lifecycle/ownership bugs (e.g. teardown triggered from the wrong layer), null/optional
    handling, and Kotlin/Swift interop hazards (SKIE-bridged types, `onEnum(of:)` exhaustiveness).
