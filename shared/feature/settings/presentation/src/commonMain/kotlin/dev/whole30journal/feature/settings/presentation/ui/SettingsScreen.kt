@@ -238,6 +238,7 @@ private fun SettingsContent(
 
     if (uiData.isDeleteAllDataDialogVisible) {
         DeleteAllDataDialog(
+            isDeleting = uiData.isDeleting,
             onConfirm = { onUiAction(SettingsContract.UiAction.OnDeleteAllDataConfirmClick) },
             onDismiss = { onUiAction(SettingsContract.UiAction.OnDeleteAllDataDismiss) },
         )
@@ -438,7 +439,7 @@ private fun StartDateDialog(startDate: LocalDate?, onDateSelect: (LocalDate) -> 
 }
 
 @Composable
-private fun DeleteAllDataDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+private fun DeleteAllDataDialog(isDeleting: Boolean, onConfirm: () -> Unit, onDismiss: () -> Unit) {
     val colors = DSTheme.colors
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(modifier = Modifier.fillMaxSize().padding(DSSpacing.space10), contentAlignment = Alignment.Center) {
@@ -464,7 +465,12 @@ private fun DeleteAllDataDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
                     color = colors.textSecondary,
                     textAlign = TextAlign.Center,
                 )
-                DSButton(onClick = onConfirm, variant = DSButtonVariant.Danger, fullWidth = true) {
+                DSButton(
+                    onClick = onConfirm,
+                    variant = DSButtonVariant.Danger,
+                    fullWidth = true,
+                    enabled = !isDeleting,
+                ) {
                     Text(stringResource(Res.string.settings_delete_all_data_confirm_button))
                 }
                 Text(

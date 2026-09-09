@@ -7,6 +7,7 @@ import dev.whole30journal.core.utils.MealPhotoStorage
 import dev.whole30journal.feature.program.domain.model.Program
 import dev.whole30journal.feature.program.domain.repository.ProgramRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
@@ -73,7 +74,7 @@ internal class ProgramRepositoryImpl(
         }
 
     override suspend fun deleteAllData(): Result<Unit> = runCatchingCancellable {
-        withContext(dbDispatcher) {
+        withContext(dbDispatcher + NonCancellable) {
             database.programQueries.transaction {
                 database.achievementQueries.deleteAll()
                 database.mealQueries.deleteAll()
