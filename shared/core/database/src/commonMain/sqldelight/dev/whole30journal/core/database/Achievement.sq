@@ -23,3 +23,6 @@ WHERE dayNumber = ?;
 deleteAfterDayNumber:
 DELETE FROM AchievementEntity
 WHERE dayNumber > ?;
+
+deleteAll:
+DELETE FROM AchievementEntity;

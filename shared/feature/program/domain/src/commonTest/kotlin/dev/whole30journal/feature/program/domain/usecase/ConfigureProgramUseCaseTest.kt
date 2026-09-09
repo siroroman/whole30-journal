@@ -71,6 +71,8 @@ private class RecordingProgramRepository(
         lastDurationDays = durationDays
         return resultToReturn
     }
+
+    override suspend fun deleteAllData(): Result<Unit> = error("not exercised by ConfigureProgramUseCaseTest")
 }
 
 private class FixedClock(today: LocalDate) : Clock {

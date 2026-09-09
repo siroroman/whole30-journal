@@ -18,6 +18,8 @@ object SettingsContract {
         val endDateLabel: String = "",
         val isDatePickerVisible: Boolean = false,
         val isSaving: Boolean = false,
+        val isDeleteAllDataDialogVisible: Boolean = false,
+        val isDeleting: Boolean = false,
     ) : UiStateAware.UiData
 
     sealed interface UiAction : UiActionAware.UiAction {
@@ -27,14 +29,19 @@ object SettingsContract {
         data class OnDurationSelected(val durationDays: Int) : UiAction
         data object OnConfirmClick : UiAction
         data object OnCancelClick : UiAction
+        data object OnDeleteAllDataClick : UiAction
+        data object OnDeleteAllDataConfirmClick : UiAction
+        data object OnDeleteAllDataDismiss : UiAction
     }
 
     sealed interface UiEvent : UiStateAware.UiEvent {
         data class ShowSaveError(val message: String) : UiEvent
+        data class ShowDeleteError(val message: String) : UiEvent
     }
 
     sealed interface OutputEvent : UiStateAware.OutputEvent {
         data object Saved : OutputEvent
         data object Cancelled : OutputEvent
+        data object DataDeleted : OutputEvent
     }
 }

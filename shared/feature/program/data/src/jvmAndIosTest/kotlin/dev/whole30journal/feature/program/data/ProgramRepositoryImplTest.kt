@@ -4,6 +4,7 @@ package dev.whole30journal.feature.program.data
 
 import app.cash.sqldelight.db.SqlDriver
 import dev.whole30journal.core.database.Whole30Database
+import dev.whole30journal.core.utils.MealPhotoStorage
 import dev.whole30journal.feature.program.domain.model.Program
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
@@ -277,6 +278,31 @@ class ProgramRepositoryImplTest {
     }
 
     @Test
+    fun `deleteAllData clears the program and every child table`() = runTest {
+        val repository = repository(today = LocalDate(2026, 8, 4))
+        repository.configureProgram(LocalDate(2026, 8, 4), durationDays = 5L).getOrThrow()
+        database.metricQueries.upsert(dayNumber = 1L, title = "Energy", iconName = "bolt", value_ = 3L, maxValue = 5L, note = "")
+        database.mealQueries.upsert(
+            id = "meal-1",
+            dayNumber = 1L,
+            label = "Lunch",
+            description = "Salad",
+            photoToken = null,
+            lovedIt = 0L,
+            sortOrder = 0L,
+        )
+        database.achievementQueries.upsert(id = "achievement-1", dayNumber = 1L, text = "Felt great", sortOrder = 0L)
+
+        repository.deleteAllData().getOrThrow()
+
+        assertNull(repository.getProgram().getOrThrow())
+        assertNull(database.dayEntryQueries.selectByDayNumber(1L).executeAsOneOrNull())
+        assertTrue(database.metricQueries.selectByDayNumber(1L).executeAsList().isEmpty())
+        assertTrue(database.mealQueries.selectByDayNumber(1L).executeAsList().isEmpty())
+        assertTrue(database.achievementQueries.selectByDayNumber(1L).executeAsList().isEmpty())
+    }
+
+    @Test
     fun `observeProgram pushes a new emission when configureProgram changes the row`() = runTest {
         val repository = repository(today = LocalDate(2026, 8, 4))
         val emissions = Channel<Result<Program?>>(Channel.UNLIMITED)
@@ -291,7 +317,7 @@ class ProgramRepositoryImplTest {
         job.cancel()
     }
 
-    private fun repository(today: LocalDate) = ProgramRepositoryImpl(database, FixedClock(today))
+    private fun repository(today: LocalDate) = ProgramRepositoryImpl(database, MealPhotoStorage(), FixedClock(today))
 }
 
 private class FixedClock(today: LocalDate) : Clock {

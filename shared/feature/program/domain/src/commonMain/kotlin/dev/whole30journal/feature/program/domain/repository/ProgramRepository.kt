@@ -9,4 +9,5 @@ interface ProgramRepository {
     fun observeProgram(): Flow<Result<Program?>>
 
     suspend fun configureProgram(startDate: LocalDate, durationDays: Long): Result<Program>
+    suspend fun deleteAllData(): Result<Unit>
 }

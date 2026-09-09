@@ -43,7 +43,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import dev.whole30journal.core.designsystem.components.DSButton
+import dev.whole30journal.core.designsystem.components.DSButtonVariant
 import dev.whole30journal.core.designsystem.components.DSCard
 import dev.whole30journal.core.designsystem.theme.DSShapes
 import dev.whole30journal.core.designsystem.theme.DSSpacing
@@ -54,10 +57,15 @@ import dev.whole30journal.feature.settings.presentation.generated.resources.sett
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_cancel_button
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_date_picker_done
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_decrease_duration_content_description
+import dev.whole30journal.feature.settings.presentation.generated.resources.settings_delete_all_data_button
+import dev.whole30journal.feature.settings.presentation.generated.resources.settings_delete_all_data_confirm_button
+import dev.whole30journal.feature.settings.presentation.generated.resources.settings_delete_all_data_dialog_message
+import dev.whole30journal.feature.settings.presentation.generated.resources.settings_delete_all_data_dialog_title
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_duration_subtitle
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_duration_title
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_edit_title
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_increase_duration_content_description
+import dev.whole30journal.feature.settings.presentation.generated.resources.settings_section_danger_zone
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_section_program
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_setup_subtitle
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_setup_title
@@ -125,6 +133,12 @@ private fun HandleUiEvents(
     events.forEach { event ->
         when (event) {
             is SettingsContract.UiEvent.ShowSaveError -> {
+                LaunchedEffect(event) {
+                    snackbarHostState.showSnackbar(event.message)
+                    onConsume(event)
+                }
+            }
+            is SettingsContract.UiEvent.ShowDeleteError -> {
                 LaunchedEffect(event) {
                     snackbarHostState.showSnackbar(event.message)
                     onConsume(event)
@@ -198,6 +212,20 @@ private fun SettingsContent(
                 onDurationChange = { onUiAction(SettingsContract.UiAction.OnDurationSelected(it)) },
             )
         }
+
+        if (!isSetupMode) {
+            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+                SectionHeader(text = stringResource(Res.string.settings_section_danger_zone))
+                DSButton(
+                    onClick = { onUiAction(SettingsContract.UiAction.OnDeleteAllDataClick) },
+                    variant = DSButtonVariant.Danger,
+                    fullWidth = true,
+                    enabled = !uiData.isDeleting,
+                ) {
+                    Text(stringResource(Res.string.settings_delete_all_data_button))
+                }
+            }
+        }
     }
 
     if (uiData.isDatePickerVisible) {
@@ -205,6 +233,13 @@ private fun SettingsContent(
             startDate = uiData.startDate,
             onDateSelect = { onUiAction(SettingsContract.UiAction.OnStartDateSelected(it)) },
             onDismiss = { onUiAction(SettingsContract.UiAction.OnDatePickerDismiss) },
+        )
+    }
+
+    if (uiData.isDeleteAllDataDialogVisible) {
+        DeleteAllDataDialog(
+            onConfirm = { onUiAction(SettingsContract.UiAction.OnDeleteAllDataConfirmClick) },
+            onDismiss = { onUiAction(SettingsContract.UiAction.OnDeleteAllDataDismiss) },
         )
     }
 }
@@ -399,6 +434,52 @@ private fun StartDateDialog(startDate: LocalDate?, onDateSelect: (LocalDate) -> 
         colors = datePickerColors,
     ) {
         DatePicker(state = datePickerState, colors = datePickerColors)
+    }
+}
+
+@Composable
+private fun DeleteAllDataDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    val colors = DSTheme.colors
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Box(modifier = Modifier.fillMaxSize().padding(DSSpacing.space10), contentAlignment = Alignment.Center) {
+            Column(
+                modifier = Modifier
+                    .widthIn(max = 280.dp)
+                    .fillMaxWidth()
+                    .clip(DSShapes.xxl)
+                    .background(colors.surface)
+                    .padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space10),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space6),
+            ) {
+                Text(
+                    text = stringResource(Res.string.settings_delete_all_data_dialog_title),
+                    style = DSTheme.typography.textXl,
+                    color = colors.text,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = stringResource(Res.string.settings_delete_all_data_dialog_message),
+                    style = DSTheme.typography.textBase,
+                    color = colors.textSecondary,
+                    textAlign = TextAlign.Center,
+                )
+                DSButton(onClick = onConfirm, variant = DSButtonVariant.Danger, fullWidth = true) {
+                    Text(stringResource(Res.string.settings_delete_all_data_confirm_button))
+                }
+                Text(
+                    text = stringResource(Res.string.settings_cancel_button),
+                    style = DSTheme.typography.textMd,
+                    color = colors.textSecondary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(DSShapes.md)
+                        .clickable(onClick = onDismiss)
+                        .padding(DSSpacing.space6),
+                )
+            }
+        }
     }
 }
 
