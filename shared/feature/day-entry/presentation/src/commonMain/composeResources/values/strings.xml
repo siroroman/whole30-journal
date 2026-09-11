@@ -36,6 +36,7 @@
     <string name="day_entry_meal_description_placeholder">What did you eat?</string>
     <string name="day_entry_meal_add_photo_content_description">Add photo</string>
     <string name="day_entry_meal_photo_content_description">Meal photo</string>
+    <string name="day_entry_meal_loved_content_description">Loved it</string>
     <string name="day_entry_add_meal_button">Add meal</string>
     <string name="day_entry_delete_meal_content_description">Delete meal</string>
     <string name="day_entry_delete_meal_dialog_title">Remove this meal?</string>

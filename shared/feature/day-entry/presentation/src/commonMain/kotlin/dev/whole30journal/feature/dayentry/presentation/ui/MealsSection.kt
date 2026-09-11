@@ -53,6 +53,7 @@ import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_add_photo_content_description
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_description_placeholder
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_label_numbered
+import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_loved_content_description
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_photo_content_description
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_reorder_content_description
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meals_title
@@ -64,6 +65,7 @@ import dev.whole30journal.feature.dayentry.presentation.photo.rememberMealPhotoR
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.CameraIcon
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.CloseIcon
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.DragHandleIcon
+import dev.whole30journal.feature.dayentry.presentation.ui.icons.HeartIcon
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.LibraryIcon
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.PlusIcon
 import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryContract
@@ -78,6 +80,7 @@ fun MealsSection(
     pendingPhotoMealId: String?,
     pendingDeleteMealId: String?,
     onDescriptionChange: (id: String, description: String) -> Unit,
+    onLovedToggle: (id: String) -> Unit,
     onAddPhotoClick: (id: String) -> Unit,
     onPhotoPick: (id: String, token: String) -> Unit,
     onPhotoSourceDismiss: () -> Unit,
@@ -112,6 +115,7 @@ fun MealsSection(
                     number = index + 1,
                     resolvePhotoToken = resolvePhotoToken,
                     onDescriptionChange = onDescriptionChange,
+                    onLovedToggle = onLovedToggle,
                     onAddPhotoClick = onAddPhotoClick,
                     onDeleteClick = onDeleteMealClick,
                     onDragStart = {
@@ -248,6 +252,7 @@ private fun MealRow(
     number: Int,
     resolvePhotoToken: (String) -> String,
     onDescriptionChange: (id: String, description: String) -> Unit,
+    onLovedToggle: (id: String) -> Unit,
     onAddPhotoClick: (id: String) -> Unit,
     onDeleteClick: (id: String) -> Unit,
     onDragStart: () -> Unit,
@@ -299,6 +304,17 @@ private fun MealRow(
                 )
             }
             Box(
+                modifier = Modifier.clickable { onLovedToggle(meal.id) },
+                contentAlignment = Alignment.Center,
+            ) {
+                HeartIcon(
+                    filled = meal.lovedIt,
+                    tint = if (meal.lovedIt) colors.scoreLow else colors.textTertiary,
+                    modifier = Modifier.size(19.dp),
+                    contentDescription = stringResource(Res.string.day_entry_meal_loved_content_description),
+                )
+            }
+            Box(
                 modifier = Modifier.clickable { onDeleteClick(meal.id) },
                 contentAlignment = Alignment.Center,
             ) {
@@ -345,6 +361,7 @@ private fun MealsSectionPreviewLight() {
                 pendingPhotoMealId = null,
                 pendingDeleteMealId = null,
                 onDescriptionChange = { _, _ -> },
+                onLovedToggle = {},
                 onAddPhotoClick = {},
                 onPhotoPick = { _, _ -> },
                 onPhotoSourceDismiss = {},
@@ -369,6 +386,7 @@ private fun MealsSectionPreviewDark() {
                 pendingPhotoMealId = null,
                 pendingDeleteMealId = null,
                 onDescriptionChange = { _, _ -> },
+                onLovedToggle = {},
                 onAddPhotoClick = {},
                 onPhotoPick = { _, _ -> },
                 onPhotoSourceDismiss = {},
