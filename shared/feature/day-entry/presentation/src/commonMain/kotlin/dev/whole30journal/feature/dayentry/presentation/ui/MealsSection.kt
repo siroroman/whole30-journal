@@ -290,58 +290,66 @@ private fun MealRow(
                 }
             }
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space2)) {
-                Text(
-                    text = stringResource(Res.string.day_entry_meal_label_numbered, number).uppercase(),
-                    style = DSTheme.typography.text2xs,
-                    color = colors.textTertiary,
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(Res.string.day_entry_meal_label_numbered, number).uppercase(),
+                        style = DSTheme.typography.text2xs,
+                        color = colors.textTertiary,
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space4), verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier.clickable { onLovedToggle(meal.id) },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            HeartIcon(
+                                filled = meal.lovedIt,
+                                tint = if (meal.lovedIt) colors.scoreLow else colors.textTertiary,
+                                modifier = Modifier.size(19.dp),
+                                contentDescription = stringResource(Res.string.day_entry_meal_loved_content_description),
+                            )
+                        }
+                        Box(
+                            modifier = Modifier.clickable { onDeleteClick(meal.id) },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CloseIcon(
+                                tint = colors.textTertiary,
+                                modifier = Modifier.size(16.dp),
+                                contentDescription = stringResource(Res.string.day_entry_delete_meal_content_description),
+                            )
+                        }
+                        Box(
+                            modifier = Modifier.pointerInput(Unit) {
+                                detectDragGestures(
+                                    onDragStart = { onDragStart() },
+                                    onDrag = { change, dragAmount ->
+                                        change.consume()
+                                        onDrag(dragAmount.y)
+                                    },
+                                    onDragEnd = { onDragEnd() },
+                                    onDragCancel = { onDragEnd() },
+                                )
+                            },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            DragHandleIcon(
+                                tint = colors.textTertiary,
+                                modifier = Modifier.size(18.dp),
+                                contentDescription = stringResource(Res.string.day_entry_meal_reorder_content_description),
+                            )
+                        }
+                    }
+                }
                 DSTextField(
                     value = meal.description,
                     onValueChange = { onDescriptionChange(meal.id, it) },
                     placeholder = stringResource(Res.string.day_entry_meal_description_placeholder),
                     singleLine = false,
                     minLines = 2,
-                )
-            }
-            Box(
-                modifier = Modifier.clickable { onLovedToggle(meal.id) },
-                contentAlignment = Alignment.Center,
-            ) {
-                HeartIcon(
-                    filled = meal.lovedIt,
-                    tint = if (meal.lovedIt) colors.scoreLow else colors.textTertiary,
-                    modifier = Modifier.size(19.dp),
-                    contentDescription = stringResource(Res.string.day_entry_meal_loved_content_description),
-                )
-            }
-            Box(
-                modifier = Modifier.clickable { onDeleteClick(meal.id) },
-                contentAlignment = Alignment.Center,
-            ) {
-                CloseIcon(
-                    tint = colors.textTertiary,
-                    modifier = Modifier.size(16.dp),
-                    contentDescription = stringResource(Res.string.day_entry_delete_meal_content_description),
-                )
-            }
-            Box(
-                modifier = Modifier.pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = { onDragStart() },
-                        onDrag = { change, dragAmount ->
-                            change.consume()
-                            onDrag(dragAmount.y)
-                        },
-                        onDragEnd = { onDragEnd() },
-                        onDragCancel = { onDragEnd() },
-                    )
-                },
-                contentAlignment = Alignment.Center,
-            ) {
-                DragHandleIcon(
-                    tint = colors.textTertiary,
-                    modifier = Modifier.size(18.dp),
-                    contentDescription = stringResource(Res.string.day_entry_meal_reorder_content_description),
                 )
             }
         }
