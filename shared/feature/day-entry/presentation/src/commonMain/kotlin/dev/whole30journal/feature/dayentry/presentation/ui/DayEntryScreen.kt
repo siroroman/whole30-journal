@@ -178,19 +178,27 @@ private fun DayEntryContent(
 
         AchievementsSection(
             achievements = uiData.achievements,
+            pendingDeleteAchievementId = uiData.pendingDeleteAchievementId,
             onTextChange = { id, text -> onUiAction(DayEntryContract.UiAction.OnAchievementTextChange(id, text)) },
             onAddClick = { onUiAction(DayEntryContract.UiAction.OnAddAchievementClick) },
+            onDeleteAchievementClick = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementClick(it)) },
+            onDeleteAchievementConfirm = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementConfirm) },
+            onDeleteAchievementDismiss = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementDismiss) },
         )
 
         MealsSection(
             meals = uiData.meals,
             pendingPhotoMealId = uiData.pendingPhotoMealId,
+            pendingDeleteMealId = uiData.pendingDeleteMealId,
             onDescriptionChange = { id, description -> onUiAction(DayEntryContract.UiAction.OnMealDescriptionChange(id, description)) },
-            onLovedToggle = { onUiAction(DayEntryContract.UiAction.OnMealLovedToggle(it)) },
             onAddPhotoClick = { onUiAction(DayEntryContract.UiAction.OnAddMealPhotoClick(it)) },
             onPhotoPick = { id, token -> onUiAction(DayEntryContract.UiAction.OnMealPhotoPick(id, token)) },
             onPhotoSourceDismiss = { onUiAction(DayEntryContract.UiAction.OnPhotoSourceDismiss) },
             onAddMealClick = { onUiAction(DayEntryContract.UiAction.OnAddMealClick) },
+            onDeleteMealClick = { onUiAction(DayEntryContract.UiAction.OnDeleteMealClick(it)) },
+            onDeleteMealConfirm = { onUiAction(DayEntryContract.UiAction.OnDeleteMealConfirm) },
+            onDeleteMealDismiss = { onUiAction(DayEntryContract.UiAction.OnDeleteMealDismiss) },
+            onReorderMeal = { from, to -> onUiAction(DayEntryContract.UiAction.OnMealReorder(from, to)) },
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {

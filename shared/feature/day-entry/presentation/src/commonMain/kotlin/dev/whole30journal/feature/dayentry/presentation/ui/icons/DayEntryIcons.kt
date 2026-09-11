@@ -22,6 +22,11 @@ private object DayEntryIconPaths {
     const val LIBRARY_FRAME = "M6,3 H18 A3,3 0 0 1 21,6 V18 A3,3 0 0 1 18,21 H6 A3,3 0 0 1 3,18 V6 A3,3 0 0 1 6,3 Z"
     const val LIBRARY_DOT = "M7,8.5 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0"
     const val LIBRARY_MOUNTAIN = "m21 15-5-5L5 21"
+    const val CLOSE_LINE_1 = "M18 6 6 18"
+    const val CLOSE_LINE_2 = "M6 6l12 12"
+    const val DRAG_HANDLE_LINE_1 = "M4 8h16"
+    const val DRAG_HANDLE_LINE_2 = "M4 12h16"
+    const val DRAG_HANDLE_LINE_3 = "M4 16h16"
 }
 
 private fun outlineVector(name: String, vararg pathData: String, strokeLineWidth: Float = 2f): ImageVector =
@@ -74,6 +79,17 @@ private object DayEntryIcons {
     val Library: ImageVector by lazy {
         outlineVector("Library", DayEntryIconPaths.LIBRARY_FRAME, DayEntryIconPaths.LIBRARY_DOT, DayEntryIconPaths.LIBRARY_MOUNTAIN)
     }
+    val Close: ImageVector by lazy {
+        outlineVector("Close", DayEntryIconPaths.CLOSE_LINE_1, DayEntryIconPaths.CLOSE_LINE_2, strokeLineWidth = 2.2f)
+    }
+    val DragHandle: ImageVector by lazy {
+        outlineVector(
+            "DragHandle",
+            DayEntryIconPaths.DRAG_HANDLE_LINE_1,
+            DayEntryIconPaths.DRAG_HANDLE_LINE_2,
+            DayEntryIconPaths.DRAG_HANDLE_LINE_3,
+        )
+    }
 }
 
 @Composable
@@ -99,4 +115,14 @@ fun CameraIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cu
 @Composable
 fun LibraryIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current, contentDescription: String? = null) {
     Icon(DayEntryIcons.Library, contentDescription, modifier, tint)
+}
+
+@Composable
+fun CloseIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current, contentDescription: String? = null) {
+    Icon(DayEntryIcons.Close, contentDescription, modifier, tint)
+}
+
+@Composable
+fun DragHandleIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current, contentDescription: String? = null) {
+    Icon(DayEntryIcons.DragHandle, contentDescription, modifier, tint)
 }

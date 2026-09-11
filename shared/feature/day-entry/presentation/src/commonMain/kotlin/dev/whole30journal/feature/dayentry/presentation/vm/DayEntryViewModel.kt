@@ -67,6 +67,18 @@ class DayEntryViewModel(
                 updateUiData { withMealPhoto(uiAction.mealId, uiAction.token) }
             DayEntryContract.UiAction.OnPhotoSourceDismiss ->
                 updateUiData { copy(pendingPhotoMealId = null) }
+            is DayEntryContract.UiAction.OnDeleteMealClick ->
+                updateUiData { copy(pendingDeleteMealId = uiAction.id) }
+            DayEntryContract.UiAction.OnDeleteMealConfirm -> confirmDeleteMeal()
+            DayEntryContract.UiAction.OnDeleteMealDismiss ->
+                updateUiData { copy(pendingDeleteMealId = null) }
+            is DayEntryContract.UiAction.OnMealReorder ->
+                updateUiData { withMealMoved(uiAction.fromIndex, uiAction.toIndex) }
+            is DayEntryContract.UiAction.OnDeleteAchievementClick ->
+                updateUiData { copy(pendingDeleteAchievementId = uiAction.id) }
+            DayEntryContract.UiAction.OnDeleteAchievementConfirm -> confirmDeleteAchievement()
+            DayEntryContract.UiAction.OnDeleteAchievementDismiss ->
+                updateUiData { copy(pendingDeleteAchievementId = null) }
             is DayEntryContract.UiAction.OnNotesChange ->
                 updateUiData { copy(notes = uiAction.notes) }
             DayEntryContract.UiAction.OnCompleteToggle ->
@@ -154,6 +166,16 @@ class DayEntryViewModel(
                     DayEntryContract.AchievementEntry(id = "day-$dayNumber-achievement-added-${achievements.size}", text = ""),
             )
         }
+    }
+
+    private fun confirmDeleteMeal() {
+        val id = currentUiData.pendingDeleteMealId ?: return
+        updateUiData { copy(meals = meals.filterNot { it.id == id }, pendingDeleteMealId = null) }
+    }
+
+    private fun confirmDeleteAchievement() {
+        val id = currentUiData.pendingDeleteAchievementId ?: return
+        updateUiData { copy(achievements = achievements.filterNot { it.id == id }, pendingDeleteAchievementId = null) }
     }
 
     private suspend fun defaultUiData(
@@ -265,3 +287,6 @@ private fun DayEntryContract.UiData.withMealLovedToggled(id: String): DayEntryCo
 
 private fun DayEntryContract.UiData.withMealPhoto(id: String, token: String): DayEntryContract.UiData =
     copy(meals = meals.map { if (it.id == id) it.copy(photoToken = token) else it }, pendingPhotoMealId = null)
+
+private fun DayEntryContract.UiData.withMealMoved(fromIndex: Int, toIndex: Int): DayEntryContract.UiData =
+    copy(meals = meals.toMutableList().apply { add(toIndex, removeAt(fromIndex)) })
