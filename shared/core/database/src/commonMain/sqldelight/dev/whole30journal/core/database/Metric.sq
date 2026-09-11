@@ -26,3 +26,6 @@ WHERE dayNumber = ?;
 deleteAfterDayNumber:
 DELETE FROM MetricEntity
 WHERE dayNumber > ?;
+
+deleteAll:
+DELETE FROM MetricEntity;

@@ -26,3 +26,6 @@ VALUES (?, ?, '', 0);
 deleteAfterDayNumber:
 DELETE FROM DayEntryEntity
 WHERE dayNumber > ?;
+
+deleteAll:
+DELETE FROM DayEntryEntity;

@@ -3,9 +3,11 @@ package dev.whole30journal.feature.program.data
 import app.cash.sqldelight.coroutines.asFlow
 import dev.whole30journal.core.database.Whole30Database
 import dev.whole30journal.core.database.runCatchingCancellable
+import dev.whole30journal.core.utils.MealPhotoStorage
 import dev.whole30journal.feature.program.domain.model.Program
 import dev.whole30journal.feature.program.domain.repository.ProgramRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
@@ -26,6 +28,7 @@ import dev.whole30journal.core.database.databaseDispatcher as dbDispatcher
 
 internal class ProgramRepositoryImpl(
     private val database: Whole30Database,
+    private val mealPhotoStorage: MealPhotoStorage,
     @OptIn(ExperimentalTime::class)
     private val clock: Clock = Clock.System,
 ) : ProgramRepository {
@@ -69,6 +72,19 @@ internal class ProgramRepositoryImpl(
             }
             buildProgram(startDate, durationDays, today = clock.todayIn(TimeZone.currentSystemDefault()))
         }
+
+    override suspend fun deleteAllData(): Result<Unit> = runCatchingCancellable {
+        withContext(dbDispatcher + NonCancellable) {
+            database.programQueries.transaction {
+                database.achievementQueries.deleteAll()
+                database.mealQueries.deleteAll()
+                database.metricQueries.deleteAll()
+                database.dayEntryQueries.deleteAll()
+                database.programQueries.deleteAll()
+            }
+            mealPhotoStorage.deleteAll()
+        }
+    }
 
     private fun loadProgram(): Program? {
         val entity = database.programQueries.select().executeAsOneOrNull() ?: return null

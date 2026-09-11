@@ -54,6 +54,7 @@ dependencies {
     implementation(projects.shared.umbrella)
     // Needed directly (not re-exported by umbrella) to wire androidDatabaseModule into startKoin{}
     implementation(projects.shared.core.database)
+    implementation(projects.shared.core.utils)
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)

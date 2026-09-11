@@ -25,7 +25,10 @@ fun SettingsRoute(onDone: () -> Unit, modifier: Modifier = Modifier) {
         LaunchedEffect(viewModel) {
             viewModel.outputEvents.collect { event ->
                 when (event) {
-                    SettingsContract.OutputEvent.Saved, SettingsContract.OutputEvent.Cancelled -> onDone()
+                    SettingsContract.OutputEvent.Saved,
+                    SettingsContract.OutputEvent.Cancelled,
+                    SettingsContract.OutputEvent.DataDeleted,
+                    -> onDone()
                 }
             }
         }

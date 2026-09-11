@@ -45,6 +45,7 @@ kotlin {
             implementation(libs.compose.runtime)
             api(projects.shared.core.uiUistate)
             implementation(projects.shared.core.database)
+            implementation(projects.shared.core.utils)
             api(projects.shared.feature.dayEntry.domain)
             implementation(projects.shared.feature.dayEntry.data)
             api(projects.shared.feature.program.domain)

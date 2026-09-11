@@ -5,6 +5,7 @@
     <string name="settings_edit_title">Nastavení</string>
 
     <string name="settings_section_program">PROGRAM</string>
+    <string name="settings_section_danger_zone">NEBEZPEČNÁ ZÓNA</string>
 
     <string name="settings_start_day_title">Den zahájení</string>
     <string name="settings_duration_title">Délka programu</string>
@@ -14,6 +15,12 @@
     <string name="settings_cancel_button">Zrušit</string>
     <string name="settings_start_button">Začít Whole30</string>
     <string name="settings_save_error">Nastavení se nepodařilo uložit. Zkuste to znovu.</string>
+
+    <string name="settings_delete_all_data_button">Smazat všechna data</string>
+    <string name="settings_delete_all_data_dialog_title">Smazat všechna data?</string>
+    <string name="settings_delete_all_data_dialog_message">Tímto trvale smažete váš program, všechny dny, jídla, fotky i úspěchy. Tuto akci nelze vrátit zpět.</string>
+    <string name="settings_delete_all_data_confirm_button">Smazat vše</string>
+    <string name="settings_delete_error">Data se nepodařilo smazat. Zkuste to znovu.</string>
 
     <string name="settings_back_content_description">Zpět</string>
     <string name="settings_decrease_duration_content_description">Zkrátit délku programu</string>

@@ -5,5 +5,5 @@ import dev.whole30journal.feature.program.domain.repository.ProgramRepository
 import org.koin.dsl.module
 
 val programDataModule = module {
-    single<ProgramRepository> { ProgramRepositoryImpl(get()) }
+    single<ProgramRepository> { ProgramRepositoryImpl(get(), get()) }
 }

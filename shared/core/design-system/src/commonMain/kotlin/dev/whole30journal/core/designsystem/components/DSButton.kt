@@ -25,7 +25,7 @@ import dev.whole30journal.core.designsystem.theme.DSShapes
 import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 
-enum class DSButtonVariant { Primary, Secondary, Ghost }
+enum class DSButtonVariant { Primary, Secondary, Ghost, Danger }
 enum class DSButtonSize { Small, Medium }
 
 private const val DISABLED_ALPHA = 0.45f
@@ -97,6 +97,20 @@ fun DSButton(
             colors = ButtonDefaults.textButtonColors(
                 contentColor = colors.accent,
                 disabledContentColor = colors.accent.copy(alpha = DISABLED_ALPHA),
+            ),
+            content = label,
+        )
+        DSButtonVariant.Danger -> Button(
+            onClick = onClick,
+            modifier = buttonModifier,
+            enabled = enabled,
+            shape = DSShapes.lg,
+            contentPadding = contentPadding,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.danger,
+                contentColor = colors.dangerOn,
+                disabledContainerColor = colors.danger.copy(alpha = DISABLED_ALPHA),
+                disabledContentColor = colors.dangerOn.copy(alpha = DISABLED_ALPHA),
             ),
             content = label,
         )

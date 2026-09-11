@@ -26,3 +26,6 @@ WHERE dayNumber = ?;
 deleteAfterDayNumber:
 DELETE FROM MealEntity
 WHERE dayNumber > ?;
+
+deleteAll:
+DELETE FROM MealEntity;

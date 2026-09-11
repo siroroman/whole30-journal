@@ -8,8 +8,10 @@ import dev.whole30journal.core.uistate.vm.StateFlowViewModel
 import dev.whole30journal.core.utils.DateFormatter
 import dev.whole30journal.core.utils.dateForDay
 import dev.whole30journal.feature.program.domain.usecase.ConfigureProgramUseCase
+import dev.whole30journal.feature.program.domain.usecase.DeleteAllDataUseCase
 import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
 import dev.whole30journal.feature.settings.presentation.generated.resources.Res
+import dev.whole30journal.feature.settings.presentation.generated.resources.settings_delete_error
 import dev.whole30journal.feature.settings.presentation.generated.resources.settings_save_error
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -22,6 +24,7 @@ import kotlin.time.ExperimentalTime
 class SettingsViewModel(
     private val getProgram: GetProgramUseCase,
     private val configureProgram: ConfigureProgramUseCase,
+    private val deleteAllData: DeleteAllDataUseCase,
     private val dateFormatter: DateFormatter,
     private val clock: Clock = Clock.System,
 ) : StateFlowViewModel<
@@ -45,6 +48,9 @@ class SettingsViewModel(
             is SettingsContract.UiAction.OnDurationSelected -> selectDuration(uiAction.durationDays)
             SettingsContract.UiAction.OnConfirmClick -> save()
             SettingsContract.UiAction.OnCancelClick -> emitOutputEvent(SettingsContract.OutputEvent.Cancelled)
+            SettingsContract.UiAction.OnDeleteAllDataClick -> updateUiData { copy(isDeleteAllDataDialogVisible = true) }
+            SettingsContract.UiAction.OnDeleteAllDataDismiss -> updateUiData { copy(isDeleteAllDataDialogVisible = false) }
+            SettingsContract.UiAction.OnDeleteAllDataConfirmClick -> deleteAll()
         }
     }
 
@@ -81,6 +87,21 @@ class SettingsViewModel(
                 val message = getString(Res.string.settings_save_error)
                 updateUiData { copy(isSaving = false) }
                 updateUiEvents { it + SettingsContract.UiEvent.ShowSaveError(message) }
+            },
+        )
+    }
+
+    private suspend fun deleteAll() {
+        updateUiData { copy(isDeleting = true) }
+        deleteAllData().fold(
+            onSuccess = {
+                updateUiData { copy(isDeleting = false, isDeleteAllDataDialogVisible = false) }
+                emitOutputEvent(SettingsContract.OutputEvent.DataDeleted)
+            },
+            onFailure = {
+                val message = getString(Res.string.settings_delete_error)
+                updateUiData { copy(isDeleting = false, isDeleteAllDataDialogVisible = false) }
+                updateUiEvents { it + SettingsContract.UiEvent.ShowDeleteError(message) }
             },
         )
     }
