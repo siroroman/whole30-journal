@@ -184,6 +184,7 @@ private fun DayEntryContent(
             onDeleteAchievementClick = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementClick(it)) },
             onDeleteAchievementConfirm = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementConfirm) },
             onDeleteAchievementDismiss = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementDismiss) },
+            onReorderAchievement = { from, to -> onUiAction(DayEntryContract.UiAction.OnAchievementReorder(from, to)) },
         )
 
         MealsSection(

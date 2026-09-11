@@ -30,6 +30,7 @@
     <string name="day_entry_delete_achievement_dialog_title">Remove this victory?</string>
     <string name="day_entry_delete_achievement_dialog_message">It'll be gone once you save this day.</string>
     <string name="day_entry_delete_achievement_confirm_button">Remove Victory</string>
+    <string name="day_entry_achievement_reorder_content_description">Reorder victory</string>
 
     <string name="day_entry_meals_title">What I ate</string>
     <string name="day_entry_meal_label_numbered">Meal %1$d</string>

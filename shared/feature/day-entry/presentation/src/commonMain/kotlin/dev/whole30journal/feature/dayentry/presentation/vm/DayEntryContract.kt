@@ -73,6 +73,7 @@ object DayEntryContract {
         data class OnDeleteAchievementClick(val id: String) : UiAction
         data object OnDeleteAchievementConfirm : UiAction
         data object OnDeleteAchievementDismiss : UiAction
+        data class OnAchievementReorder(val fromIndex: Int, val toIndex: Int) : UiAction
         data class OnNotesChange(val notes: String) : UiAction
         data object OnCompleteToggle : UiAction
         data object OnSaveClick : UiAction

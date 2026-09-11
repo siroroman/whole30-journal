@@ -79,6 +79,8 @@ class DayEntryViewModel(
             DayEntryContract.UiAction.OnDeleteAchievementConfirm -> confirmDeleteAchievement()
             DayEntryContract.UiAction.OnDeleteAchievementDismiss ->
                 updateUiData { copy(pendingDeleteAchievementId = null) }
+            is DayEntryContract.UiAction.OnAchievementReorder ->
+                updateUiData { withAchievementMoved(uiAction.fromIndex, uiAction.toIndex) }
             is DayEntryContract.UiAction.OnNotesChange ->
                 updateUiData { copy(notes = uiAction.notes) }
             DayEntryContract.UiAction.OnCompleteToggle ->
@@ -290,3 +292,6 @@ private fun DayEntryContract.UiData.withMealPhoto(id: String, token: String): Da
 
 private fun DayEntryContract.UiData.withMealMoved(fromIndex: Int, toIndex: Int): DayEntryContract.UiData =
     copy(meals = meals.toMutableList().apply { add(toIndex, removeAt(fromIndex)) })
+
+private fun DayEntryContract.UiData.withAchievementMoved(fromIndex: Int, toIndex: Int): DayEntryContract.UiData =
+    copy(achievements = achievements.toMutableList().apply { add(toIndex, removeAt(fromIndex)) })

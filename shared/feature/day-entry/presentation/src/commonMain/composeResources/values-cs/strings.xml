@@ -30,6 +30,7 @@
     <string name="day_entry_delete_achievement_dialog_title">Odebrat toto vítězství?</string>
     <string name="day_entry_delete_achievement_dialog_message">Zmizí po uložení tohoto dne.</string>
     <string name="day_entry_delete_achievement_confirm_button">Odebrat vítězství</string>
+    <string name="day_entry_achievement_reorder_content_description">Přeuspořádat vítězství</string>
 
     <string name="day_entry_meals_title">Co jsem jedl/a</string>
     <string name="day_entry_meal_label_numbered">%1$d. jídlo</string>
