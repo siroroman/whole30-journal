@@ -1,21 +1,24 @@
 # Whole30 Journal App
 
-A Kotlin Multiplatform starter project meant to speed up the start of a new KMP app for Android and
-iOS. It provides the shared ViewModel foundation (`shared/core/ui-uistate`) and the iOS/Koin bridge
-(`iosApp/iosApp/Bridge`) for two code-sharing modes across the two platforms:
+A Kotlin Multiplatform app for Android and iOS that tracks a Whole30 program: configure a start
+date and duration, log one entry per day (energy / mood / sleep / cravings scores, meals with
+photos, achievements, notes), and review progress and trends on the home screen. Everything is
+stored locally in SQLDelight — there is no backend.
 
-- Shared **Compose Multiplatform** UI (written once in `commonMain`), running natively on both
-  platforms (wrapped in `ComposeUIViewController` on iOS).
-- **Native** UI on each platform (Jetpack Compose / SwiftUI), driven by **the same** shared KMP
-  `ViewModel` (observed on iOS via SKIE `for await`).
+Every screen is a **Compose Multiplatform** screen written once in `commonMain` and rendered
+natively on both platforms (wrapped in `ComposeUIViewController` on iOS). Each app module owns only
+navigation, DI bootstrap, and platform plumbing — Jetpack Navigation Compose on Android, a SwiftUI
+`NavigationStack` driven by the shared ViewModel's output events (observed via SKIE `for await`) on
+iOS.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for a full walkthrough of both patterns with code, and
-`scripts/create_kmp_feature_boilerplate.sh` to scaffold a new feature.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the full walkthrough and [AGENTS.md](AGENTS.md) for
+build commands and conventions.
 
 ## Tech stack
 
-Kotlin 2.4.0 · Compose Multiplatform 1.11.1 (Material3 1.9.0) · Koin 4.2.2 · SKIE 0.10.13 ·
-kotlinx.coroutines 1.11.0 · androidx.lifecycle 2.11.0 · Android Gradle Plugin 9.3.1.
+Kotlin 2.4.10 · Compose Multiplatform 1.11.1 (Material3 1.9.0) · Koin 4.2.2 · SKIE 0.10.14 ·
+SQLDelight 2.3.2 · Coil 3.5.0 · kotlinx.coroutines 1.11.0 · kotlinx-datetime 0.7.1 ·
+androidx.lifecycle 2.11.0 · Android Gradle Plugin 9.3.1.
 
 See [gradle/libs.versions.toml](gradle/libs.versions.toml) for the full, always up-to-date version
 catalog.
@@ -43,4 +46,11 @@ Also verified directly via CLI:
 ```bash
 xcodebuild -project iosApp.xcodeproj -scheme iosApp -configuration Debug \
   -sdk iphonesimulator -destination 'id=<simulator-udid>' build
+```
+
+## Tests
+
+```bash
+./gradlew jvmTest testDebugUnitTest   # what CI runs
+./gradlew detekt
 ```
