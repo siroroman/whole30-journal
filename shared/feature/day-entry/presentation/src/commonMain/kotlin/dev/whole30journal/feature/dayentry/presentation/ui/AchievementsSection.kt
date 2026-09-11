@@ -75,6 +75,7 @@ fun AchievementsSection(
                 val isDragged = entry.id == draggedAchievementId
                 AchievementRow(
                     achievement = entry,
+                    showDragHandle = achievements.size > 1,
                     onTextChange = onTextChange,
                     onDeleteClick = onDeleteAchievementClick,
                     onDragStart = {
@@ -127,6 +128,7 @@ fun AchievementsSection(
 @Composable
 private fun AchievementRow(
     achievement: DayEntryContract.AchievementEntry,
+    showDragHandle: Boolean,
     onTextChange: (id: String, text: String) -> Unit,
     onDeleteClick: (id: String) -> Unit,
     onDragStart: () -> Unit,
@@ -160,25 +162,27 @@ private fun AchievementRow(
                     contentDescription = stringResource(Res.string.day_entry_delete_achievement_content_description),
                 )
             }
-            Box(
-                modifier = Modifier.pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = { onDragStart() },
-                        onDrag = { change, dragAmount ->
-                            change.consume()
-                            onDrag(dragAmount.y)
-                        },
-                        onDragEnd = { onDragEnd() },
-                        onDragCancel = { onDragEnd() },
+            if (showDragHandle) {
+                Box(
+                    modifier = Modifier.pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = { onDragStart() },
+                            onDrag = { change, dragAmount ->
+                                change.consume()
+                                onDrag(dragAmount.y)
+                            },
+                            onDragEnd = { onDragEnd() },
+                            onDragCancel = { onDragEnd() },
+                        )
+                    },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    DragHandleIcon(
+                        tint = colors.textTertiary,
+                        modifier = Modifier.size(18.dp),
+                        contentDescription = stringResource(Res.string.day_entry_achievement_reorder_content_description),
                     )
-                },
-                contentAlignment = Alignment.Center,
-            ) {
-                DragHandleIcon(
-                    tint = colors.textTertiary,
-                    modifier = Modifier.size(18.dp),
-                    contentDescription = stringResource(Res.string.day_entry_achievement_reorder_content_description),
-                )
+                }
             }
         }
     }

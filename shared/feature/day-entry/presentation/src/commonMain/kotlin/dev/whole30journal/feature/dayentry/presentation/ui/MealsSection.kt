@@ -113,6 +113,7 @@ fun MealsSection(
                 MealRow(
                     meal = meal,
                     number = index + 1,
+                    showDragHandle = meals.size > 1,
                     resolvePhotoToken = resolvePhotoToken,
                     onDescriptionChange = onDescriptionChange,
                     onLovedToggle = onLovedToggle,
@@ -250,6 +251,7 @@ private fun PhotoSourceOption(text: String, icon: @Composable () -> Unit, onClic
 private fun MealRow(
     meal: DayEntryContract.MealEntry,
     number: Int,
+    showDragHandle: Boolean,
     resolvePhotoToken: (String) -> String,
     onDescriptionChange: (id: String, description: String) -> Unit,
     onLovedToggle: (id: String) -> Unit,
@@ -322,25 +324,27 @@ private fun MealRow(
                                 contentDescription = stringResource(Res.string.day_entry_delete_meal_content_description),
                             )
                         }
-                        Box(
-                            modifier = Modifier.pointerInput(Unit) {
-                                detectDragGestures(
-                                    onDragStart = { onDragStart() },
-                                    onDrag = { change, dragAmount ->
-                                        change.consume()
-                                        onDrag(dragAmount.y)
-                                    },
-                                    onDragEnd = { onDragEnd() },
-                                    onDragCancel = { onDragEnd() },
+                        if (showDragHandle) {
+                            Box(
+                                modifier = Modifier.pointerInput(Unit) {
+                                    detectDragGestures(
+                                        onDragStart = { onDragStart() },
+                                        onDrag = { change, dragAmount ->
+                                            change.consume()
+                                            onDrag(dragAmount.y)
+                                        },
+                                        onDragEnd = { onDragEnd() },
+                                        onDragCancel = { onDragEnd() },
+                                    )
+                                },
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                DragHandleIcon(
+                                    tint = colors.textTertiary,
+                                    modifier = Modifier.size(18.dp),
+                                    contentDescription = stringResource(Res.string.day_entry_meal_reorder_content_description),
                                 )
-                            },
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            DragHandleIcon(
-                                tint = colors.textTertiary,
-                                modifier = Modifier.size(18.dp),
-                                contentDescription = stringResource(Res.string.day_entry_meal_reorder_content_description),
-                            )
+                            }
                         }
                     }
                 }
