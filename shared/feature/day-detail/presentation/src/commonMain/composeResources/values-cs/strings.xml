@@ -18,6 +18,7 @@
     <string name="day_detail_nsv_title">Vítězství mimo váhu</string>
 
     <string name="day_detail_meals_title">Co jsem jedl/a</string>
+    <string name="day_detail_meal_label_numbered">%1$d. jídlo</string>
     <string name="day_detail_meal_photo_content_description">Fotka jídla</string>
     <string name="day_detail_meal_loved_content_description">Nejvíc mi chutnalo</string>
     <string name="day_detail_meal_not_loved_content_description">Nechutnalo mi nejvíc</string>

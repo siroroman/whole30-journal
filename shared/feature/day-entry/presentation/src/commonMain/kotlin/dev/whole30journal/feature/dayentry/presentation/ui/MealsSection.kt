@@ -52,6 +52,7 @@ import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_delete_meal_dialog_title
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_add_photo_content_description
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_description_placeholder
+import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_label_numbered
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_photo_content_description
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_reorder_content_description
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meals_title
@@ -103,11 +104,12 @@ fun MealsSection(
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
         Text(text = stringResource(Res.string.day_entry_meals_title), style = DSTheme.typography.textLg, color = colors.text)
-        meals.forEach { meal ->
+        meals.forEachIndexed { index, meal ->
             key(meal.id) {
                 val isDragged = meal.id == draggedMealId
                 MealRow(
                     meal = meal,
+                    number = index + 1,
                     resolvePhotoToken = resolvePhotoToken,
                     onDescriptionChange = onDescriptionChange,
                     onAddPhotoClick = onAddPhotoClick,
@@ -243,6 +245,7 @@ private fun PhotoSourceOption(text: String, icon: @Composable () -> Unit, onClic
 @Composable
 private fun MealRow(
     meal: DayEntryContract.MealEntry,
+    number: Int,
     resolvePhotoToken: (String) -> String,
     onDescriptionChange: (id: String, description: String) -> Unit,
     onAddPhotoClick: (id: String) -> Unit,
@@ -281,14 +284,20 @@ private fun MealRow(
                     )
                 }
             }
-            DSTextField(
-                value = meal.description,
-                onValueChange = { onDescriptionChange(meal.id, it) },
-                placeholder = stringResource(Res.string.day_entry_meal_description_placeholder),
-                singleLine = false,
-                minLines = 2,
-                modifier = Modifier.weight(1f),
-            )
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space2)) {
+                Text(
+                    text = stringResource(Res.string.day_entry_meal_label_numbered, number).uppercase(),
+                    style = DSTheme.typography.text2xs,
+                    color = colors.textTertiary,
+                )
+                DSTextField(
+                    value = meal.description,
+                    onValueChange = { onDescriptionChange(meal.id, it) },
+                    placeholder = stringResource(Res.string.day_entry_meal_description_placeholder),
+                    singleLine = false,
+                    minLines = 2,
+                )
+            }
             Box(
                 modifier = Modifier.clickable { onDeleteClick(meal.id) },
                 contentAlignment = Alignment.Center,

@@ -7,6 +7,7 @@ import dev.whole30journal.core.uistate.vm.StateFlowViewModel
 import dev.whole30journal.core.utils.DateFormatter
 import dev.whole30journal.core.utils.dateForDay
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.Res
+import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_meal_label_numbered
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_metric_cravings_title
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_metric_energy_title
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_metric_mood_title
@@ -62,6 +63,9 @@ class DayDetailViewModel(
 
         observeDayEntry(dayNumber.toLong()).collectLatest { result ->
             val entry = result.getOrNull()
+            val mealSummaries = entry?.meals.orEmpty()
+                .filter { it.mealDescription.isNotBlank() || it.photoToken != null || it.lovedIt }
+                .mapIndexed { index, meal -> meal.toMealSummary(index) }
             updateUiData(isLoading = false) {
                 copy(
                     dayNumber = dayNumber,
@@ -70,9 +74,7 @@ class DayDetailViewModel(
                     isComplete = entry?.isComplete ?: false,
                     overallScore = entry?.scoreFor(MetricTitle.OVERALL),
                     metrics = entry?.let { metricSummaries(it, metricTitles) }.orEmpty(),
-                    meals = entry?.meals.orEmpty()
-                        .filter { it.mealDescription.isNotBlank() || it.photoToken != null || it.lovedIt }
-                        .map { it.toMealSummary() },
+                    meals = mealSummaries,
                     achievements = entry?.achievements.orEmpty().map { it.text }.filter { it.isNotBlank() },
                     notes = entry?.notes.orEmpty(),
                 )
@@ -98,9 +100,9 @@ class DayDetailViewModel(
 
 private fun DayEntry.scoreFor(title: String): Int? = metrics.firstOrNull { it.title == title }?.value?.toInt()
 
-private fun Meal.toMealSummary() = DayDetailContract.MealSummary(
+private suspend fun Meal.toMealSummary(index: Int) = DayDetailContract.MealSummary(
     id = id,
-    label = label,
+    label = getString(Res.string.day_detail_meal_label_numbered, index + 1),
     description = mealDescription,
     photoToken = photoToken,
     lovedIt = lovedIt,
