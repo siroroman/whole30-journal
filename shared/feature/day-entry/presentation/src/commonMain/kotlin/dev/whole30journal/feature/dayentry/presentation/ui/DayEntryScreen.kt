@@ -2,12 +2,16 @@ package dev.whole30journal.feature.dayentry.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -22,6 +26,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import dev.whole30journal.core.designsystem.components.DSTextField
@@ -31,6 +42,7 @@ import dev.whole30journal.core.uistate.UiStateAware
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.Res
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_back_content_description
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_day_title
+import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_keyboard_done
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_metric_cravings_high
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_metric_cravings_low
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_metric_cravings_title
@@ -61,16 +73,20 @@ fun DayEntryScreen(
     modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val focusManager = LocalFocusManager.current
+    val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     DSTheme {
         Scaffold(
-            modifier = modifier,
+            modifier = modifier.pointerInput(Unit) { detectTapGestures { focusManager.clearFocus() } },
             containerColor = DSTheme.colors.bg,
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 DayEntryTopBar(
                     dayNumber = state.uiData.dayNumber,
                     dateLabel = state.uiData.dateLabel,
+                    isKeyboardVisible = isKeyboardVisible,
                     onCancelClick = { onUiAction(DayEntryContract.UiAction.OnCancelClick) },
+                    onDoneClick = { focusManager.clearFocus() },
                     onSaveClick = { onUiAction(DayEntryContract.UiAction.OnSaveClick) },
                 )
             },
@@ -117,7 +133,9 @@ private fun HandleUiEvents(
 private fun DayEntryTopBar(
     dayNumber: Int,
     dateLabel: String,
+    isKeyboardVisible: Boolean,
     onCancelClick: () -> Unit,
+    onDoneClick: () -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -133,12 +151,25 @@ private fun DayEntryTopBar(
                 Text(text = stringResource(Res.string.day_entry_day_title, dayNumber), style = DSTheme.typography.textMd, color = colors.text)
                 Text(text = dateLabel, style = DSTheme.typography.textXs, color = colors.textTertiary)
             }
-            Text(
-                text = stringResource(Res.string.day_entry_save_button_short),
-                style = DSTheme.typography.textLg.copy(fontWeight = FontWeight.Bold),
-                color = colors.accent,
-                modifier = Modifier.align(Alignment.CenterEnd).clickable(onClick = onSaveClick),
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(DSSpacing.space7),
+                modifier = Modifier.align(Alignment.CenterEnd),
+            ) {
+                if (isKeyboardVisible) {
+                    Text(
+                        text = stringResource(Res.string.day_entry_keyboard_done),
+                        style = DSTheme.typography.textLg,
+                        color = colors.textSecondary,
+                        modifier = Modifier.clickable(onClick = onDoneClick),
+                    )
+                }
+                Text(
+                    text = stringResource(Res.string.day_entry_save_button_short),
+                    style = DSTheme.typography.textLg.copy(fontWeight = FontWeight.Bold),
+                    color = colors.accent,
+                    modifier = Modifier.clickable(onClick = onSaveClick),
+                )
+            }
         }
         HorizontalDivider(color = colors.divider)
     }
@@ -151,9 +182,19 @@ private fun DayEntryContent(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
+    val focusManager = LocalFocusManager.current
+    val dismissKeyboardOnDrag = remember(focusManager) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (source == NestedScrollSource.UserInput) focusManager.clearFocus()
+                return Offset.Zero
+            }
+        }
+    }
     Column(
         modifier = modifier
             .padding(contentPadding)
+            .nestedScroll(dismissKeyboardOnDrag)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
         verticalArrangement = Arrangement.spacedBy(DSSpacing.space8),
