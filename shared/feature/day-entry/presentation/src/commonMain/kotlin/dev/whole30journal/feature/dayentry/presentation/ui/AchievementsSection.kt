@@ -149,7 +149,7 @@ private fun AchievementRow(
                 containerColor = colors.surface,
                 keyboardOptions = KeyboardOptions(autoCorrectEnabled = false),
                 singleLine = false,
-                minLines = 2,
+                minLines = 1,
                 modifier = Modifier.weight(1f),
             )
             Box(

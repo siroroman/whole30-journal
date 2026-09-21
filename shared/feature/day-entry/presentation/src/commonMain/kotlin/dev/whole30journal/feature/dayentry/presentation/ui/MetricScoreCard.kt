@@ -54,7 +54,7 @@ fun MetricScoreCard(
             onValueChange = onNoteChange,
             placeholder = notePlaceholder,
             singleLine = false,
-            minLines = 2,
+            minLines = 1,
         )
     }
 }

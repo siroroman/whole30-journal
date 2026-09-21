@@ -353,7 +353,7 @@ private fun MealRow(
                     onValueChange = { onDescriptionChange(meal.id, it) },
                     placeholder = stringResource(Res.string.day_entry_meal_description_placeholder),
                     singleLine = false,
-                    minLines = 2,
+                    minLines = 1,
                 )
             }
         }
