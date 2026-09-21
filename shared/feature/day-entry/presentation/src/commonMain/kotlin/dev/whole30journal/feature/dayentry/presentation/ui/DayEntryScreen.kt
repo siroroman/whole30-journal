@@ -176,17 +176,6 @@ private fun DayEntryContent(
         }
         OverallScoreCard(score = uiData.overallScore)
 
-        AchievementsSection(
-            achievements = uiData.achievements,
-            pendingDeleteAchievementId = uiData.pendingDeleteAchievementId,
-            onTextChange = { id, text -> onUiAction(DayEntryContract.UiAction.OnAchievementTextChange(id, text)) },
-            onAddClick = { onUiAction(DayEntryContract.UiAction.OnAddAchievementClick) },
-            onDeleteAchievementClick = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementClick(it)) },
-            onDeleteAchievementConfirm = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementConfirm) },
-            onDeleteAchievementDismiss = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementDismiss) },
-            onReorderAchievement = { from, to -> onUiAction(DayEntryContract.UiAction.OnAchievementReorder(from, to)) },
-        )
-
         MealsSection(
             meals = uiData.meals,
             pendingPhotoMealId = uiData.pendingPhotoMealId,
@@ -201,6 +190,17 @@ private fun DayEntryContent(
             onDeleteMealConfirm = { onUiAction(DayEntryContract.UiAction.OnDeleteMealConfirm) },
             onDeleteMealDismiss = { onUiAction(DayEntryContract.UiAction.OnDeleteMealDismiss) },
             onReorderMeal = { from, to -> onUiAction(DayEntryContract.UiAction.OnMealReorder(from, to)) },
+        )
+
+        AchievementsSection(
+            achievements = uiData.achievements,
+            pendingDeleteAchievementId = uiData.pendingDeleteAchievementId,
+            onTextChange = { id, text -> onUiAction(DayEntryContract.UiAction.OnAchievementTextChange(id, text)) },
+            onAddClick = { onUiAction(DayEntryContract.UiAction.OnAddAchievementClick) },
+            onDeleteAchievementClick = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementClick(it)) },
+            onDeleteAchievementConfirm = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementConfirm) },
+            onDeleteAchievementDismiss = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementDismiss) },
+            onReorderAchievement = { from, to -> onUiAction(DayEntryContract.UiAction.OnAchievementReorder(from, to)) },
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
