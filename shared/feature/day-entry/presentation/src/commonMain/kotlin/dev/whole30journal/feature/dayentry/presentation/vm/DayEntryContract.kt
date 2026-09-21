@@ -64,6 +64,7 @@ object DayEntryContract {
         data class OnMealLovedToggle(val id: String) : UiAction
         data class OnAddMealPhotoClick(val id: String) : UiAction
         data class OnMealPhotoPick(val mealId: String, val token: String) : UiAction
+        data class OnMealPhotoRemove(val mealId: String) : UiAction
         data object OnPhotoSourceDismiss : UiAction
         data class OnDeleteMealClick(val id: String) : UiAction
         data object OnDeleteMealConfirm : UiAction

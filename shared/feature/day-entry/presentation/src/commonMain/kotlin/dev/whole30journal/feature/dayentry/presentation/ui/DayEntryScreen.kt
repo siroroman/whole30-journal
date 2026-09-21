@@ -202,6 +202,7 @@ private fun DayEntryContent(
             onLovedToggle = { onUiAction(DayEntryContract.UiAction.OnMealLovedToggle(it)) },
             onAddPhotoClick = { onUiAction(DayEntryContract.UiAction.OnAddMealPhotoClick(it)) },
             onPhotoPick = { id, token -> onUiAction(DayEntryContract.UiAction.OnMealPhotoPick(id, token)) },
+            onPhotoRemove = { onUiAction(DayEntryContract.UiAction.OnMealPhotoRemove(it)) },
             onPhotoSourceDismiss = { onUiAction(DayEntryContract.UiAction.OnPhotoSourceDismiss) },
             onAddMealClick = { onUiAction(DayEntryContract.UiAction.OnAddMealClick) },
             onDeleteMealClick = { onUiAction(DayEntryContract.UiAction.OnDeleteMealClick(it)) },

@@ -47,6 +47,7 @@
     <string name="day_entry_photo_source_title">Add Meal Photo</string>
     <string name="day_entry_photo_source_camera">Take Photo</string>
     <string name="day_entry_photo_source_library">Choose from Library</string>
+    <string name="day_entry_photo_source_remove">Remove Photo</string>
 
     <string name="day_entry_notes_title">Today's notes</string>
     <string name="day_entry_notes_placeholder">What are you thinking about today?</string>
