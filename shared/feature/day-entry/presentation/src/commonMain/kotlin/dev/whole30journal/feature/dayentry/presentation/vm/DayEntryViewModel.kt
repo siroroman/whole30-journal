@@ -73,14 +73,14 @@ class DayEntryViewModel(
             DayEntryContract.UiAction.OnDeleteMealDismiss ->
                 updateUiData { copy(pendingDeleteMealId = null) }
             is DayEntryContract.UiAction.OnMealReorder ->
-                updateUiData { withMealMoved(uiAction.fromIndex, uiAction.toIndex) }
+                updateUiData { copy(meals = meals.moved(uiAction.fromIndex, uiAction.toIndex)) }
             is DayEntryContract.UiAction.OnDeleteAchievementClick ->
                 updateUiData { copy(pendingDeleteAchievementId = uiAction.id) }
             DayEntryContract.UiAction.OnDeleteAchievementConfirm -> confirmDeleteAchievement()
             DayEntryContract.UiAction.OnDeleteAchievementDismiss ->
                 updateUiData { copy(pendingDeleteAchievementId = null) }
             is DayEntryContract.UiAction.OnAchievementReorder ->
-                updateUiData { withAchievementMoved(uiAction.fromIndex, uiAction.toIndex) }
+                updateUiData { copy(achievements = achievements.moved(uiAction.fromIndex, uiAction.toIndex)) }
             is DayEntryContract.UiAction.OnNotesChange ->
                 updateUiData { copy(notes = uiAction.notes) }
             DayEntryContract.UiAction.OnCompleteToggle ->
@@ -282,8 +282,9 @@ private fun DayEntryContract.UiData.withMealLovedToggled(id: String): DayEntryCo
 private fun DayEntryContract.UiData.withMealPhoto(id: String, token: String): DayEntryContract.UiData =
     copy(meals = meals.map { if (it.id == id) it.copy(photoToken = token) else it }, pendingPhotoMealId = null)
 
-private fun DayEntryContract.UiData.withMealMoved(fromIndex: Int, toIndex: Int): DayEntryContract.UiData =
-    copy(meals = meals.toMutableList().apply { add(toIndex, removeAt(fromIndex)) })
-
-private fun DayEntryContract.UiData.withAchievementMoved(fromIndex: Int, toIndex: Int): DayEntryContract.UiData =
-    copy(achievements = achievements.toMutableList().apply { add(toIndex, removeAt(fromIndex)) })
+private fun <T> List<T>.moved(fromIndex: Int, toIndex: Int): List<T> =
+    if (fromIndex == toIndex || fromIndex !in indices || toIndex !in indices) {
+        this
+    } else {
+        toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
+    }
