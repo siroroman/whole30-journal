@@ -191,7 +191,6 @@ class DayEntryViewModel(
         totalDays = totalDays,
         programStartDate = startDate,
         meals = defaultMeals(dayNumber),
-        achievements = defaultAchievements(dayNumber),
     )
 
     private suspend fun defaultMeals(dayNumber: Int): List<DayEntryContract.MealEntry> = listOf(
@@ -199,11 +198,6 @@ class DayEntryViewModel(
         DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-2", label = getString(Res.string.day_entry_meal_label_numbered, 2)),
         DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-3", label = getString(Res.string.day_entry_meal_label_numbered, 3)),
     )
-
-    private fun defaultAchievements(dayNumber: Int): List<DayEntryContract.AchievementEntry> =
-        (0 until DEFAULT_ACHIEVEMENT_SLOTS).map { index ->
-            DayEntryContract.AchievementEntry(id = "day-$dayNumber-achievement-slot-$index", text = "")
-        }
 
     private fun today(): LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
 
@@ -232,10 +226,9 @@ class DayEntryViewModel(
             sleep = sleep,
             cravings = cravings,
             overallScore = computeOverall(energy, mood, sleep, cravings),
-            achievements = achievements.takeIf { it.isNotEmpty() }
-                ?.sortedBy { it.sortOrder }
-                ?.map { DayEntryContract.AchievementEntry(id = it.id, text = it.text) }
-                ?: defaultAchievements(dayNumber),
+            achievements = achievements
+                .sortedBy { it.sortOrder }
+                .map { DayEntryContract.AchievementEntry(id = it.id, text = it.text) },
             meals = meals.takeIf { it.isNotEmpty() }
                 ?.sortedBy { it.sortOrder }
                 ?.map {
@@ -255,7 +248,6 @@ class DayEntryViewModel(
 }
 
 private const val DEFAULT_TOTAL_DAYS = 30
-private const val DEFAULT_ACHIEVEMENT_SLOTS = 1
 private const val MAX_SCORE = 10L
 
 private fun computeOverall(vararg entries: DayEntryContract.MetricEntry): Int? =
