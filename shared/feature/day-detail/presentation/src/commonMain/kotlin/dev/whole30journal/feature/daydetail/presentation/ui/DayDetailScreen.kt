@@ -92,7 +92,7 @@ private fun DayDetailTopBar(
                 modifier = Modifier.align(Alignment.CenterStart).clickable(onClick = onBackClick),
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.align(Alignment.Center)) {
-                Text(text = stringResource(Res.string.day_detail_title, dayNumber), style = DSTheme.typography.textMd, color = colors.text)
+                Text(text = stringResource(Res.string.day_detail_title, dayNumber), style = DSTheme.typography.textXl, color = colors.text)
                 Text(text = dateLabel, style = DSTheme.typography.textXs, color = colors.textTertiary)
             }
             Text(

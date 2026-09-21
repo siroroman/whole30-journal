@@ -104,7 +104,13 @@ internal fun Modifier.reorderableItem(state: ReorderState, id: String): Modifier
     .onSizeChanged { state.onItemSized(id, it.height.toFloat()) }
 
 @Composable
-internal fun ReorderHandle(state: ReorderState, id: String, contentDescription: String, modifier: Modifier = Modifier) {
+internal fun ReorderHandle(
+    state: ReorderState,
+    id: String,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    iconSize: Dp = 18.dp,
+) {
     Box(
         modifier = modifier.pointerInput(state, id) {
             detectDragGestures(
@@ -121,7 +127,7 @@ internal fun ReorderHandle(state: ReorderState, id: String, contentDescription: 
     ) {
         DragHandleIcon(
             tint = DSTheme.colors.textTertiary,
-            modifier = Modifier.size(18.dp),
+            modifier = Modifier.size(iconSize),
             contentDescription = contentDescription,
         )
     }

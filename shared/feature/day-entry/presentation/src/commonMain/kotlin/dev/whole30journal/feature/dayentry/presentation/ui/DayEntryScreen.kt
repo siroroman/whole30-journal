@@ -138,7 +138,7 @@ private fun DayEntryTopBar(
                 modifier = Modifier.align(Alignment.CenterStart).clickable(onClick = onCancelClick),
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.align(Alignment.Center)) {
-                Text(text = stringResource(Res.string.day_entry_day_title, dayNumber), style = DSTheme.typography.textMd, color = colors.text)
+                Text(text = stringResource(Res.string.day_entry_day_title, dayNumber), style = DSTheme.typography.textXl, color = colors.text)
                 Text(text = dateLabel, style = DSTheme.typography.textXs, color = colors.textTertiary)
             }
             Text(
@@ -176,7 +176,7 @@ private fun DayEntryContent(
             .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
         verticalArrangement = Arrangement.spacedBy(DSSpacing.space8),
     ) {
-        Text(text = stringResource(Res.string.day_entry_section_how_i_felt), style = DSTheme.typography.textLg, color = DSTheme.colors.text)
+        Text(text = stringResource(Res.string.day_entry_section_how_i_felt), style = DSTheme.typography.textXl, color = DSTheme.colors.text)
 
         val notePlaceholder = stringResource(Res.string.day_entry_note_placeholder)
         METRIC_CARD_CONFIGS.forEach { config ->
@@ -222,7 +222,7 @@ private fun DayEntryContent(
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
-            Text(text = stringResource(Res.string.day_entry_notes_title), style = DSTheme.typography.textLg, color = DSTheme.colors.text)
+            Text(text = stringResource(Res.string.day_entry_notes_title), style = DSTheme.typography.textXl, color = DSTheme.colors.text)
             DSTextField(
                 value = uiData.notes,
                 onValueChange = { onUiAction(DayEntryContract.UiAction.OnNotesChange(it)) },

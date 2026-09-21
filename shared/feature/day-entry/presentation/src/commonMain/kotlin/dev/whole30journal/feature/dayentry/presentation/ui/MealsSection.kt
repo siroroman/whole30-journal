@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,6 +64,7 @@ import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryContract
 import org.jetbrains.compose.resources.stringResource
 
 private val PhotoSlotSize = 60.dp
+private val MealActionIconSize = 24.dp
 
 @Composable
 fun MealsSection(
@@ -92,7 +94,7 @@ fun MealsSection(
 
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(EntryListSpacing)) {
-        Text(text = stringResource(Res.string.day_entry_meals_title), style = DSTheme.typography.textLg, color = colors.text)
+        Text(text = stringResource(Res.string.day_entry_meals_title), style = DSTheme.typography.textXl, color = colors.text)
         meals.forEachIndexed { index, meal ->
             key(meal.id) {
                 MealRow(
@@ -109,6 +111,7 @@ fun MealsSection(
                                 state = reorderState,
                                 id = meal.id,
                                 contentDescription = stringResource(Res.string.day_entry_meal_reorder_content_description),
+                                iconSize = MealActionIconSize,
                             )
                         }
                     } else {
@@ -263,7 +266,7 @@ private fun MealRow(
                 ) {
                     Text(
                         text = stringResource(Res.string.day_entry_meal_label_numbered, number).uppercase(),
-                        style = DSTheme.typography.text2xs,
+                        style = DSTheme.typography.textMd.copy(fontWeight = FontWeight.Bold),
                         color = colors.textTertiary,
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space4), verticalAlignment = Alignment.CenterVertically) {
@@ -274,7 +277,7 @@ private fun MealRow(
                             HeartIcon(
                                 filled = meal.lovedIt,
                                 tint = if (meal.lovedIt) colors.scoreLow else colors.textTertiary,
-                                modifier = Modifier.size(19.dp),
+                                modifier = Modifier.size(MealActionIconSize),
                                 contentDescription = stringResource(Res.string.day_entry_meal_loved_content_description),
                             )
                         }
@@ -284,7 +287,7 @@ private fun MealRow(
                         ) {
                             CloseIcon(
                                 tint = colors.textTertiary,
-                                modifier = Modifier.size(16.dp),
+                                modifier = Modifier.size(MealActionIconSize),
                                 contentDescription = stringResource(Res.string.day_entry_delete_meal_content_description),
                             )
                         }

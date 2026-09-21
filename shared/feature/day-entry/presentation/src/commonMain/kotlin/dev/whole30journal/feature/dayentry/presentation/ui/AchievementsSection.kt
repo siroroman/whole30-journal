@@ -52,7 +52,7 @@ fun AchievementsSection(
 
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(EntryListSpacing)) {
-        Text(text = stringResource(Res.string.day_entry_nsv_title), style = DSTheme.typography.textLg, color = colors.text)
+        Text(text = stringResource(Res.string.day_entry_nsv_title), style = DSTheme.typography.textXl, color = colors.text)
         achievements.forEach { entry ->
             key(entry.id) {
                 AchievementRow(

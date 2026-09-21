@@ -21,7 +21,7 @@ fun NotesSummaryCard(notes: String, modifier: Modifier = Modifier) {
     if (notes.isBlank()) return
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
-        Text(text = stringResource(Res.string.day_detail_notes_title), style = DSTheme.typography.textLg, color = colors.text)
+        Text(text = stringResource(Res.string.day_detail_notes_title), style = DSTheme.typography.textXl, color = colors.text)
         DSCard(modifier = Modifier.fillMaxWidth()) {
             Text(text = notes, style = DSTheme.typography.textSm, color = colors.text)
         }

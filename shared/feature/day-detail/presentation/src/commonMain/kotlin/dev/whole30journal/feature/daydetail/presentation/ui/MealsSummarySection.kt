@@ -46,7 +46,7 @@ fun MealsSummarySection(meals: List<DayDetailContract.MealSummary>, modifier: Mo
     val resolvePhotoToken = rememberMealPhotoResolver()
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
-        Text(text = stringResource(Res.string.day_detail_meals_title), style = DSTheme.typography.textLg, color = colors.text)
+        Text(text = stringResource(Res.string.day_detail_meals_title), style = DSTheme.typography.textXl, color = colors.text)
         meals.forEach { meal -> MealSummaryRow(meal = meal, resolvePhotoToken = resolvePhotoToken) }
     }
 }
