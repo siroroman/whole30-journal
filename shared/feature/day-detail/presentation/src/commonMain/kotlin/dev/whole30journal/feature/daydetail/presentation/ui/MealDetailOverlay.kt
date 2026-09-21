@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -38,7 +40,7 @@ import dev.whole30journal.feature.dayentry.presentation.ui.icons.LibraryIcon
 import org.jetbrains.compose.resources.stringResource
 
 private val PlaceholderIconSize = 96.dp
-private const val TITLE_MAX_LINES = 4
+private val DescriptionMaxHeight = 160.dp
 
 @Composable
 fun MealDetailOverlay(meal: DayDetailContract.MealSummary?, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
@@ -84,9 +86,11 @@ private fun MealDetailContent(meal: DayDetailContract.MealSummary, onDismiss: ()
                 style = DSTheme.typography.text2xl,
                 color = colors.text,
                 textAlign = TextAlign.Start,
-                maxLines = TITLE_MAX_LINES,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space7),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = DescriptionMaxHeight)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = DSSpacing.space7),
             )
         }
         Box(
