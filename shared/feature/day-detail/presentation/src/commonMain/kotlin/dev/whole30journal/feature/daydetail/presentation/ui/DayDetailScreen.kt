@@ -133,8 +133,8 @@ private fun DayDetailContent(
             Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
                 uiData.metrics.forEach { summary -> MetricSummaryRow(summary = summary) }
             }
-            AchievementsSummaryList(achievements = uiData.achievements)
             MealsSummarySection(meals = uiData.meals)
+            AchievementsSummaryList(achievements = uiData.achievements)
             NotesSummaryCard(notes = uiData.notes)
         } else {
             DayDetailEmptyState(
