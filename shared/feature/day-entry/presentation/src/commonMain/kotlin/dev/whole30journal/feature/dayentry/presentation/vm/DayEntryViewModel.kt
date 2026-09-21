@@ -43,7 +43,6 @@ class DayEntryViewModel(
 ) {
 
     private var isLoaded = false
-    private var isAddingMeal = false
 
     override suspend fun applyUiAction(uiAction: DayEntryContract.UiAction) {
         when (uiAction) {
@@ -126,7 +125,7 @@ class DayEntryViewModel(
             meals = data.meals.mapIndexed { index, meal ->
                 Meal(
                     id = meal.id,
-                    label = meal.label,
+                    label = getString(Res.string.day_entry_meal_label_numbered, index + 1),
                     mealDescription = meal.description,
                     photoToken = meal.photoToken,
                     lovedIt = meal.lovedIt,
@@ -148,16 +147,9 @@ class DayEntryViewModel(
         )
     }
 
-    private suspend fun addMeal() {
-        if (isAddingMeal) return
-        isAddingMeal = true
-        try {
-            val label = getString(Res.string.day_entry_meal_label_numbered, currentUiData.meals.size + 1)
-            updateUiData {
-                copy(meals = meals + DayEntryContract.MealEntry(id = "day-$dayNumber-meal-added-${meals.size}", label = label))
-            }
-        } finally {
-            isAddingMeal = false
+    private fun addMeal() {
+        updateUiData {
+            copy(meals = meals + DayEntryContract.MealEntry(id = "day-$dayNumber-meal-added-${meals.size}"))
         }
     }
 
@@ -180,7 +172,7 @@ class DayEntryViewModel(
         updateUiData { copy(achievements = achievements.filterNot { it.id == id }, pendingDeleteAchievementId = null) }
     }
 
-    private suspend fun defaultUiData(
+    private fun defaultUiData(
         dayNumber: Int,
         dateLabel: String,
         totalDays: Int,
@@ -193,15 +185,15 @@ class DayEntryViewModel(
         meals = defaultMeals(dayNumber),
     )
 
-    private suspend fun defaultMeals(dayNumber: Int): List<DayEntryContract.MealEntry> = listOf(
-        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-1", label = getString(Res.string.day_entry_meal_label_numbered, 1)),
-        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-2", label = getString(Res.string.day_entry_meal_label_numbered, 2)),
-        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-3", label = getString(Res.string.day_entry_meal_label_numbered, 3)),
+    private fun defaultMeals(dayNumber: Int): List<DayEntryContract.MealEntry> = listOf(
+        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-1"),
+        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-2"),
+        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-3"),
     )
 
     private fun today(): LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
 
-    private suspend fun DayEntry.toUiData(
+    private fun DayEntry.toUiData(
         dayNumber: Int,
         dateLabel: String,
         totalDays: Int,
@@ -234,7 +226,6 @@ class DayEntryViewModel(
                 ?.map {
                     DayEntryContract.MealEntry(
                         id = it.id,
-                        label = it.label,
                         description = it.mealDescription,
                         photoToken = it.photoToken,
                         lovedIt = it.lovedIt,

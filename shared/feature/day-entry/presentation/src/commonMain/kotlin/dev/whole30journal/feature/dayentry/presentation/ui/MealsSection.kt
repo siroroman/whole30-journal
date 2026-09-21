@@ -310,8 +310,8 @@ private fun MealsSectionPreviewLight() {
         Surface(color = DSTheme.colors.bg) {
             MealsSection(
                 meals = listOf(
-                    DayEntryContract.MealEntry(id = "1", label = "Meal 1", description = "Scrambled eggs, spinach, avocado"),
-                    DayEntryContract.MealEntry(id = "2", label = "Meal 2", description = "", lovedIt = true),
+                    DayEntryContract.MealEntry(id = "1", description = "Scrambled eggs, spinach, avocado"),
+                    DayEntryContract.MealEntry(id = "2", description = "", lovedIt = true),
                 ),
                 pendingPhotoMealId = null,
                 pendingDeleteMealId = null,
@@ -337,7 +337,7 @@ private fun MealsSectionPreviewDark() {
     DSTheme(darkTheme = true) {
         Surface(color = DSTheme.colors.bg) {
             MealsSection(
-                meals = listOf(DayEntryContract.MealEntry(id = "1", label = "Meal 1")),
+                meals = listOf(DayEntryContract.MealEntry(id = "1")),
                 pendingPhotoMealId = null,
                 pendingDeleteMealId = null,
                 onDescriptionChange = { _, _ -> },

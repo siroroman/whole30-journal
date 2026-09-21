@@ -21,7 +21,6 @@ object DayEntryContract {
     @Immutable
     data class MealEntry(
         val id: String,
-        val label: String,
         @property:ObjCName("mealDescription") val description: String = "",
         val photoToken: String? = null,
         val lovedIt: Boolean = false,
