@@ -92,7 +92,7 @@ private fun DayDetailTopBar(
                 modifier = Modifier.align(Alignment.CenterStart).clickable(onClick = onBackClick),
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.align(Alignment.Center)) {
-                Text(text = stringResource(Res.string.day_detail_title, dayNumber), style = DSTheme.typography.textMd, color = colors.text)
+                Text(text = stringResource(Res.string.day_detail_title, dayNumber), style = DSTheme.typography.textXl, color = colors.text)
                 Text(text = dateLabel, style = DSTheme.typography.textXs, color = colors.textTertiary)
             }
             Text(
@@ -133,8 +133,8 @@ private fun DayDetailContent(
             Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
                 uiData.metrics.forEach { summary -> MetricSummaryRow(summary = summary) }
             }
-            AchievementsSummaryList(achievements = uiData.achievements)
             MealsSummarySection(meals = uiData.meals)
+            AchievementsSummaryList(achievements = uiData.achievements)
             NotesSummaryCard(notes = uiData.notes)
         } else {
             DayDetailEmptyState(

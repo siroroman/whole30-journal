@@ -26,6 +26,11 @@
     <string name="day_entry_nsv_title">Non-scale victories</string>
     <string name="day_entry_nsv_placeholder">Non-scale victory</string>
     <string name="day_entry_add_achievement_button">Add victory</string>
+    <string name="day_entry_delete_achievement_content_description">Delete victory</string>
+    <string name="day_entry_delete_achievement_dialog_title">Remove this victory?</string>
+    <string name="day_entry_delete_achievement_dialog_message">It'll be gone once you save this day.</string>
+    <string name="day_entry_delete_achievement_confirm_button">Remove Victory</string>
+    <string name="day_entry_achievement_reorder_content_description">Reorder victory</string>
 
     <string name="day_entry_meals_title">What I ate</string>
     <string name="day_entry_meal_label_numbered">Meal %1$d</string>
@@ -34,6 +39,11 @@
     <string name="day_entry_meal_photo_content_description">Meal photo</string>
     <string name="day_entry_meal_loved_content_description">Loved it</string>
     <string name="day_entry_add_meal_button">Add meal</string>
+    <string name="day_entry_delete_meal_content_description">Delete meal</string>
+    <string name="day_entry_delete_meal_dialog_title">Remove this meal?</string>
+    <string name="day_entry_delete_meal_dialog_message">It'll be gone once you save this day.</string>
+    <string name="day_entry_delete_meal_confirm_button">Remove Meal</string>
+    <string name="day_entry_meal_reorder_content_description">Reorder meal</string>
     <string name="day_entry_photo_source_title">Add Meal Photo</string>
     <string name="day_entry_photo_source_camera">Take Photo</string>
     <string name="day_entry_photo_source_library">Choose from Library</string>

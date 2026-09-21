@@ -2,6 +2,7 @@ package dev.whole30journal.feature.dayentry.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import dev.whole30journal.core.designsystem.components.DSTextField
@@ -61,9 +68,10 @@ fun DayEntryScreen(
     modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val focusManager = LocalFocusManager.current
     DSTheme {
         Scaffold(
-            modifier = modifier,
+            modifier = modifier.pointerInput(Unit) { detectTapGestures { focusManager.clearFocus() } },
             containerColor = DSTheme.colors.bg,
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
@@ -130,7 +138,7 @@ private fun DayEntryTopBar(
                 modifier = Modifier.align(Alignment.CenterStart).clickable(onClick = onCancelClick),
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.align(Alignment.Center)) {
-                Text(text = stringResource(Res.string.day_entry_day_title, dayNumber), style = DSTheme.typography.textMd, color = colors.text)
+                Text(text = stringResource(Res.string.day_entry_day_title, dayNumber), style = DSTheme.typography.textXl, color = colors.text)
                 Text(text = dateLabel, style = DSTheme.typography.textXs, color = colors.textTertiary)
             }
             Text(
@@ -151,14 +159,24 @@ private fun DayEntryContent(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
+    val focusManager = LocalFocusManager.current
+    val dismissKeyboardOnDrag = remember(focusManager) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (source == NestedScrollSource.UserInput) focusManager.clearFocus()
+                return Offset.Zero
+            }
+        }
+    }
     Column(
         modifier = modifier
             .padding(contentPadding)
+            .nestedScroll(dismissKeyboardOnDrag)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
         verticalArrangement = Arrangement.spacedBy(DSSpacing.space8),
     ) {
-        Text(text = stringResource(Res.string.day_entry_section_how_i_felt), style = DSTheme.typography.textLg, color = DSTheme.colors.text)
+        Text(text = stringResource(Res.string.day_entry_section_how_i_felt), style = DSTheme.typography.textXl, color = DSTheme.colors.text)
 
         val notePlaceholder = stringResource(Res.string.day_entry_note_placeholder)
         METRIC_CARD_CONFIGS.forEach { config ->
@@ -176,25 +194,35 @@ private fun DayEntryContent(
         }
         OverallScoreCard(score = uiData.overallScore)
 
-        AchievementsSection(
-            achievements = uiData.achievements,
-            onTextChange = { id, text -> onUiAction(DayEntryContract.UiAction.OnAchievementTextChange(id, text)) },
-            onAddClick = { onUiAction(DayEntryContract.UiAction.OnAddAchievementClick) },
-        )
-
         MealsSection(
             meals = uiData.meals,
             pendingPhotoMealId = uiData.pendingPhotoMealId,
+            pendingDeleteMealId = uiData.pendingDeleteMealId,
             onDescriptionChange = { id, description -> onUiAction(DayEntryContract.UiAction.OnMealDescriptionChange(id, description)) },
             onLovedToggle = { onUiAction(DayEntryContract.UiAction.OnMealLovedToggle(it)) },
             onAddPhotoClick = { onUiAction(DayEntryContract.UiAction.OnAddMealPhotoClick(it)) },
             onPhotoPick = { id, token -> onUiAction(DayEntryContract.UiAction.OnMealPhotoPick(id, token)) },
             onPhotoSourceDismiss = { onUiAction(DayEntryContract.UiAction.OnPhotoSourceDismiss) },
             onAddMealClick = { onUiAction(DayEntryContract.UiAction.OnAddMealClick) },
+            onDeleteMealClick = { onUiAction(DayEntryContract.UiAction.OnDeleteMealClick(it)) },
+            onDeleteMealConfirm = { onUiAction(DayEntryContract.UiAction.OnDeleteMealConfirm) },
+            onDeleteMealDismiss = { onUiAction(DayEntryContract.UiAction.OnDeleteMealDismiss) },
+            onReorderMeal = { from, to -> onUiAction(DayEntryContract.UiAction.OnMealReorder(from, to)) },
+        )
+
+        AchievementsSection(
+            achievements = uiData.achievements,
+            pendingDeleteAchievementId = uiData.pendingDeleteAchievementId,
+            onTextChange = { id, text -> onUiAction(DayEntryContract.UiAction.OnAchievementTextChange(id, text)) },
+            onAddClick = { onUiAction(DayEntryContract.UiAction.OnAddAchievementClick) },
+            onDeleteAchievementClick = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementClick(it)) },
+            onDeleteAchievementConfirm = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementConfirm) },
+            onDeleteAchievementDismiss = { onUiAction(DayEntryContract.UiAction.OnDeleteAchievementDismiss) },
+            onReorderAchievement = { from, to -> onUiAction(DayEntryContract.UiAction.OnAchievementReorder(from, to)) },
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
-            Text(text = stringResource(Res.string.day_entry_notes_title), style = DSTheme.typography.textLg, color = DSTheme.colors.text)
+            Text(text = stringResource(Res.string.day_entry_notes_title), style = DSTheme.typography.textXl, color = DSTheme.colors.text)
             DSTextField(
                 value = uiData.notes,
                 onValueChange = { onUiAction(DayEntryContract.UiAction.OnNotesChange(it)) },
@@ -261,10 +289,10 @@ private fun previewUiData(): DayEntryContract.UiData = DayEntryContract.UiData(
         DayEntryContract.AchievementEntry(id = "1", text = "Ran 3 miles without feeling drained after"),
     ),
     meals = listOf(
-        DayEntryContract.MealEntry(id = "1", label = "Meal 1", description = "Frittata with spinach and mushrooms"),
-        DayEntryContract.MealEntry(id = "2", label = "Meal 2", description = "Pulled pork, roasted sweet potato", lovedIt = true),
-        DayEntryContract.MealEntry(id = "3", label = "Meal 3", description = ""),
-        DayEntryContract.MealEntry(id = "4", label = "Extra or Snack", description = ""),
+        DayEntryContract.MealEntry(id = "1", description = "Frittata with spinach and mushrooms"),
+        DayEntryContract.MealEntry(id = "2", description = "Pulled pork, roasted sweet potato", lovedIt = true),
+        DayEntryContract.MealEntry(id = "3", description = ""),
+        DayEntryContract.MealEntry(id = "4", description = ""),
     ),
     notes = "This is the first day it felt easy instead of like a fight.",
     isComplete = true,

@@ -43,7 +43,6 @@ class DayEntryViewModel(
 ) {
 
     private var isLoaded = false
-    private var isAddingMeal = false
 
     override suspend fun applyUiAction(uiAction: DayEntryContract.UiAction) {
         when (uiAction) {
@@ -67,6 +66,20 @@ class DayEntryViewModel(
                 updateUiData { withMealPhoto(uiAction.mealId, uiAction.token) }
             DayEntryContract.UiAction.OnPhotoSourceDismiss ->
                 updateUiData { copy(pendingPhotoMealId = null) }
+            is DayEntryContract.UiAction.OnDeleteMealClick ->
+                updateUiData { copy(pendingDeleteMealId = uiAction.id) }
+            DayEntryContract.UiAction.OnDeleteMealConfirm -> confirmDeleteMeal()
+            DayEntryContract.UiAction.OnDeleteMealDismiss ->
+                updateUiData { copy(pendingDeleteMealId = null) }
+            is DayEntryContract.UiAction.OnMealReorder ->
+                updateUiData { copy(meals = meals.moved(uiAction.fromIndex, uiAction.toIndex)) }
+            is DayEntryContract.UiAction.OnDeleteAchievementClick ->
+                updateUiData { copy(pendingDeleteAchievementId = uiAction.id) }
+            DayEntryContract.UiAction.OnDeleteAchievementConfirm -> confirmDeleteAchievement()
+            DayEntryContract.UiAction.OnDeleteAchievementDismiss ->
+                updateUiData { copy(pendingDeleteAchievementId = null) }
+            is DayEntryContract.UiAction.OnAchievementReorder ->
+                updateUiData { copy(achievements = achievements.moved(uiAction.fromIndex, uiAction.toIndex)) }
             is DayEntryContract.UiAction.OnNotesChange ->
                 updateUiData { copy(notes = uiAction.notes) }
             DayEntryContract.UiAction.OnCompleteToggle ->
@@ -112,7 +125,7 @@ class DayEntryViewModel(
             meals = data.meals.mapIndexed { index, meal ->
                 Meal(
                     id = meal.id,
-                    label = meal.label,
+                    label = getString(Res.string.day_entry_meal_label_numbered, index + 1),
                     mealDescription = meal.description,
                     photoToken = meal.photoToken,
                     lovedIt = meal.lovedIt,
@@ -134,16 +147,9 @@ class DayEntryViewModel(
         )
     }
 
-    private suspend fun addMeal() {
-        if (isAddingMeal) return
-        isAddingMeal = true
-        try {
-            val label = getString(Res.string.day_entry_meal_label_numbered, currentUiData.meals.size + 1)
-            updateUiData {
-                copy(meals = meals + DayEntryContract.MealEntry(id = "day-$dayNumber-meal-added-${meals.size}", label = label))
-            }
-        } finally {
-            isAddingMeal = false
+    private fun addMeal() {
+        updateUiData {
+            copy(meals = meals + DayEntryContract.MealEntry(id = "day-$dayNumber-meal-added-${meals.size}"))
         }
     }
 
@@ -156,7 +162,17 @@ class DayEntryViewModel(
         }
     }
 
-    private suspend fun defaultUiData(
+    private fun confirmDeleteMeal() {
+        val id = currentUiData.pendingDeleteMealId ?: return
+        updateUiData { copy(meals = meals.filterNot { it.id == id }, pendingDeleteMealId = null) }
+    }
+
+    private fun confirmDeleteAchievement() {
+        val id = currentUiData.pendingDeleteAchievementId ?: return
+        updateUiData { copy(achievements = achievements.filterNot { it.id == id }, pendingDeleteAchievementId = null) }
+    }
+
+    private fun defaultUiData(
         dayNumber: Int,
         dateLabel: String,
         totalDays: Int,
@@ -167,23 +183,17 @@ class DayEntryViewModel(
         totalDays = totalDays,
         programStartDate = startDate,
         meals = defaultMeals(dayNumber),
-        achievements = defaultAchievements(dayNumber),
     )
 
-    private suspend fun defaultMeals(dayNumber: Int): List<DayEntryContract.MealEntry> = listOf(
-        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-1", label = getString(Res.string.day_entry_meal_label_numbered, 1)),
-        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-2", label = getString(Res.string.day_entry_meal_label_numbered, 2)),
-        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-3", label = getString(Res.string.day_entry_meal_label_numbered, 3)),
+    private fun defaultMeals(dayNumber: Int): List<DayEntryContract.MealEntry> = listOf(
+        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-1"),
+        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-2"),
+        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-3"),
     )
-
-    private fun defaultAchievements(dayNumber: Int): List<DayEntryContract.AchievementEntry> =
-        (0 until DEFAULT_ACHIEVEMENT_SLOTS).map { index ->
-            DayEntryContract.AchievementEntry(id = "day-$dayNumber-achievement-slot-$index", text = "")
-        }
 
     private fun today(): LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
 
-    private suspend fun DayEntry.toUiData(
+    private fun DayEntry.toUiData(
         dayNumber: Int,
         dateLabel: String,
         totalDays: Int,
@@ -208,16 +218,14 @@ class DayEntryViewModel(
             sleep = sleep,
             cravings = cravings,
             overallScore = computeOverall(energy, mood, sleep, cravings),
-            achievements = achievements.takeIf { it.isNotEmpty() }
-                ?.sortedBy { it.sortOrder }
-                ?.map { DayEntryContract.AchievementEntry(id = it.id, text = it.text) }
-                ?: defaultAchievements(dayNumber),
+            achievements = achievements
+                .sortedBy { it.sortOrder }
+                .map { DayEntryContract.AchievementEntry(id = it.id, text = it.text) },
             meals = meals.takeIf { it.isNotEmpty() }
                 ?.sortedBy { it.sortOrder }
                 ?.map {
                     DayEntryContract.MealEntry(
                         id = it.id,
-                        label = it.label,
                         description = it.mealDescription,
                         photoToken = it.photoToken,
                         lovedIt = it.lovedIt,
@@ -231,7 +239,6 @@ class DayEntryViewModel(
 }
 
 private const val DEFAULT_TOTAL_DAYS = 30
-private const val DEFAULT_ACHIEVEMENT_SLOTS = 1
 private const val MAX_SCORE = 10L
 
 private fun computeOverall(vararg entries: DayEntryContract.MetricEntry): Int? =
@@ -265,3 +272,10 @@ private fun DayEntryContract.UiData.withMealLovedToggled(id: String): DayEntryCo
 
 private fun DayEntryContract.UiData.withMealPhoto(id: String, token: String): DayEntryContract.UiData =
     copy(meals = meals.map { if (it.id == id) it.copy(photoToken = token) else it }, pendingPhotoMealId = null)
+
+private fun <T> List<T>.moved(fromIndex: Int, toIndex: Int): List<T> =
+    if (fromIndex == toIndex || fromIndex !in indices || toIndex !in indices) {
+        this
+    } else {
+        toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
+    }

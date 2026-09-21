@@ -25,7 +25,7 @@ fun AchievementsSummaryList(achievements: List<String>, modifier: Modifier = Mod
     if (achievements.isEmpty()) return
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
-        Text(text = stringResource(Res.string.day_detail_nsv_title), style = DSTheme.typography.textLg, color = colors.text)
+        Text(text = stringResource(Res.string.day_detail_nsv_title), style = DSTheme.typography.textXl, color = colors.text)
         DSCard(modifier = Modifier.fillMaxWidth(), contentPadding = DSSpacing.space6) {
             achievements.forEachIndexed { index, text ->
                 Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {

@@ -26,6 +26,11 @@
     <string name="day_entry_nsv_title">Vítězství mimo váhu</string>
     <string name="day_entry_nsv_placeholder">Vítězství mimo váhu</string>
     <string name="day_entry_add_achievement_button">Přidat vítězství</string>
+    <string name="day_entry_delete_achievement_content_description">Smazat vítězství</string>
+    <string name="day_entry_delete_achievement_dialog_title">Odebrat toto vítězství?</string>
+    <string name="day_entry_delete_achievement_dialog_message">Zmizí po uložení tohoto dne.</string>
+    <string name="day_entry_delete_achievement_confirm_button">Odebrat vítězství</string>
+    <string name="day_entry_achievement_reorder_content_description">Přeuspořádat vítězství</string>
 
     <string name="day_entry_meals_title">Co jsem jedl/a</string>
     <string name="day_entry_meal_label_numbered">%1$d. jídlo</string>
@@ -34,6 +39,11 @@
     <string name="day_entry_meal_photo_content_description">Fotka jídla</string>
     <string name="day_entry_meal_loved_content_description">Nejvíc mi chutnalo</string>
     <string name="day_entry_add_meal_button">Přidat jídlo</string>
+    <string name="day_entry_delete_meal_content_description">Smazat jídlo</string>
+    <string name="day_entry_delete_meal_dialog_title">Odebrat toto jídlo?</string>
+    <string name="day_entry_delete_meal_dialog_message">Zmizí po uložení tohoto dne.</string>
+    <string name="day_entry_delete_meal_confirm_button">Odebrat jídlo</string>
+    <string name="day_entry_meal_reorder_content_description">Přeuspořádat jídlo</string>
     <string name="day_entry_photo_source_title">Přidat fotku jídla</string>
     <string name="day_entry_photo_source_camera">Vyfotit</string>
     <string name="day_entry_photo_source_library">Vybrat z knihovny</string>
