@@ -1,6 +1,7 @@
 package dev.whole30journal.core.designsystem.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -9,6 +10,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -21,14 +24,17 @@ fun DSCard(
     modifier: Modifier = Modifier,
     highlighted: Boolean = false,
     contentPadding: Dp = DSSpacing.space7,
+    onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val colors = DSTheme.colors
+    val shape = DSShapes.xl
+    val clickModifier = if (onClick != null) Modifier.clip(shape).clickable(role = Role.Button, onClick = onClick) else Modifier
     Surface(
-        modifier = modifier,
+        modifier = modifier.then(clickModifier),
         color = colors.surface,
         contentColor = colors.text,
-        shape = DSShapes.xl,
+        shape = shape,
         border = if (highlighted) BorderStroke(1.5.dp, colors.accent) else null,
     ) {
         Column(

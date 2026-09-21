@@ -1,7 +1,6 @@
 package dev.whole30journal.feature.daydetail.presentation.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,7 +63,7 @@ private fun MealSummaryRow(
     modifier: Modifier = Modifier,
 ) {
     val colors = DSTheme.colors
-    DSCard(modifier = modifier.fillMaxWidth().clip(DSShapes.xl).clickable(onClick = onClick), contentPadding = DSSpacing.space6) {
+    DSCard(modifier = modifier.fillMaxWidth(), contentPadding = DSSpacing.space6, onClick = onClick) {
         Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space5), verticalAlignment = Alignment.CenterVertically) {
             if (meal.photoToken != null) {
                 AsyncImage(
