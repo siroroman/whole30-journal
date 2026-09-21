@@ -21,7 +21,6 @@
     <string name="day_detail_meal_label_numbered">Meal %1$d</string>
     <string name="day_detail_meal_photo_content_description">Meal photo</string>
     <string name="day_detail_meal_loved_content_description">Loved it</string>
-    <string name="day_detail_meal_not_loved_content_description">Not loved</string>
 
     <string name="day_detail_notes_title">Notes</string>
 
