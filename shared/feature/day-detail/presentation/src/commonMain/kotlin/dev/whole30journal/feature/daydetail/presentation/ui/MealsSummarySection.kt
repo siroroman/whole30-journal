@@ -1,6 +1,7 @@
 package dev.whole30journal.feature.daydetail.presentation.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,25 +37,34 @@ import dev.whole30journal.feature.daydetail.presentation.generated.resources.day
 import dev.whole30journal.feature.daydetail.presentation.vm.DayDetailContract
 import dev.whole30journal.feature.dayentry.presentation.photo.rememberMealPhotoResolver
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.HeartIcon
+import dev.whole30journal.feature.dayentry.presentation.ui.icons.LibraryIcon
 import org.jetbrains.compose.resources.stringResource
 
 private val PhotoSlotSize = 52.dp
+private val PlaceholderIconSize = 24.dp
 
 @Composable
-fun MealsSummarySection(meals: List<DayDetailContract.MealSummary>, modifier: Modifier = Modifier) {
+fun MealsSummarySection(meals: List<DayDetailContract.MealSummary>, onMealClick: (String) -> Unit, modifier: Modifier = Modifier) {
     if (meals.isEmpty()) return
     val resolvePhotoToken = rememberMealPhotoResolver()
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
         Text(text = stringResource(Res.string.day_detail_meals_title), style = DSTheme.typography.textXl, color = colors.text)
-        meals.forEach { meal -> MealSummaryRow(meal = meal, resolvePhotoToken = resolvePhotoToken) }
+        meals.forEach { meal ->
+            MealSummaryRow(meal = meal, resolvePhotoToken = resolvePhotoToken, onClick = { onMealClick(meal.id) })
+        }
     }
 }
 
 @Composable
-private fun MealSummaryRow(meal: DayDetailContract.MealSummary, resolvePhotoToken: (String) -> String, modifier: Modifier = Modifier) {
+private fun MealSummaryRow(
+    meal: DayDetailContract.MealSummary,
+    resolvePhotoToken: (String) -> String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val colors = DSTheme.colors
-    DSCard(modifier = modifier.fillMaxWidth(), contentPadding = DSSpacing.space6) {
+    DSCard(modifier = modifier.fillMaxWidth().clip(DSShapes.xl).clickable(onClick = onClick), contentPadding = DSSpacing.space6) {
         Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space5), verticalAlignment = Alignment.CenterVertically) {
             if (meal.photoToken != null) {
                 AsyncImage(
@@ -64,7 +74,12 @@ private fun MealSummaryRow(meal: DayDetailContract.MealSummary, resolvePhotoToke
                     modifier = Modifier.size(PhotoSlotSize).clip(DSShapes.md).background(colors.surface2),
                 )
             } else {
-                Box(modifier = Modifier.size(PhotoSlotSize).dashedBorder(colors.divider, DSShapes.md))
+                Box(
+                    modifier = Modifier.size(PhotoSlotSize).dashedBorder(colors.divider, DSShapes.md),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    LibraryIcon(tint = colors.textTertiary, modifier = Modifier.size(PlaceholderIconSize))
+                }
             }
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space2)) {
                 Text(text = meal.label.uppercase(), style = DSTheme.typography.text2xs, color = colors.textTertiary)
@@ -113,6 +128,7 @@ private fun MealsSummarySectionPreviewLight() {
                         lovedIt = true,
                     ),
                 ),
+                onMealClick = {},
                 modifier = Modifier.padding(DSSpacing.space7),
             )
         }
@@ -134,6 +150,7 @@ private fun MealsSummarySectionPreviewDark() {
                         lovedIt = false,
                     ),
                 ),
+                onMealClick = {},
                 modifier = Modifier.padding(DSSpacing.space7),
             )
         }

@@ -59,7 +59,7 @@ left on the default rule set); Detekt config is at `config/detekt/detekt.yml` (1
 - `shared:feature:home` / `settings` / `day-detail` — `presentation` only; each reuses another
   feature's `domain` module (day-entry + program, program, day-entry + program respectively).
   `day-detail` additionally depends on `day-entry`'s presentation module for the meal-photo
-  resolver and `HeartIcon` — the one cross-presentation edge; don't add a second one.
+  resolver, `HeartIcon` and `CloseIcon` — the one cross-presentation edge; don't add a second one.
 - `shared:umbrella` — builds the `SharedKit` framework for iOS; hosts `KoinIOS` and `appModules`.
 - `androidApp` — Compose app. `MainActivity` → `App()` → `HomeRoute()`, which owns the `NavHost`.
   Koin starts in `Whole30JournalApp.onCreate()`.

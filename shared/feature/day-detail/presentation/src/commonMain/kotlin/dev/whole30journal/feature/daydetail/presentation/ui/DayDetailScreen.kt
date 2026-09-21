@@ -44,25 +44,31 @@ fun DayDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     DSTheme {
-        Scaffold(
-            modifier = modifier,
-            containerColor = DSTheme.colors.bg,
-            topBar = {
-                DayDetailTopBar(
-                    dayNumber = state.uiData.dayNumber,
-                    dateLabel = state.uiData.dateLabel,
-                    onBackClick = { onUiAction(DayDetailContract.UiAction.OnBackClick) },
-                    onEditClick = { onUiAction(DayDetailContract.UiAction.OnEditClick) },
-                )
-            },
-        ) { contentPadding ->
-            DayDetailContent(
-                uiData = state.uiData,
-                onUiAction = onUiAction,
-                contentPadding = contentPadding,
+        Box(modifier = modifier) {
+            Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = DSTheme.colors.bg,
+                topBar = {
+                    DayDetailTopBar(
+                        dayNumber = state.uiData.dayNumber,
+                        dateLabel = state.uiData.dateLabel,
+                        onBackClick = { onUiAction(DayDetailContract.UiAction.OnBackClick) },
+                        onEditClick = { onUiAction(DayDetailContract.UiAction.OnEditClick) },
+                    )
+                },
+            ) { contentPadding ->
+                DayDetailContent(
+                    uiData = state.uiData,
+                    onUiAction = onUiAction,
+                    contentPadding = contentPadding,
+                    modifier = Modifier.fillMaxSize(),
+                )
+                HandleUiEvents(events = state.uiEvents, onConsume = onUiEventConsume)
+            }
+            MealDetailOverlay(
+                meal = state.uiData.meals.firstOrNull { it.id == state.uiData.selectedMealId },
+                onDismiss = { onUiAction(DayDetailContract.UiAction.OnMealDetailDismiss) },
             )
-            HandleUiEvents(events = state.uiEvents, onConsume = onUiEventConsume)
         }
     }
 }
@@ -133,7 +139,10 @@ private fun DayDetailContent(
             Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
                 uiData.metrics.forEach { summary -> MetricSummaryRow(summary = summary) }
             }
-            MealsSummarySection(meals = uiData.meals)
+            MealsSummarySection(
+                meals = uiData.meals,
+                onMealClick = { onUiAction(DayDetailContract.UiAction.OnMealClick(it)) },
+            )
             AchievementsSummaryList(achievements = uiData.achievements)
             NotesSummaryCard(notes = uiData.notes)
         } else {
@@ -165,6 +174,8 @@ private fun previewUiData(): DayDetailContract.UiData = DayDetailContract.UiData
     notes = "Almost done with the 30 days and it genuinely feels sustainable now.",
 )
 
+private fun previewMealDetailUiData(): DayDetailContract.UiData = previewUiData().let { it.copy(selectedMealId = it.meals.first().id) }
+
 private fun previewEmptyUiData(): DayDetailContract.UiData = DayDetailContract.UiData(dayNumber = 18, dateLabel = "2.8.2026", hasEntry = false)
 
 private const val UI_MODE_NIGHT_YES = 0x20
@@ -184,6 +195,16 @@ private fun DayDetailScreenPreview() {
 private fun DayDetailScreenPreviewDark() {
     DayDetailScreen(
         state = UiStateAware.UiState(isLoading = false, uiData = previewUiData()),
+        onUiAction = {},
+        onUiEventConsume = {},
+    )
+}
+
+@Preview
+@Composable
+private fun DayDetailScreenMealDetailPreview() {
+    DayDetailScreen(
+        state = UiStateAware.UiState(isLoading = false, uiData = previewMealDetailUiData()),
         onUiAction = {},
         onUiEventConsume = {},
     )

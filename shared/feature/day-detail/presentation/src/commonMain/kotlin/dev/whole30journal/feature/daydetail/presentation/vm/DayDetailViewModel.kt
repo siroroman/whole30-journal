@@ -50,6 +50,8 @@ class DayDetailViewModel(
             DayDetailContract.UiAction.OnBackClick -> emitOutputEvent(DayDetailContract.OutputEvent.Close)
             DayDetailContract.UiAction.OnEditClick ->
                 requestedDayNumber?.let { emitOutputEvent(DayDetailContract.OutputEvent.EditRequested(it)) }
+            is DayDetailContract.UiAction.OnMealClick -> updateUiData { copy(selectedMealId = uiAction.mealId) }
+            DayDetailContract.UiAction.OnMealDetailDismiss -> updateUiData { copy(selectedMealId = null) }
         }
     }
 
