@@ -4,7 +4,6 @@
     <string name="day_entry_cancel_button">Cancel</string>
     <string name="day_entry_day_title">Day %1$d</string>
     <string name="day_entry_save_button_short">Save</string>
-    <string name="day_entry_keyboard_done">Done</string>
     <string name="day_entry_section_how_i_felt">How I felt today</string>
 
     <string name="day_entry_metric_energy_title">Energy</string>
