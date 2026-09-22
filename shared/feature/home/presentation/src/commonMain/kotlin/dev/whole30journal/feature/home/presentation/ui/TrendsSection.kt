@@ -197,9 +197,9 @@ private fun TrendBarChart(
             }
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = axisLabels.start, style = DSTheme.typography.text2xs, color = colors.textTertiary)
-            Text(text = axisLabels.middle, style = DSTheme.typography.text2xs, color = colors.textTertiary)
-            Text(text = axisLabels.end, style = DSTheme.typography.text2xs, color = colors.textTertiary)
+            Text(text = axisLabels.start, style = DSTheme.typography.textXs, color = colors.textTertiary)
+            Text(text = axisLabels.middle, style = DSTheme.typography.textXs, color = colors.textTertiary)
+            Text(text = axisLabels.end, style = DSTheme.typography.textXs, color = colors.textTertiary)
         }
     }
 }
