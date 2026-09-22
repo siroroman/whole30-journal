@@ -68,7 +68,7 @@ private fun MealDetailContent(meal: DayDetailContract.MealSummary, onDismiss: ()
             .systemBarsPadding(),
     ) {
         Column(
-            modifier = Modifier.align(Alignment.Center).padding(top = CloseButtonClearance),
+            modifier = Modifier.fillMaxSize().padding(top = CloseButtonClearance),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(DSSpacing.space10),
         ) {
@@ -77,7 +77,7 @@ private fun MealDetailContent(meal: DayDetailContract.MealSummary, onDismiss: ()
                     model = resolvePhotoToken(meal.photoToken),
                     contentDescription = stringResource(Res.string.day_detail_meal_photo_content_description),
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false).padding(horizontal = DSSpacing.space7),
+                    modifier = Modifier.fillMaxWidth().weight(1f, fill = true),
                 )
             } else {
                 LibraryIcon(tint = colors.textTertiary, modifier = Modifier.size(PlaceholderIconSize))
