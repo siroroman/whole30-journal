@@ -84,8 +84,6 @@ class DayEntryViewModel(
                 updateUiData { copy(achievements = achievements.moved(uiAction.fromIndex, uiAction.toIndex)) }
             is DayEntryContract.UiAction.OnNotesChange ->
                 updateUiData { copy(notes = uiAction.notes) }
-            DayEntryContract.UiAction.OnCompleteToggle ->
-                updateUiData { copy(isComplete = !isComplete) }
             DayEntryContract.UiAction.OnSaveClick -> save()
             DayEntryContract.UiAction.OnCancelClick -> emitOutputEvent(DayEntryContract.OutputEvent.Close)
         }

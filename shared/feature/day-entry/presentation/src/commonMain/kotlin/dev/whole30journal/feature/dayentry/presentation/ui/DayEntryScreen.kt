@@ -85,9 +85,7 @@ fun DayEntryScreen(
             bottomBar = {
                 DayEntryFooter(
                     dayNumber = state.uiData.dayNumber,
-                    isComplete = state.uiData.isComplete,
                     isSaving = state.uiData.isSaving,
-                    onCompleteToggle = { onUiAction(DayEntryContract.UiAction.OnCompleteToggle) },
                     onSaveClick = { onUiAction(DayEntryContract.UiAction.OnSaveClick) },
                 )
             },

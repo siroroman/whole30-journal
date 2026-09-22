@@ -52,7 +52,6 @@
     <string name="day_entry_notes_title">Dnešní poznámky</string>
     <string name="day_entry_notes_placeholder">Nad čím dnes přemýšlíš?</string>
 
-    <string name="day_entry_complete_toggle_label">Den splněn — mám to!</string>
     <string name="day_entry_save_button">Uložit %1$d. den</string>
     <string name="day_entry_save_error">Den se nepodařilo uložit. Zkus to znovu.</string>
 </resources>
