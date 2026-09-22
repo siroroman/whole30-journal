@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
@@ -71,10 +73,11 @@ fun DayOverviewCard(
             )
         }
         if (metrics != null) {
+            Spacer(modifier = Modifier.height(DSSpacing.space5))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(DSSpacing.space7),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 DSProgressRing(
                     score = metrics.overall,
@@ -83,7 +86,7 @@ fun DayOverviewCard(
                     label = stringResource(Res.string.home_metric_overall),
                     icon = { LeafIcon(tint = colors.accent, modifier = Modifier.size(METRIC_ICON_SIZE)) },
                 )
-                MetricGrid(metrics = metrics, modifier = Modifier.weight(1f))
+                MetricGrid(metrics = metrics)
             }
         } else {
             DayEmptyState(isFuture = isFuture)
@@ -112,12 +115,11 @@ private fun DayEmptyState(isFuture: Boolean, modifier: Modifier = Modifier) {
 private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Modifier) {
     val colors = DSTheme.colors
 
-    Column(
+    Row(
         modifier = modifier,
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space5),
+        horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10),
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10)) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
             DSProgressRing(
                 score = metrics.energy,
                 size = METRIC_RING_SIZE,
@@ -126,20 +128,20 @@ private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Mo
                 icon = { EnergyIcon(tint = colors.iconEnergy, modifier = Modifier.size(METRIC_ICON_SIZE)) },
             )
             DSProgressRing(
-                score = metrics.mood,
-                size = METRIC_RING_SIZE,
-                stroke = METRIC_RING_STROKE,
-                label = stringResource(Res.string.home_metric_mood),
-                icon = { MoodIcon(tint = colors.iconMood, modifier = Modifier.size(METRIC_ICON_SIZE)) },
-            )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10)) {
-            DSProgressRing(
                 score = metrics.sleep,
                 size = METRIC_RING_SIZE,
                 stroke = METRIC_RING_STROKE,
                 label = stringResource(Res.string.home_metric_sleep),
                 icon = { SleepIcon(tint = colors.iconSleep, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+            )
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+            DSProgressRing(
+                score = metrics.mood,
+                size = METRIC_RING_SIZE,
+                stroke = METRIC_RING_STROKE,
+                label = stringResource(Res.string.home_metric_mood),
+                icon = { MoodIcon(tint = colors.iconMood, modifier = Modifier.size(METRIC_ICON_SIZE)) },
             )
             DSProgressRing(
                 score = metrics.cravings,
@@ -152,9 +154,9 @@ private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Mo
     }
 }
 
-private val OVERALL_RING_SIZE = 96.dp
+private val OVERALL_RING_SIZE = 72.dp
 private val OVERALL_RING_STROKE = 6.dp
-private val METRIC_RING_SIZE = 64.dp
+private val METRIC_RING_SIZE = 48.dp
 private val METRIC_RING_STROKE = 4.dp
 private val METRIC_ICON_SIZE = 12.dp
 
