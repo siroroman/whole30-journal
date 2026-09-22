@@ -48,9 +48,9 @@ fun DSProgressBar(
         }
         if (labelLeft != null || labelCenter != null || labelRight != null) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = labelLeft.orEmpty(), style = DSTheme.typography.text2xs, color = colors.textSecondary)
-                Text(text = labelCenter.orEmpty(), style = DSTheme.typography.text2xs, color = colors.textSecondary)
-                Text(text = labelRight.orEmpty(), style = DSTheme.typography.text2xs, color = colors.textSecondary)
+                Text(text = labelLeft.orEmpty(), style = DSTheme.typography.textSm, color = colors.textSecondary)
+                Text(text = labelCenter.orEmpty(), style = DSTheme.typography.textSm, color = colors.textSecondary)
+                Text(text = labelRight.orEmpty(), style = DSTheme.typography.textSm, color = colors.textSecondary)
             }
         }
     }
