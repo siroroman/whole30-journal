@@ -120,7 +120,13 @@ class DayEntryViewModel(
                 Metric(MetricTitle.MOOD, "mood", data.mood.score?.toLong(), MAX_SCORE, data.mood.note),
                 Metric(MetricTitle.SLEEP, "sleep", data.sleep.score?.toLong(), MAX_SCORE, data.sleep.note),
                 Metric(MetricTitle.CRAVINGS, "cravings", data.cravings.score?.toLong(), MAX_SCORE, data.cravings.note),
-                Metric(MetricTitle.OVERALL, "leaf", data.overallScore?.toLong(), MAX_SCORE, ""),
+                Metric(
+                    MetricTitle.OVERALL,
+                    "leaf",
+                    data.overallScore?.toLong(),
+                    MAX_SCORE,
+                    if (data.overallScoreManuallySet) OVERALL_MANUAL_NOTE else "",
+                ),
             ),
             notes = data.notes,
             isComplete = data.isComplete,
@@ -210,7 +216,8 @@ class DayEntryViewModel(
         val sleep = metricEntry(MetricTitle.SLEEP)
         val cravings = metricEntry(MetricTitle.CRAVINGS)
         val computedOverall = computeOverall(energy, mood, sleep, cravings)
-        val savedOverall = metrics.firstOrNull { it.title == MetricTitle.OVERALL }?.value?.toInt()
+        val overallMetric = metrics.firstOrNull { it.title == MetricTitle.OVERALL }
+        val savedOverall = overallMetric?.value?.toInt()
 
         return DayEntryContract.UiData(
             dayNumber = dayNumber,
@@ -222,7 +229,7 @@ class DayEntryViewModel(
             sleep = sleep,
             cravings = cravings,
             overallScore = savedOverall ?: computedOverall,
-            overallScoreManuallySet = savedOverall != null && savedOverall != computedOverall,
+            overallScoreManuallySet = overallMetric?.note == OVERALL_MANUAL_NOTE,
             achievements = achievements
                 .sortedBy { it.sortOrder }
                 .map { DayEntryContract.AchievementEntry(id = it.id, text = it.text) },
@@ -245,6 +252,7 @@ class DayEntryViewModel(
 
 private const val DEFAULT_TOTAL_DAYS = 30
 private const val MAX_SCORE = 10L
+private const val OVERALL_MANUAL_NOTE = "manual"
 
 private fun computeOverall(vararg entries: DayEntryContract.MetricEntry): Int? =
     overallScore(entries.map { it.score })

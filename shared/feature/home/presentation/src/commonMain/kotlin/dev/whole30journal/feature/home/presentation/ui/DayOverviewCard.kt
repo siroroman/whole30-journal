@@ -50,7 +50,12 @@ fun DayOverviewCard(
 ) {
     val colors = DSTheme.colors
     val isFuture = selectedDay > currentDay
-    DSCard(modifier = modifier.fillMaxWidth(), onClick = if (metrics != null) onViewDetailsClick else onEditClick) {
+    val onClick = when {
+        metrics != null -> onViewDetailsClick
+        isFuture -> null
+        else -> onEditClick
+    }
+    DSCard(modifier = modifier.fillMaxWidth(), onClick = onClick) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
