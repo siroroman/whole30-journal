@@ -155,3 +155,27 @@ private fun MealDetailOverlayPreviewDark() {
         )
     }
 }
+
+@Preview
+@Composable
+private fun MealDetailOverlayEmptyPreviewLight() {
+    DSTheme(darkTheme = false) {
+        MealDetailContent(
+            meal = DayDetailContract.MealSummary(id = "2", label = "Meal 2", description = "", photoToken = null, lovedIt = true),
+            onDismiss = {},
+            previewPhoto = null,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MealDetailOverlayEmptyPreviewDark() {
+    DSTheme(darkTheme = true) {
+        MealDetailContent(
+            meal = DayDetailContract.MealSummary(id = "2", label = "Meal 2", description = "", photoToken = null, lovedIt = true),
+            onDismiss = {},
+            previewPhoto = null,
+        )
+    }
+}
