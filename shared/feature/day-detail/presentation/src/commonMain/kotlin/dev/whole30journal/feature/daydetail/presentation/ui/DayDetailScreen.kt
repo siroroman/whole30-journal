@@ -53,12 +53,14 @@ fun DayDetailScreen(
                     )
                 },
             ) { contentPadding ->
-                DayDetailContent(
-                    uiData = state.uiData,
-                    onUiAction = onUiAction,
-                    contentPadding = contentPadding,
-                    modifier = Modifier.fillMaxSize(),
-                )
+                if (!state.isLoading) {
+                    DayDetailContent(
+                        uiData = state.uiData,
+                        onUiAction = onUiAction,
+                        contentPadding = contentPadding,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
                 HandleUiEvents(events = state.uiEvents, onConsume = onUiEventConsume)
             }
             MealDetailOverlay(
