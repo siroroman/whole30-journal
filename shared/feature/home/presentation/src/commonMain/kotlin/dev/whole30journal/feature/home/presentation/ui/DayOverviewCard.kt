@@ -1,19 +1,14 @@
 package dev.whole30journal.feature.home.presentation.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,20 +24,16 @@ import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
 import dev.whole30journal.feature.home.presentation.generated.resources.home_day_future_message
 import dev.whole30journal.feature.home.presentation.generated.resources.home_day_no_entry_message
-import dev.whole30journal.feature.home.presentation.generated.resources.home_edit_today_content_description
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_cravings
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_energy
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_mood
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_overall
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_sleep
-import dev.whole30journal.feature.home.presentation.generated.resources.home_view_today_details_content_description
 import dev.whole30journal.feature.home.presentation.ui.icons.CravingsIcon
-import dev.whole30journal.feature.home.presentation.ui.icons.EditIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.EnergyIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.LeafIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.MoodIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.SleepIcon
-import dev.whole30journal.feature.home.presentation.ui.icons.ViewDetailsIcon
 import dev.whole30journal.feature.home.presentation.vm.HomeContract
 import org.jetbrains.compose.resources.stringResource
 
@@ -53,57 +44,30 @@ fun DayOverviewCard(
     currentDay: Int,
     totalDays: Int,
     metrics: HomeContract.DayMetrics?,
-    onEditClick: () -> Unit,
-    onViewDetailsClick: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = DSTheme.colors
     val isFuture = selectedDay > currentDay
-    DSCard(modifier = modifier.fillMaxWidth()) {
+    DSCard(modifier = modifier.fillMaxWidth(), onClick = onClick) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
-            ) {
-                Text(
-                    text = selectedDayLabel,
-                    style = DSTheme.typography.textXl,
-                    color = colors.textSecondary,
-                )
-                Text(
-                    text = "$selectedDay/$totalDays",
-                    style = DSTheme.typography.textSm,
-                    color = colors.accentOn,
-                    modifier = Modifier
-                        .clip(DSShapes.pill)
-                        .background(colors.accent)
-                        .padding(horizontal = DSSpacing.space3, vertical = DSSpacing.space1),
-                )
-            }
-            if (!isFuture) {
-                Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
-                    IconCircleButton(onClick = onEditClick) {
-                        EditIcon(
-                            tint = colors.text,
-                            modifier = Modifier.size(20.dp),
-                            contentDescription = stringResource(Res.string.home_edit_today_content_description),
-                        )
-                    }
-                    if (metrics != null) {
-                        IconCircleButton(onClick = onViewDetailsClick) {
-                            ViewDetailsIcon(
-                                tint = colors.text,
-                                modifier = Modifier.size(20.dp),
-                                contentDescription = stringResource(Res.string.home_view_today_details_content_description),
-                            )
-                        }
-                    }
-                }
-            }
+            Text(
+                text = selectedDayLabel,
+                style = DSTheme.typography.textXl,
+                color = colors.textSecondary,
+            )
+            Text(
+                text = "$selectedDay/$totalDays",
+                style = DSTheme.typography.textSm,
+                color = colors.accentOn,
+                modifier = Modifier
+                    .clip(DSShapes.pill)
+                    .background(colors.accent)
+                    .padding(horizontal = DSSpacing.space3, vertical = DSSpacing.space1),
+            )
         }
         if (metrics != null) {
             Row(
@@ -141,22 +105,6 @@ private fun DayEmptyState(isFuture: Boolean, modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .padding(vertical = DSSpacing.space8),
     )
-}
-
-@Composable
-private fun IconCircleButton(onClick: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    val colors = DSTheme.colors
-    Box(
-        modifier = modifier
-            .minimumInteractiveComponentSize()
-            .size(36.dp)
-            .clip(CircleShape)
-            .border(width = 1.dp, color = colors.divider, shape = CircleShape)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        content()
-    }
 }
 
 @Composable
@@ -223,8 +171,7 @@ private fun DayOverviewCardPreviewLight() {
                 currentDay = 12,
                 totalDays = 30,
                 metrics = previewMetrics(),
-                onEditClick = {},
-                onViewDetailsClick = {},
+                onClick = {},
                 modifier = Modifier.padding(16.dp),
             )
         }
@@ -242,8 +189,7 @@ private fun DayOverviewCardPreviewDark() {
                 currentDay = 12,
                 totalDays = 30,
                 metrics = previewMetrics(),
-                onEditClick = {},
-                onViewDetailsClick = {},
+                onClick = {},
                 modifier = Modifier.padding(16.dp),
             )
         }
@@ -261,8 +207,7 @@ private fun DayOverviewCardEmptyPreviewLight() {
                 currentDay = 12,
                 totalDays = 30,
                 metrics = null,
-                onEditClick = {},
-                onViewDetailsClick = {},
+                onClick = {},
                 modifier = Modifier.padding(16.dp),
             )
         }
@@ -280,8 +225,7 @@ private fun DayOverviewCardEmptyPreviewDark() {
                 currentDay = 12,
                 totalDays = 30,
                 metrics = null,
-                onEditClick = {},
-                onViewDetailsClick = {},
+                onClick = {},
                 modifier = Modifier.padding(16.dp),
             )
         }

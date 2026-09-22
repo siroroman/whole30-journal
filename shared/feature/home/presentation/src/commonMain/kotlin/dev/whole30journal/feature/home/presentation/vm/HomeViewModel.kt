@@ -40,8 +40,6 @@ class HomeViewModel(
     override suspend fun applyUiAction(uiAction: HomeContract.UiAction) {
         when (uiAction) {
             is HomeContract.UiAction.OnDayClick -> selectDay(uiAction.dayNumber)
-            is HomeContract.UiAction.OnEditDayClick ->
-                emitOutputEvent(HomeContract.OutputEvent.NavigateToDayEntry(uiAction.dayNumber))
             is HomeContract.UiAction.OnViewDayDetailsClick ->
                 emitOutputEvent(HomeContract.OutputEvent.NavigateToDayDetail(uiAction.dayNumber))
             is HomeContract.UiAction.OnTrendMetricSelected ->

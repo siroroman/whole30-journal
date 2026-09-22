@@ -35,7 +35,6 @@ fun HomeRoute() {
     LaunchedEffect(viewModel, navigate) {
         viewModel.outputEvents.collect { event ->
             when (event) {
-                is HomeContract.OutputEvent.NavigateToDayEntry -> navigate(AppRoute.DayEntry(event.dayNumber))
                 is HomeContract.OutputEvent.NavigateToDayDetail -> navigate(AppRoute.DayDetail(event.dayNumber))
                 HomeContract.OutputEvent.NavigateToSettings -> navigate(AppRoute.Settings)
             }

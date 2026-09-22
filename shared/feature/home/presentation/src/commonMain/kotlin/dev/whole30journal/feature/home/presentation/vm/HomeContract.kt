@@ -57,7 +57,6 @@ object HomeContract {
 
     sealed interface UiAction : UiActionAware.UiAction {
         data class OnDayClick(val dayNumber: Int) : UiAction
-        data class OnEditDayClick(val dayNumber: Int) : UiAction
         data class OnViewDayDetailsClick(val dayNumber: Int) : UiAction
         data class OnTrendMetricSelected(val metric: TrendMetric) : UiAction
         data object OnSettingsClick : UiAction
@@ -67,7 +66,6 @@ object HomeContract {
     sealed interface UiEvent : UiStateAware.UiEvent
 
     sealed interface OutputEvent : UiStateAware.OutputEvent {
-        data class NavigateToDayEntry(val dayNumber: Int) : OutputEvent
         data class NavigateToDayDetail(val dayNumber: Int) : OutputEvent
         data object NavigateToSettings : OutputEvent
     }
