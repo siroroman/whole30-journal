@@ -190,7 +190,10 @@ private fun DayEntryContent(
                 onNoteChange = { onUiAction(DayEntryContract.UiAction.OnNoteChange(config.kind, it)) },
             )
         }
-        OverallScoreCard(score = uiData.overallScore)
+        OverallScoreCard(
+            score = uiData.overallScore,
+            onScoreChange = { onUiAction(DayEntryContract.UiAction.OnOverallScoreChange(it)) },
+        )
 
         MealsSection(
             meals = uiData.meals,

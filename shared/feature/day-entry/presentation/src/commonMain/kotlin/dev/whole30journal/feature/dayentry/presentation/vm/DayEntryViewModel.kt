@@ -50,6 +50,8 @@ class DayEntryViewModel(
                 if (!isLoaded) loadDayEntry(uiAction.dayNumber)
             is DayEntryContract.UiAction.OnScoreChange ->
                 updateUiData { withScore(uiAction.metric, uiAction.score) }
+            is DayEntryContract.UiAction.OnOverallScoreChange ->
+                updateUiData { copy(overallScore = uiAction.score, overallScoreManuallySet = true) }
             is DayEntryContract.UiAction.OnNoteChange ->
                 updateUiData { withNote(uiAction.metric, uiAction.note) }
             is DayEntryContract.UiAction.OnAchievementTextChange ->
@@ -207,6 +209,8 @@ class DayEntryViewModel(
         val mood = metricEntry(MetricTitle.MOOD)
         val sleep = metricEntry(MetricTitle.SLEEP)
         val cravings = metricEntry(MetricTitle.CRAVINGS)
+        val computedOverall = computeOverall(energy, mood, sleep, cravings)
+        val savedOverall = metrics.firstOrNull { it.title == MetricTitle.OVERALL }?.value?.toInt()
 
         return DayEntryContract.UiData(
             dayNumber = dayNumber,
@@ -217,7 +221,8 @@ class DayEntryViewModel(
             mood = mood,
             sleep = sleep,
             cravings = cravings,
-            overallScore = computeOverall(energy, mood, sleep, cravings),
+            overallScore = savedOverall ?: computedOverall,
+            overallScoreManuallySet = savedOverall != null && savedOverall != computedOverall,
             achievements = achievements
                 .sortedBy { it.sortOrder }
                 .map { DayEntryContract.AchievementEntry(id = it.id, text = it.text) },
@@ -251,7 +256,11 @@ private fun DayEntryContract.UiData.withScore(metric: DayEntryContract.MetricKin
         DayEntryContract.MetricKind.Sleep -> copy(sleep = sleep.copy(score = score))
         DayEntryContract.MetricKind.Cravings -> copy(cravings = cravings.copy(score = score))
     }
-    return updated.copy(overallScore = computeOverall(updated.energy, updated.mood, updated.sleep, updated.cravings))
+    return if (updated.overallScoreManuallySet) {
+        updated
+    } else {
+        updated.copy(overallScore = computeOverall(updated.energy, updated.mood, updated.sleep, updated.cravings))
+    }
 }
 
 private fun DayEntryContract.UiData.withNote(metric: DayEntryContract.MetricKind, note: String): DayEntryContract.UiData = when (metric) {
