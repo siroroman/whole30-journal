@@ -17,7 +17,6 @@ import dev.whole30journal.core.designsystem.components.DSProgressRing
 import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.Res
-import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_overall_caption
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_overall_title
 import org.jetbrains.compose.resources.stringResource
 
@@ -33,9 +32,8 @@ fun OverallScoreSummaryCard(score: Int?, modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space1)) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(Res.string.day_detail_overall_title), style = DSTheme.typography.textMd, color = colors.text)
-                Text(text = stringResource(Res.string.day_detail_overall_caption), style = DSTheme.typography.textSm, color = colors.textSecondary)
             }
             DSProgressRing(score = score, size = RingSize, stroke = RingStroke)
         }

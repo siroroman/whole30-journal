@@ -5,7 +5,6 @@
     <string name="day_detail_back_content_description">Back</string>
 
     <string name="day_detail_overall_title">Overall score</string>
-    <string name="day_detail_overall_caption">Average of Energy, Mood, Sleep and Cravings</string>
 
     <string name="day_detail_metric_energy_title">Energy</string>
     <string name="day_detail_metric_mood_title">Mood</string>
