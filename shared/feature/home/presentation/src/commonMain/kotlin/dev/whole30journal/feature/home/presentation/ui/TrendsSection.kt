@@ -154,7 +154,7 @@ private fun TrendBarChart(
     }
 
     Column(modifier = modifier) {
-        Canvas(modifier = Modifier.fillMaxWidth().height(120.dp)) {
+        Canvas(modifier = Modifier.fillMaxWidth().height(132.dp)) {
             listOf(0, 5, 10).forEach { gridValue ->
                 val y = size.height - (gridValue / maxValue) * size.height
                 drawLine(
