@@ -23,7 +23,7 @@ fun NotesSummaryCard(notes: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
         Text(text = stringResource(Res.string.day_detail_notes_title), style = DSTheme.typography.textXl, color = colors.text)
         DSCard(modifier = Modifier.fillMaxWidth()) {
-            Text(text = notes, style = DSTheme.typography.textSm, color = colors.text)
+            Text(text = notes, style = DSTheme.typography.textMd, color = colors.text)
         }
     }
 }
