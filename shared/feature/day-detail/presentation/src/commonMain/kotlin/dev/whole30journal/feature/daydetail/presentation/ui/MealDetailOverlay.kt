@@ -4,11 +4,13 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -22,6 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,10 +37,12 @@ import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.Res
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_meal_detail_close_content_description
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.day_detail_meal_photo_content_description
+import dev.whole30journal.feature.daydetail.presentation.generated.resources.meal_detail_preview_sample
 import dev.whole30journal.feature.daydetail.presentation.vm.DayDetailContract
 import dev.whole30journal.feature.dayentry.presentation.photo.rememberMealPhotoResolver
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.CloseIcon
 import dev.whole30journal.feature.dayentry.presentation.ui.icons.LibraryIcon
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 private val PlaceholderIconSize = 96.dp
@@ -57,7 +63,12 @@ fun MealDetailOverlay(meal: DayDetailContract.MealSummary?, onDismiss: () -> Uni
 }
 
 @Composable
-private fun MealDetailContent(meal: DayDetailContract.MealSummary, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
+private fun MealDetailContent(
+    meal: DayDetailContract.MealSummary,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    previewPhoto: Painter? = null,
+) {
     val colors = DSTheme.colors
     val resolvePhotoToken = rememberMealPhotoResolver()
     Box(
@@ -70,28 +81,37 @@ private fun MealDetailContent(meal: DayDetailContract.MealSummary, onDismiss: ()
         Column(
             modifier = Modifier.fillMaxSize().padding(top = CloseButtonClearance),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(DSSpacing.space10),
         ) {
-            if (meal.photoToken != null) {
+            if (previewPhoto != null) {
+                Image(
+                    painter = previewPhoto,
+                    contentDescription = stringResource(Res.string.day_detail_meal_photo_content_description),
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            } else if (meal.photoToken != null) {
                 AsyncImage(
                     model = resolvePhotoToken(meal.photoToken),
                     contentDescription = stringResource(Res.string.day_detail_meal_photo_content_description),
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxWidth().weight(1f, fill = true),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.7f),
                 )
             } else {
                 LibraryIcon(tint = colors.textTertiary, modifier = Modifier.size(PlaceholderIconSize))
             }
+
             Text(
                 text = meal.description.ifBlank { meal.label },
-                style = DSTheme.typography.text2xl,
+                style = DSTheme.typography.textMd,
                 color = colors.text,
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(max = DescriptionMaxHeight)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = DSSpacing.space7),
+                    .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
             )
         }
         Box(
@@ -103,7 +123,7 @@ private fun MealDetailContent(meal: DayDetailContract.MealSummary, onDismiss: ()
                 .padding(DSSpacing.space4),
         ) {
             CloseIcon(
-                tint = colors.textSecondary,
+                tint = colors.text,
                 contentDescription = stringResource(Res.string.day_detail_meal_detail_close_content_description),
             )
         }
@@ -114,7 +134,7 @@ private fun MealDetailContent(meal: DayDetailContract.MealSummary, onDismiss: ()
 @Composable
 private fun MealDetailOverlayPreviewLight() {
     DSTheme(darkTheme = false) {
-        MealDetailOverlay(
+        MealDetailContent(
             meal = DayDetailContract.MealSummary(
                 id = "1",
                 label = "Meal 1",
@@ -123,6 +143,7 @@ private fun MealDetailOverlayPreviewLight() {
                 lovedIt = true,
             ),
             onDismiss = {},
+            previewPhoto = painterResource(Res.drawable.meal_detail_preview_sample),
         )
     }
 }
@@ -131,9 +152,10 @@ private fun MealDetailOverlayPreviewLight() {
 @Composable
 private fun MealDetailOverlayPreviewDark() {
     DSTheme(darkTheme = true) {
-        MealDetailOverlay(
+        MealDetailContent(
             meal = DayDetailContract.MealSummary(id = "2", label = "Meal 2", description = "", photoToken = null, lovedIt = true),
             onDismiss = {},
+            previewPhoto = painterResource(Res.drawable.meal_detail_preview_sample),
         )
     }
 }
