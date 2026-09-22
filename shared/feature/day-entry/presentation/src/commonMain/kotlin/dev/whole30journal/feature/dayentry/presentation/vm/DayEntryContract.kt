@@ -29,9 +29,9 @@ object DayEntryContract {
     @Immutable
     data class UiData(
         val dayNumber: Int = 0,
+        val date: LocalDate? = null,
         val dateLabel: String = "",
         val totalDays: Int = 30,
-        val programStartDate: LocalDate? = null,
         val energy: MetricEntry = MetricEntry(),
         val mood: MetricEntry = MetricEntry(),
         val sleep: MetricEntry = MetricEntry(),

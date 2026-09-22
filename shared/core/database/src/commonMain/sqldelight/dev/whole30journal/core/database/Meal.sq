@@ -1,31 +1,27 @@
 CREATE TABLE MealEntity (
     id TEXT NOT NULL PRIMARY KEY,
-    dayNumber INTEGER NOT NULL,
+    date TEXT NOT NULL,
     label TEXT NOT NULL,
     description TEXT NOT NULL,
     photoToken TEXT,
     lovedIt INTEGER NOT NULL,
     sortOrder INTEGER NOT NULL,
-    FOREIGN KEY (dayNumber) REFERENCES DayEntryEntity(dayNumber)
+    FOREIGN KEY (date) REFERENCES DayEntryEntity(date)
 );
 
-selectByDayNumber:
+selectByDate:
 SELECT *
 FROM MealEntity
-WHERE dayNumber = ?
+WHERE date = ?
 ORDER BY sortOrder, id;
 
 upsert:
-INSERT OR REPLACE INTO MealEntity (id, dayNumber, label, description, photoToken, lovedIt, sortOrder)
+INSERT OR REPLACE INTO MealEntity (id, date, label, description, photoToken, lovedIt, sortOrder)
 VALUES (?, ?, ?, ?, ?, ?, ?);
 
-deleteByDayNumber:
+deleteByDate:
 DELETE FROM MealEntity
-WHERE dayNumber = ?;
-
-deleteAfterDayNumber:
-DELETE FROM MealEntity
-WHERE dayNumber > ?;
+WHERE date = ?;
 
 deleteAll:
 DELETE FROM MealEntity;

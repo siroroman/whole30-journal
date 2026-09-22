@@ -18,8 +18,6 @@ import dev.whole30journal.feature.dayentry.presentation.generated.resources.Res
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meal_label_numbered
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_save_error
 import dev.whole30journal.feature.program.domain.usecase.GetProgramUseCase
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -93,28 +91,26 @@ class DayEntryViewModel(
 
     private suspend fun loadDayEntry(dayNumber: Int) {
         updateIsLoading(true)
-        val (program, entry) = coroutineScope {
-            val programDeferred = async { getProgram().getOrNull() }
-            val entryDeferred = async { getDayEntry(dayNumber.toLong()).getOrNull() }
-            programDeferred.await() to entryDeferred.await()
-        }
+        val program = getProgram().getOrNull()
         val startDate = program?.startDate
-        val dateLabel = startDate?.let { dateFormatter(dateForDay(dayNumber, it), today(), DateFormatter.Style.Short) }.orEmpty()
+        val date = startDate?.let { dateForDay(dayNumber, it) }
+        val entry = date?.let { getDayEntry(it).getOrNull() }
+        val dateLabel = date?.let { dateFormatter(it, today(), DateFormatter.Style.Short) }.orEmpty()
         val totalDays = program?.durationDays?.toInt() ?: DEFAULT_TOTAL_DAYS
 
-        val draft = entry?.takeIf { it.isLogged }?.toUiData(dayNumber, dateLabel, totalDays, startDate)
-            ?: defaultUiData(dayNumber, dateLabel, totalDays, startDate)
+        val draft = entry?.takeIf { it.isLogged }?.toUiData(dayNumber, dateLabel, totalDays, date)
+            ?: defaultUiData(dayNumber, dateLabel, totalDays, date)
         updateUiData(isLoading = false) { draft }
         isLoaded = true
     }
 
     private suspend fun save() {
         val data = currentUiData
+        val date = data.date ?: return
         updateUiData { copy(isSaving = true) }
 
         val entry = DayEntry(
-            dayNumber = data.dayNumber.toLong(),
-            date = data.programStartDate?.let { dateForDay(data.dayNumber, it).toString() }.orEmpty(),
+            date = date,
             metrics = listOf(
                 Metric(MetricTitle.ENERGY, "energy", data.energy.score?.toLong(), MAX_SCORE, data.energy.note),
                 Metric(MetricTitle.MOOD, "mood", data.mood.score?.toLong(), MAX_SCORE, data.mood.note),
@@ -157,15 +153,17 @@ class DayEntryViewModel(
 
     private fun addMeal() {
         updateUiData {
-            copy(meals = meals + DayEntryContract.MealEntry(id = "day-$dayNumber-meal-added-${meals.size}"))
+            copy(meals = meals + DayEntryContract.MealEntry(id = "${entryIdPrefix(dayNumber, date)}-meal-added-${meals.size}"))
         }
     }
 
     private fun addAchievement() {
         updateUiData {
             copy(
-                achievements = achievements +
-                    DayEntryContract.AchievementEntry(id = "day-$dayNumber-achievement-added-${achievements.size}", text = ""),
+                achievements = achievements + DayEntryContract.AchievementEntry(
+                    id = "${entryIdPrefix(dayNumber, date)}-achievement-added-${achievements.size}",
+                    text = "",
+                ),
             )
         }
     }
@@ -184,20 +182,23 @@ class DayEntryViewModel(
         dayNumber: Int,
         dateLabel: String,
         totalDays: Int,
-        startDate: LocalDate?,
+        date: LocalDate?,
     ): DayEntryContract.UiData = DayEntryContract.UiData(
         dayNumber = dayNumber,
+        date = date,
         dateLabel = dateLabel,
         totalDays = totalDays,
-        programStartDate = startDate,
-        meals = defaultMeals(dayNumber),
+        meals = defaultMeals(dayNumber, date),
     )
 
-    private fun defaultMeals(dayNumber: Int): List<DayEntryContract.MealEntry> = listOf(
-        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-1"),
-        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-2"),
-        DayEntryContract.MealEntry(id = "day-$dayNumber-meal-slot-3"),
-    )
+    private fun defaultMeals(dayNumber: Int, date: LocalDate?): List<DayEntryContract.MealEntry> {
+        val prefix = entryIdPrefix(dayNumber, date)
+        return listOf(
+            DayEntryContract.MealEntry(id = "$prefix-meal-slot-1"),
+            DayEntryContract.MealEntry(id = "$prefix-meal-slot-2"),
+            DayEntryContract.MealEntry(id = "$prefix-meal-slot-3"),
+        )
+    }
 
     private fun today(): LocalDate = clock.todayIn(TimeZone.currentSystemDefault())
 
@@ -205,7 +206,7 @@ class DayEntryViewModel(
         dayNumber: Int,
         dateLabel: String,
         totalDays: Int,
-        startDate: LocalDate?,
+        date: LocalDate?,
     ): DayEntryContract.UiData {
         fun metricEntry(title: String) = metrics.firstOrNull { it.title == title }
             ?.let { DayEntryContract.MetricEntry(score = it.value?.toInt(), note = it.note) }
@@ -221,9 +222,9 @@ class DayEntryViewModel(
 
         return DayEntryContract.UiData(
             dayNumber = dayNumber,
+            date = date,
             dateLabel = dateLabel,
             totalDays = totalDays,
-            programStartDate = startDate,
             energy = energy,
             mood = mood,
             sleep = sleep,
@@ -243,7 +244,7 @@ class DayEntryViewModel(
                         lovedIt = it.lovedIt,
                     )
                 }
-                ?: defaultMeals(dayNumber),
+                ?: defaultMeals(dayNumber, date),
             notes = notes,
             isComplete = isComplete,
         )
@@ -253,6 +254,12 @@ class DayEntryViewModel(
 private const val DEFAULT_TOTAL_DAYS = 30
 private const val MAX_SCORE = 10L
 private const val OVERALL_MANUAL_NOTE = "manual"
+
+// Meal/achievement ids are DB primary keys, so they must stay unique across every date a program
+// has ever used - keying on the resolved calendar date (rather than the ordinal dayNumber, which
+// gets reused by a different date whenever the program's startDate changes) avoids two unrelated
+// days colliding on the same id.
+private fun entryIdPrefix(dayNumber: Int, date: LocalDate?): String = date?.toString() ?: "day-$dayNumber"
 
 private fun computeOverall(vararg entries: DayEntryContract.MetricEntry): Int? =
     overallScore(entries.map { it.score })

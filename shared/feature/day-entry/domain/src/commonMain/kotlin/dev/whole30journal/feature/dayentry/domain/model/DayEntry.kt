@@ -1,8 +1,9 @@
 package dev.whole30journal.feature.dayentry.domain.model
 
+import kotlinx.datetime.LocalDate
+
 data class DayEntry(
-    val dayNumber: Long,
-    val date: String,
+    val date: LocalDate,
     val metrics: List<Metric>,
     val notes: String,
     val isComplete: Boolean,

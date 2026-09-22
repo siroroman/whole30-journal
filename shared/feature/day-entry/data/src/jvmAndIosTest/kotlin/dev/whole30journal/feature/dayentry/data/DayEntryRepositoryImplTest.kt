@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,6 +36,9 @@ class DayEntryRepositoryImplTest {
     private val driver: SqlDriver = createTestDriver()
     private val repository = DayEntryRepositoryImpl(Whole30Database(driver))
 
+    private val day1 = LocalDate(2026, 7, 1)
+    private val day2 = LocalDate(2026, 7, 2)
+
     @AfterTest
     fun tearDown() {
         driver.close()
@@ -42,7 +46,7 @@ class DayEntryRepositoryImplTest {
 
     @Test
     fun `getDayEntry returns success with null when nothing was ever saved`() = runTest(timeout = DB_TEST_TIMEOUT) {
-        val result = repository.getDayEntry(dayNumber = 1L)
+        val result = repository.getDayEntry(day1)
 
         assertTrue(result.isSuccess)
         assertNull(result.getOrNull())
@@ -50,28 +54,28 @@ class DayEntryRepositoryImplTest {
 
     @Test
     fun `saveDayEntry then getDayEntry round-trips the full aggregate`() = runTest(timeout = DB_TEST_TIMEOUT) {
-        val entry = sampleDayEntry(dayNumber = 1L)
+        val entry = sampleDayEntry(day1)
 
         repository.saveDayEntry(entry).getOrThrow()
 
-        assertEquals(entry, repository.getDayEntry(1L).getOrThrow())
+        assertEquals(entry, repository.getDayEntry(day1).getOrThrow())
     }
 
     @Test
-    fun `saveDayEntry keeps entries for different day numbers independent`() = runTest(timeout = DB_TEST_TIMEOUT) {
-        val day1 = sampleDayEntry(dayNumber = 1L)
-        val day2 = sampleDayEntry(dayNumber = 2L)
+    fun `saveDayEntry keeps entries for different dates independent`() = runTest(timeout = DB_TEST_TIMEOUT) {
+        val entry1 = sampleDayEntry(day1)
+        val entry2 = sampleDayEntry(day2)
 
-        repository.saveDayEntry(day1).getOrThrow()
-        repository.saveDayEntry(day2).getOrThrow()
+        repository.saveDayEntry(entry1).getOrThrow()
+        repository.saveDayEntry(entry2).getOrThrow()
 
-        assertEquals(day1, repository.getDayEntry(1L).getOrThrow())
-        assertEquals(day2, repository.getDayEntry(2L).getOrThrow())
+        assertEquals(entry1, repository.getDayEntry(day1).getOrThrow())
+        assertEquals(entry2, repository.getDayEntry(day2).getOrThrow())
     }
 
     @Test
     fun `saveDayEntry replaces previously saved metrics meals and achievements`() = runTest(timeout = DB_TEST_TIMEOUT) {
-        val original = sampleDayEntry(dayNumber = 1L)
+        val original = sampleDayEntry(day1)
         repository.saveDayEntry(original).getOrThrow()
 
         val updated = original.copy(
@@ -83,27 +87,27 @@ class DayEntryRepositoryImplTest {
         )
         repository.saveDayEntry(updated).getOrThrow()
 
-        assertEquals(updated, repository.getDayEntry(1L).getOrThrow())
+        assertEquals(updated, repository.getDayEntry(day1).getOrThrow())
     }
 
     @Test
     fun `observeDayEntry reflects the current state whenever it's collected`() = runTest(timeout = DB_TEST_TIMEOUT) {
-        assertNull(repository.observeDayEntry(1L).first().getOrThrow())
+        assertNull(repository.observeDayEntry(day1).first().getOrThrow())
 
-        val entry = sampleDayEntry(dayNumber = 1L)
+        val entry = sampleDayEntry(day1)
         repository.saveDayEntry(entry).getOrThrow()
 
-        assertEquals(entry, repository.observeDayEntry(1L).first().getOrThrow())
+        assertEquals(entry, repository.observeDayEntry(day1).first().getOrThrow())
     }
 
     @Test
     fun `observeDayEntry pushes a new emission when saveDayEntry changes the row`() = runTest(timeout = DB_TEST_TIMEOUT) {
         val emissions = Channel<Result<DayEntry?>>(Channel.UNLIMITED)
-        backgroundScope.launch { repository.observeDayEntry(1L).collect { emissions.send(it) } }
+        backgroundScope.launch { repository.observeDayEntry(day1).collect { emissions.send(it) } }
 
         assertNull(emissions.receive().getOrThrow())
 
-        val entry = sampleDayEntry(dayNumber = 1L)
+        val entry = sampleDayEntry(day1)
         repository.saveDayEntry(entry).getOrThrow()
 
         assertEquals(entry, emissions.receive().getOrThrow())
@@ -111,7 +115,7 @@ class DayEntryRepositoryImplTest {
 
     @Test
     fun `concurrent saves and reads never observe a torn intermediate state`() = runTest(timeout = DB_TEST_TIMEOUT) {
-        val versionA = sampleDayEntry(dayNumber = 1L)
+        val versionA = sampleDayEntry(day1)
         val versionB = versionA.copy(
             notes = "Version B",
             metrics = versionA.metrics.map { it.copy(note = "B") },
@@ -122,14 +126,14 @@ class DayEntryRepositoryImplTest {
 
         val observed = mutableListOf<DayEntry?>()
         val observeJob = backgroundScope.launch {
-            repository.observeDayEntry(1L).collect { observed.add(it.getOrThrow()) }
+            repository.observeDayEntry(day1).collect { observed.add(it.getOrThrow()) }
         }
 
         val saveJob = launch {
             repeat(30) { i -> repository.saveDayEntry(if (i % 2 == 0) versionA else versionB).getOrThrow() }
         }
         val readJob = launch {
-            repeat(30) { assertTrue(isConsistent(repository.getDayEntry(1L).getOrThrow())) }
+            repeat(30) { assertTrue(isConsistent(repository.getDayEntry(day1).getOrThrow())) }
         }
         saveJob.join()
         readJob.join()
@@ -140,9 +144,8 @@ class DayEntryRepositoryImplTest {
     }
 }
 
-private fun sampleDayEntry(dayNumber: Long) = DayEntry(
-    dayNumber = dayNumber,
-    date = "2026-07-$dayNumber",
+private fun sampleDayEntry(date: LocalDate) = DayEntry(
+    date = date,
     metrics = listOf(
         Metric(title = "Energy", iconName = "bolt", value = 4L, maxValue = 5L, note = "Felt good"),
         Metric(title = "Sleep", iconName = "moon", value = null, maxValue = 5L, note = ""),
@@ -151,7 +154,7 @@ private fun sampleDayEntry(dayNumber: Long) = DayEntry(
     isComplete = false,
     meals = listOf(
         Meal(
-            id = "meal-$dayNumber-1",
+            id = "meal-$date-1",
             label = "Breakfast",
             mealDescription = "Eggs and avocado",
             photoToken = null,
@@ -159,7 +162,7 @@ private fun sampleDayEntry(dayNumber: Long) = DayEntry(
             sortOrder = 0L,
         ),
         Meal(
-            id = "meal-$dayNumber-2",
+            id = "meal-$date-2",
             label = "Lunch",
             mealDescription = "Chicken salad",
             photoToken = "token-abc",
@@ -168,6 +171,6 @@ private fun sampleDayEntry(dayNumber: Long) = DayEntry(
         ),
     ),
     achievements = listOf(
-        Achievement(id = "ach-$dayNumber-1", text = "No sugar cravings", sortOrder = 0L),
+        Achievement(id = "ach-$date-1", text = "No sugar cravings", sortOrder = 0L),
     ),
 )

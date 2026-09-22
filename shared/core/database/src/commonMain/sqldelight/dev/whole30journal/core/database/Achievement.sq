@@ -1,28 +1,24 @@
 CREATE TABLE AchievementEntity (
     id TEXT NOT NULL PRIMARY KEY,
-    dayNumber INTEGER NOT NULL,
+    date TEXT NOT NULL,
     text TEXT NOT NULL,
     sortOrder INTEGER NOT NULL,
-    FOREIGN KEY (dayNumber) REFERENCES DayEntryEntity(dayNumber)
+    FOREIGN KEY (date) REFERENCES DayEntryEntity(date)
 );
 
-selectByDayNumber:
+selectByDate:
 SELECT *
 FROM AchievementEntity
-WHERE dayNumber = ?
+WHERE date = ?
 ORDER BY sortOrder, id;
 
 upsert:
-INSERT OR REPLACE INTO AchievementEntity (id, dayNumber, text, sortOrder)
+INSERT OR REPLACE INTO AchievementEntity (id, date, text, sortOrder)
 VALUES (?, ?, ?, ?);
 
-deleteByDayNumber:
+deleteByDate:
 DELETE FROM AchievementEntity
-WHERE dayNumber = ?;
-
-deleteAfterDayNumber:
-DELETE FROM AchievementEntity
-WHERE dayNumber > ?;
+WHERE date = ?;
 
 deleteAll:
 DELETE FROM AchievementEntity;
