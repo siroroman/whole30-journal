@@ -67,6 +67,7 @@ fun AchievementsSection(
                                 state = reorderState,
                                 id = entry.id,
                                 contentDescription = stringResource(Res.string.day_entry_achievement_reorder_content_description),
+                                iconSize = AchievementActionIconSize,
                             )
                         }
                     } else {
