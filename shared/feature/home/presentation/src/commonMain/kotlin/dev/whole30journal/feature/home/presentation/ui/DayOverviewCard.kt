@@ -44,12 +44,13 @@ fun DayOverviewCard(
     currentDay: Int,
     totalDays: Int,
     metrics: HomeContract.DayMetrics?,
-    onClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onViewDetailsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = DSTheme.colors
     val isFuture = selectedDay > currentDay
-    DSCard(modifier = modifier.fillMaxWidth(), onClick = onClick) {
+    DSCard(modifier = modifier.fillMaxWidth(), onClick = if (metrics != null) onViewDetailsClick else onEditClick) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
@@ -171,7 +172,8 @@ private fun DayOverviewCardPreviewLight() {
                 currentDay = 12,
                 totalDays = 30,
                 metrics = previewMetrics(),
-                onClick = {},
+                onEditClick = {},
+                onViewDetailsClick = {},
                 modifier = Modifier.padding(16.dp),
             )
         }
@@ -189,7 +191,8 @@ private fun DayOverviewCardPreviewDark() {
                 currentDay = 12,
                 totalDays = 30,
                 metrics = previewMetrics(),
-                onClick = {},
+                onEditClick = {},
+                onViewDetailsClick = {},
                 modifier = Modifier.padding(16.dp),
             )
         }
@@ -207,7 +210,8 @@ private fun DayOverviewCardEmptyPreviewLight() {
                 currentDay = 12,
                 totalDays = 30,
                 metrics = null,
-                onClick = {},
+                onEditClick = {},
+                onViewDetailsClick = {},
                 modifier = Modifier.padding(16.dp),
             )
         }
@@ -225,7 +229,8 @@ private fun DayOverviewCardEmptyPreviewDark() {
                 currentDay = 12,
                 totalDays = 30,
                 metrics = null,
-                onClick = {},
+                onEditClick = {},
+                onViewDetailsClick = {},
                 modifier = Modifier.padding(16.dp),
             )
         }

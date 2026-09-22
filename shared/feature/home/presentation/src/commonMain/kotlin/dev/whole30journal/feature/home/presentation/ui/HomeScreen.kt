@@ -79,7 +79,8 @@ private fun HomeContent(
             currentDay = uiData.currentDay,
             totalDays = uiData.totalDays,
             metrics = uiData.metricsByDay[uiData.selectedDay],
-            onClick = { onUiAction(HomeContract.UiAction.OnViewDayDetailsClick(uiData.selectedDay)) },
+            onEditClick = { onUiAction(HomeContract.UiAction.OnEditDayClick(uiData.selectedDay)) },
+            onViewDetailsClick = { onUiAction(HomeContract.UiAction.OnViewDayDetailsClick(uiData.selectedDay)) },
         )
         TrendsSection(
             selectedMetric = uiData.selectedTrendMetric,

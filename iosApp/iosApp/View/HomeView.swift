@@ -59,6 +59,8 @@ struct HomeView: View {
             .task {
                 for await event in viewModel.outputEvents {
                     switch onEnum(of: event) {
+                    case let .navigateToDayEntry(data):
+                        push(.dayEntry(Int(data.dayNumber)))
                     case let .navigateToDayDetail(data):
                         push(.dayDetail(Int(data.dayNumber)))
                     case .navigateToSettings:
