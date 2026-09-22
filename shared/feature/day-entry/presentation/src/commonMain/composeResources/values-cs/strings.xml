@@ -21,7 +21,6 @@
     <string name="day_entry_note_placeholder">Poznámka</string>
 
     <string name="day_entry_overall_title">Celkové hodnocení</string>
-    <string name="day_entry_overall_caption">Automaticky vypočteno z energie, nálady, spánku a chutí</string>
 
     <string name="day_entry_nsv_title">Vítězství mimo váhu</string>
     <string name="day_entry_nsv_placeholder">Vítězství mimo váhu</string>

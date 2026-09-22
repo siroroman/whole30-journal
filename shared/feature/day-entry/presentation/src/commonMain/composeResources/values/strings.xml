@@ -21,7 +21,6 @@
     <string name="day_entry_note_placeholder">Note</string>
 
     <string name="day_entry_overall_title">Overall rating</string>
-    <string name="day_entry_overall_caption">Auto-calculated from Energy, Mood, Sleep and Cravings</string>
 
     <string name="day_entry_nsv_title">Non-scale victories</string>
     <string name="day_entry_nsv_placeholder">Non-scale victory</string>

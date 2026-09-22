@@ -13,7 +13,6 @@ import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.designsystem.theme.scoreColor
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.Res
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_overall_caption
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_overall_title
 import org.jetbrains.compose.resources.stringResource
 
@@ -24,7 +23,6 @@ fun OverallScoreCard(score: Int?, onScoreChange: (Int) -> Unit, modifier: Modifi
         Text(text = stringResource(Res.string.day_entry_overall_title), style = DSTheme.typography.textMd, color = colors.text)
         Text(text = score?.toString() ?: "–", style = DSTheme.typography.text2xl, color = colors.scoreColor(score))
         DSScoreDots(score = score, onScoreChange = onScoreChange)
-        Text(text = stringResource(Res.string.day_entry_overall_caption), style = DSTheme.typography.textSm, color = colors.textTertiary)
     }
 }
 
