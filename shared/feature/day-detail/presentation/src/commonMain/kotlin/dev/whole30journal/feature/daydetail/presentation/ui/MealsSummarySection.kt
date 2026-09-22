@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -81,7 +82,11 @@ private fun MealSummaryRow(
                 }
             }
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space2)) {
-                Text(text = meal.label.uppercase(), style = DSTheme.typography.text2xs, color = colors.textTertiary)
+                Text(
+                    text = meal.label.uppercase(),
+                    style = DSTheme.typography.textMd.copy(fontWeight = FontWeight.Bold),
+                    color = colors.textTertiary,
+                )
                 Text(text = meal.description, style = DSTheme.typography.textSm, color = colors.text)
             }
             if (meal.lovedIt) {
