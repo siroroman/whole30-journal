@@ -41,6 +41,7 @@ import org.jetbrains.compose.resources.stringResource
 
 private val PlaceholderIconSize = 96.dp
 private val DescriptionMaxHeight = 160.dp
+private val CloseButtonClearance = 56.dp
 
 @Composable
 fun MealDetailOverlay(meal: DayDetailContract.MealSummary?, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
@@ -67,7 +68,7 @@ private fun MealDetailContent(meal: DayDetailContract.MealSummary, onDismiss: ()
             .systemBarsPadding(),
     ) {
         Column(
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center).padding(top = CloseButtonClearance),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(DSSpacing.space10),
         ) {
@@ -76,7 +77,7 @@ private fun MealDetailContent(meal: DayDetailContract.MealSummary, onDismiss: ()
                     model = resolvePhotoToken(meal.photoToken),
                     contentDescription = stringResource(Res.string.day_detail_meal_photo_content_description),
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
+                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false).padding(horizontal = DSSpacing.space7),
                 )
             } else {
                 LibraryIcon(tint = colors.textTertiary, modifier = Modifier.size(PlaceholderIconSize))
