@@ -149,7 +149,7 @@ private fun IconCircleButton(onClick: () -> Unit, modifier: Modifier = Modifier,
     Box(
         modifier = modifier
             .minimumInteractiveComponentSize()
-            .size(40.dp)
+            .size(36.dp)
             .clip(CircleShape)
             .border(width = 1.dp, color = colors.divider, shape = CircleShape)
             .clickable(onClick = onClick),
