@@ -89,7 +89,7 @@ private fun MealDetailContent(
 
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxHeight().padding(bottom = DSSpacing.space10),
+                modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(bottom = DSSpacing.space10),
             ) {
                 ImageView(meal = meal, previewPhoto = previewPhoto)
             }
@@ -98,7 +98,7 @@ private fun MealDetailContent(
 }
 
 @Composable
-private  fun  ImageView(
+private fun ImageView(
     meal: DayDetailContract.MealSummary,
     previewPhoto: Painter? = null
 ) {
