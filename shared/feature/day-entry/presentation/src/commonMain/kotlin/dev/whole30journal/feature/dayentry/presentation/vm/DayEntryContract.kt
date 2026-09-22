@@ -37,6 +37,7 @@ object DayEntryContract {
         val sleep: MetricEntry = MetricEntry(),
         val cravings: MetricEntry = MetricEntry(),
         val overallScore: Int? = null,
+        val overallScoreManuallySet: Boolean = false,
         val achievements: List<AchievementEntry> = emptyList(),
         val meals: List<MealEntry> = emptyList(),
         val pendingPhotoMealId: String? = null,
@@ -50,6 +51,7 @@ object DayEntryContract {
     sealed interface UiAction : UiActionAware.UiAction {
         data class OnAppear(val dayNumber: Int) : UiAction
         data class OnScoreChange(val metric: MetricKind, val score: Int) : UiAction
+        data class OnOverallScoreChange(val score: Int) : UiAction
         data class OnNoteChange(val metric: MetricKind, val note: String) : UiAction
         data class OnAchievementTextChange(val id: String, val text: String) : UiAction
         data object OnAddAchievementClick : UiAction
@@ -75,7 +77,6 @@ object DayEntryContract {
         data object OnDeleteAchievementDismiss : UiAction
         data class OnAchievementReorder(val fromIndex: Int, val toIndex: Int) : UiAction
         data class OnNotesChange(val notes: String) : UiAction
-        data object OnCompleteToggle : UiAction
         data object OnSaveClick : UiAction
         data object OnCancelClick : UiAction
     }

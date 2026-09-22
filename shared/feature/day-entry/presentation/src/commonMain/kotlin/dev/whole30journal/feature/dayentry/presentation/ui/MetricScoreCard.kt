@@ -45,8 +45,8 @@ fun MetricScoreCard(
             )
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = lowLabel, style = DSTheme.typography.text2xs, color = colors.textTertiary)
-            Text(text = highLabel, style = DSTheme.typography.text2xs, color = colors.textTertiary)
+            Text(text = lowLabel, style = DSTheme.typography.textXs, color = colors.textTertiary)
+            Text(text = highLabel, style = DSTheme.typography.textXs, color = colors.textTertiary)
         }
         DSScoreDots(score = score, onScoreChange = onScoreChange)
         DSTextField(

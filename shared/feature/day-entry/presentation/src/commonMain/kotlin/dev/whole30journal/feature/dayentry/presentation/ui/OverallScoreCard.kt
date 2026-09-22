@@ -13,18 +13,16 @@ import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.designsystem.theme.scoreColor
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.Res
-import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_overall_caption
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_overall_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun OverallScoreCard(score: Int?, modifier: Modifier = Modifier) {
+fun OverallScoreCard(score: Int?, onScoreChange: (Int) -> Unit, modifier: Modifier = Modifier) {
     val colors = DSTheme.colors
     DSCard(modifier = modifier.fillMaxWidth()) {
         Text(text = stringResource(Res.string.day_entry_overall_title), style = DSTheme.typography.textMd, color = colors.text)
         Text(text = score?.toString() ?: "–", style = DSTheme.typography.text2xl, color = colors.scoreColor(score))
-        DSScoreDots(score = score, enabled = false)
-        Text(text = stringResource(Res.string.day_entry_overall_caption), style = DSTheme.typography.textSm, color = colors.textTertiary)
+        DSScoreDots(score = score, onScoreChange = onScoreChange)
     }
 }
 
@@ -33,7 +31,7 @@ fun OverallScoreCard(score: Int?, modifier: Modifier = Modifier) {
 private fun OverallScoreCardPreviewLight() {
     DSTheme(darkTheme = false) {
         Surface(color = DSTheme.colors.bg) {
-            OverallScoreCard(score = 6, modifier = Modifier.padding(DSSpacing.space7))
+            OverallScoreCard(score = 6, onScoreChange = {}, modifier = Modifier.padding(DSSpacing.space7))
         }
     }
 }
@@ -43,7 +41,7 @@ private fun OverallScoreCardPreviewLight() {
 private fun OverallScoreCardPreviewDark() {
     DSTheme(darkTheme = true) {
         Surface(color = DSTheme.colors.bg) {
-            OverallScoreCard(score = null, modifier = Modifier.padding(DSSpacing.space7))
+            OverallScoreCard(score = null, onScoreChange = {}, modifier = Modifier.padding(DSSpacing.space7))
         }
     }
 }

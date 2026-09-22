@@ -29,8 +29,8 @@ fun AchievementsSummaryList(achievements: List<String>, modifier: Modifier = Mod
         DSCard(modifier = Modifier.fillMaxWidth(), contentPadding = DSSpacing.space6) {
             achievements.forEachIndexed { index, text ->
                 Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
-                    Text(text = CHECKMARK, style = DSTheme.typography.textSm, color = colors.accent)
-                    Text(text = text, style = DSTheme.typography.textSm, color = colors.text)
+                    Text(text = CHECKMARK, style = DSTheme.typography.textMd, color = colors.accent)
+                    Text(text = text, style = DSTheme.typography.textMd, color = colors.text)
                 }
                 if (index != achievements.lastIndex) HorizontalDivider(color = colors.divider)
             }

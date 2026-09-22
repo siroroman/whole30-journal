@@ -1,53 +1,39 @@
 package dev.whole30journal.feature.home.presentation.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.whole30journal.core.designsystem.components.DSCard
 import dev.whole30journal.core.designsystem.components.DSProgressRing
-import dev.whole30journal.core.designsystem.components.DSTag
-import dev.whole30journal.core.designsystem.components.DSTagTone
 import dev.whole30journal.core.designsystem.theme.DSShapes
 import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.feature.home.presentation.generated.resources.Res
-import dev.whole30journal.feature.home.presentation.generated.resources.home_day_complete_tag
 import dev.whole30journal.feature.home.presentation.generated.resources.home_day_future_message
 import dev.whole30journal.feature.home.presentation.generated.resources.home_day_no_entry_message
-import dev.whole30journal.feature.home.presentation.generated.resources.home_day_not_complete_tag
-import dev.whole30journal.feature.home.presentation.generated.resources.home_edit_today_content_description
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_cravings
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_energy
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_mood
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_overall
 import dev.whole30journal.feature.home.presentation.generated.resources.home_metric_sleep
-import dev.whole30journal.feature.home.presentation.generated.resources.home_view_today_details_content_description
 import dev.whole30journal.feature.home.presentation.ui.icons.CravingsIcon
-import dev.whole30journal.feature.home.presentation.ui.icons.EditIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.EnergyIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.LeafIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.MoodIcon
 import dev.whole30journal.feature.home.presentation.ui.icons.SleepIcon
-import dev.whole30journal.feature.home.presentation.ui.icons.ViewDetailsIcon
 import dev.whole30journal.feature.home.presentation.vm.HomeContract
 import org.jetbrains.compose.resources.stringResource
 
@@ -64,65 +50,36 @@ fun DayOverviewCard(
 ) {
     val colors = DSTheme.colors
     val isFuture = selectedDay > currentDay
-    DSCard(modifier = modifier.fillMaxWidth()) {
+    val onClick = when {
+        metrics != null -> onViewDetailsClick
+        isFuture -> null
+        else -> onEditClick
+    }
+    DSCard(modifier = modifier.fillMaxWidth(), onClick = onClick) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
-            ) {
-                Text(
-                    text = selectedDayLabel,
-                    style = DSTheme.typography.textBase.copy(fontWeight = FontWeight.Bold),
-                    color = colors.textSecondary,
-                )
-                Text(
-                    text = "$selectedDay/$totalDays",
-                    style = DSTheme.typography.text2xs,
-                    color = colors.accentOn,
-                    modifier = Modifier
-                        .clip(DSShapes.pill)
-                        .background(colors.accent)
-                        .padding(horizontal = DSSpacing.space3, vertical = DSSpacing.space1),
-                )
-            }
-            if (!isFuture) {
-                Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
-                    IconCircleButton(onClick = onEditClick) {
-                        EditIcon(
-                            tint = colors.text,
-                            modifier = Modifier.size(14.dp),
-                            contentDescription = stringResource(Res.string.home_edit_today_content_description),
-                        )
-                    }
-                    if (metrics != null) {
-                        IconCircleButton(onClick = onViewDetailsClick) {
-                            ViewDetailsIcon(
-                                tint = colors.text,
-                                modifier = Modifier.size(14.dp),
-                                contentDescription = stringResource(Res.string.home_view_today_details_content_description),
-                            )
-                        }
-                    }
-                }
-            }
+            Text(
+                text = selectedDayLabel,
+                style = DSTheme.typography.textLg,
+                color = colors.textSecondary,
+            )
+            Text(
+                text = "$selectedDay/$totalDays",
+                style = DSTheme.typography.textXs,
+                color = colors.accentOn,
+                modifier = Modifier
+                    .clip(DSShapes.pill)
+                    .background(colors.accent)
+                    .padding(horizontal = DSSpacing.space3, vertical = DSSpacing.space1),
+            )
         }
         if (metrics != null) {
-            DSTag(
-                text = if (metrics.isComplete) {
-                    stringResource(Res.string.home_day_complete_tag)
-                } else {
-                    stringResource(Res.string.home_day_not_complete_tag)
-                },
-                tone = if (metrics.isComplete) DSTagTone.Accent else DSTagTone.Neutral,
-            )
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = DSSpacing.space3),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(DSSpacing.space7),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 DSProgressRing(
                     score = metrics.overall,
@@ -131,7 +88,7 @@ fun DayOverviewCard(
                     label = stringResource(Res.string.home_metric_overall),
                     icon = { LeafIcon(tint = colors.accent, modifier = Modifier.size(METRIC_ICON_SIZE)) },
                 )
-                MetricGrid(metrics = metrics, modifier = Modifier.weight(1f))
+                MetricGrid(metrics = metrics)
             }
         } else {
             DayEmptyState(isFuture = isFuture)
@@ -157,31 +114,14 @@ private fun DayEmptyState(isFuture: Boolean, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun IconCircleButton(onClick: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    val colors = DSTheme.colors
-    Box(
-        modifier = modifier
-            .minimumInteractiveComponentSize()
-            .size(28.dp)
-            .clip(CircleShape)
-            .border(width = 1.dp, color = colors.divider, shape = CircleShape)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        content()
-    }
-}
-
-@Composable
 private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Modifier) {
     val colors = DSTheme.colors
 
-    Column(
+    Row(
         modifier = modifier,
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space5),
+        horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10),
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10)) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
             DSProgressRing(
                 score = metrics.energy,
                 size = METRIC_RING_SIZE,
@@ -190,20 +130,20 @@ private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Mo
                 icon = { EnergyIcon(tint = colors.iconEnergy, modifier = Modifier.size(METRIC_ICON_SIZE)) },
             )
             DSProgressRing(
-                score = metrics.mood,
-                size = METRIC_RING_SIZE,
-                stroke = METRIC_RING_STROKE,
-                label = stringResource(Res.string.home_metric_mood),
-                icon = { MoodIcon(tint = colors.iconMood, modifier = Modifier.size(METRIC_ICON_SIZE)) },
-            )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10)) {
-            DSProgressRing(
                 score = metrics.sleep,
                 size = METRIC_RING_SIZE,
                 stroke = METRIC_RING_STROKE,
                 label = stringResource(Res.string.home_metric_sleep),
                 icon = { SleepIcon(tint = colors.iconSleep, modifier = Modifier.size(METRIC_ICON_SIZE)) },
+            )
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+            DSProgressRing(
+                score = metrics.mood,
+                size = METRIC_RING_SIZE,
+                stroke = METRIC_RING_STROKE,
+                label = stringResource(Res.string.home_metric_mood),
+                icon = { MoodIcon(tint = colors.iconMood, modifier = Modifier.size(METRIC_ICON_SIZE)) },
             )
             DSProgressRing(
                 score = metrics.cravings,
@@ -216,9 +156,9 @@ private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Mo
     }
 }
 
-private val OVERALL_RING_SIZE = 96.dp
+private val OVERALL_RING_SIZE = 72.dp
 private val OVERALL_RING_STROKE = 6.dp
-private val METRIC_RING_SIZE = 64.dp
+private val METRIC_RING_SIZE = 48.dp
 private val METRIC_RING_STROKE = 4.dp
 private val METRIC_ICON_SIZE = 12.dp
 

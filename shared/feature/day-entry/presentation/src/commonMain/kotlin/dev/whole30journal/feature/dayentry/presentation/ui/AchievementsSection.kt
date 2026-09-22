@@ -36,6 +36,8 @@ import dev.whole30journal.feature.dayentry.presentation.ui.icons.CloseIcon
 import dev.whole30journal.feature.dayentry.presentation.vm.DayEntryContract
 import org.jetbrains.compose.resources.stringResource
 
+private val AchievementActionIconSize = 24.dp
+
 @Composable
 fun AchievementsSection(
     achievements: List<DayEntryContract.AchievementEntry>,
@@ -65,6 +67,7 @@ fun AchievementsSection(
                                 state = reorderState,
                                 id = entry.id,
                                 contentDescription = stringResource(Res.string.day_entry_achievement_reorder_content_description),
+                                iconSize = AchievementActionIconSize,
                             )
                         }
                     } else {
@@ -119,7 +122,7 @@ private fun AchievementRow(
             ) {
                 CloseIcon(
                     tint = colors.textTertiary,
-                    modifier = Modifier.size(16.dp),
+                    modifier = Modifier.size(AchievementActionIconSize),
                     contentDescription = stringResource(Res.string.day_entry_delete_achievement_content_description),
                 )
             }

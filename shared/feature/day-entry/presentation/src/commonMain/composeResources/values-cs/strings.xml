@@ -21,7 +21,6 @@
     <string name="day_entry_note_placeholder">Poznámka</string>
 
     <string name="day_entry_overall_title">Celkové hodnocení</string>
-    <string name="day_entry_overall_caption">Automaticky vypočteno z energie, nálady, spánku a chutí</string>
 
     <string name="day_entry_nsv_title">Vítězství mimo váhu</string>
     <string name="day_entry_nsv_placeholder">Vítězství mimo váhu</string>
@@ -52,7 +51,6 @@
     <string name="day_entry_notes_title">Dnešní poznámky</string>
     <string name="day_entry_notes_placeholder">Nad čím dnes přemýšlíš?</string>
 
-    <string name="day_entry_complete_toggle_label">Den splněn — mám to!</string>
     <string name="day_entry_save_button">Uložit %1$d. den</string>
     <string name="day_entry_save_error">Den se nepodařilo uložit. Zkus to znovu.</string>
 </resources>

@@ -85,9 +85,7 @@ fun DayEntryScreen(
             bottomBar = {
                 DayEntryFooter(
                     dayNumber = state.uiData.dayNumber,
-                    isComplete = state.uiData.isComplete,
                     isSaving = state.uiData.isSaving,
-                    onCompleteToggle = { onUiAction(DayEntryContract.UiAction.OnCompleteToggle) },
                     onSaveClick = { onUiAction(DayEntryContract.UiAction.OnSaveClick) },
                 )
             },
@@ -174,7 +172,7 @@ private fun DayEntryContent(
             .nestedScroll(dismissKeyboardOnDrag)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space8),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space10),
     ) {
         Text(text = stringResource(Res.string.day_entry_section_how_i_felt), style = DSTheme.typography.textXl, color = DSTheme.colors.text)
 
@@ -192,7 +190,10 @@ private fun DayEntryContent(
                 onNoteChange = { onUiAction(DayEntryContract.UiAction.OnNoteChange(config.kind, it)) },
             )
         }
-        OverallScoreCard(score = uiData.overallScore)
+        OverallScoreCard(
+            score = uiData.overallScore,
+            onScoreChange = { onUiAction(DayEntryContract.UiAction.OnOverallScoreChange(it)) },
+        )
 
         MealsSection(
             meals = uiData.meals,

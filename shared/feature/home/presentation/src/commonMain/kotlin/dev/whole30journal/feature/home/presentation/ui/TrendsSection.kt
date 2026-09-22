@@ -153,8 +153,9 @@ private fun TrendBarChart(
         }
     }
 
-    Column(modifier = modifier) {
-        Canvas(modifier = Modifier.fillMaxWidth().height(120.dp)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(DSSpacing.space1)) {
+        Canvas(modifier = Modifier.fillMaxWidth().height(132.dp)) {
+            val gutterWidth = textMeasurer.measure(text = "10", style = labelStyle).size.width.toFloat() + 4.dp.toPx()
             listOf(0, 5, 10).forEach { gridValue ->
                 val y = size.height - (gridValue / maxValue) * size.height
                 drawLine(
@@ -170,12 +171,13 @@ private fun TrendBarChart(
                     style = labelStyle,
                 )
             }
-            val slotWidth = size.width / totalDays
+            val plotWidth = size.width - gutterWidth
+            val slotWidth = plotWidth / totalDays
             val barWidth = slotWidth * 0.6f
             animatedSeries.forEach { (dayNumber, animatedValue) ->
                 val value = animatedValue.value
                 val barHeight = (value / maxValue) * size.height
-                val left = (dayNumber - 1) * slotWidth + (slotWidth - barWidth) / 2f
+                val left = gutterWidth + (dayNumber - 1) * slotWidth + (slotWidth - barWidth) / 2f
                 val topCorner = CornerRadius(3.dp.toPx(), 3.dp.toPx())
                 val barPath = Path().apply {
                     addRoundRect(
@@ -195,9 +197,9 @@ private fun TrendBarChart(
             }
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = axisLabels.start, style = DSTheme.typography.text2xs, color = colors.textTertiary)
-            Text(text = axisLabels.middle, style = DSTheme.typography.text2xs, color = colors.textTertiary)
-            Text(text = axisLabels.end, style = DSTheme.typography.text2xs, color = colors.textTertiary)
+            Text(text = axisLabels.start, style = DSTheme.typography.textXs, color = colors.textTertiary)
+            Text(text = axisLabels.middle, style = DSTheme.typography.textXs, color = colors.textTertiary)
+            Text(text = axisLabels.end, style = DSTheme.typography.textXs, color = colors.textTertiary)
         }
     }
 }

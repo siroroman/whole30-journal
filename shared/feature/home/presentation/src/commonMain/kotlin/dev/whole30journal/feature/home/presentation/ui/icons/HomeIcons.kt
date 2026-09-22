@@ -24,8 +24,6 @@ private object HomeIconPaths {
     const val SMILEY = "M3,12 a9,9 0 1,0 18,0 a9,9 0 1,0 -18,0 M8 14s1.5 2 4 2 4-2 4-2 M9 9h.01 M15 9h.01"
     const val MOON = "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
     const val CIRCLE_CHECK = "M3,12 a9,9 0 1,0 18,0 a9,9 0 1,0 -18,0 M9 12l2 2 4-4"
-    const val PENCIL = "M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"
-    const val CHEVRON_RIGHT = "m9 18 6-6-6-6"
     const val GEAR = "M4.8,12 a7.2,7.2 0 1,0 14.4,0 a7.2,7.2 0 1,0 -14.4,0 " +
         "M9,12 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0 " +
         "M19.2,12 L21.7,12 " +
@@ -56,8 +54,6 @@ private object HomeIcons {
     val Smiley: ImageVector by lazy { outlineIcon("Smiley", HomeIconPaths.SMILEY, 2f) }
     val Moon: ImageVector by lazy { outlineIcon("Moon", HomeIconPaths.MOON, 2f) }
     val CircleCheck: ImageVector by lazy { outlineIcon("CircleCheck", HomeIconPaths.CIRCLE_CHECK, 2f) }
-    val Pencil: ImageVector by lazy { outlineIcon("Pencil", HomeIconPaths.PENCIL, 2.2f) }
-    val ChevronRight: ImageVector by lazy { outlineIcon("ChevronRight", HomeIconPaths.CHEVRON_RIGHT, 2.2f) }
     val Gear: ImageVector by lazy { outlineIcon("Gear", HomeIconPaths.GEAR, 1.8f) }
 }
 
@@ -84,16 +80,6 @@ fun SleepIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.cur
 @Composable
 fun CravingsIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current, contentDescription: String? = null) {
     Icon(HomeIcons.CircleCheck, contentDescription, modifier, tint)
-}
-
-@Composable
-fun EditIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current, contentDescription: String? = null) {
-    Icon(HomeIcons.Pencil, contentDescription, modifier, tint)
-}
-
-@Composable
-fun ViewDetailsIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current, contentDescription: String? = null) {
-    Icon(HomeIcons.ChevronRight, contentDescription, modifier, tint)
 }
 
 @Composable
