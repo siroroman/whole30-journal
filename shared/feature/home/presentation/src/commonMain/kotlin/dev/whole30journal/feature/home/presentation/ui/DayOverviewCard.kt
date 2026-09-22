@@ -57,12 +57,12 @@ fun DayOverviewCard(
         ) {
             Text(
                 text = selectedDayLabel,
-                style = DSTheme.typography.textXl,
+                style = DSTheme.typography.textLg,
                 color = colors.textSecondary,
             )
             Text(
                 text = "$selectedDay/$totalDays",
-                style = DSTheme.typography.textSm,
+                style = DSTheme.typography.textXs,
                 color = colors.accentOn,
                 modifier = Modifier
                     .clip(DSShapes.pill)

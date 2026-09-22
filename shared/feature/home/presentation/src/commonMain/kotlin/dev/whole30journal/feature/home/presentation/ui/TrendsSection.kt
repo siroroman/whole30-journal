@@ -153,7 +153,7 @@ private fun TrendBarChart(
         }
     }
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(DSSpacing.space1)) {
         Canvas(modifier = Modifier.fillMaxWidth().height(132.dp)) {
             val gutterWidth = textMeasurer.measure(text = "10", style = labelStyle).size.width.toFloat() + 4.dp.toPx()
             listOf(0, 5, 10).forEach { gridValue ->
