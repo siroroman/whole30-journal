@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
@@ -62,7 +61,6 @@ private fun MealDetailContent(
     previewPhoto: Painter? = null,
 ) {
     val colors = DSTheme.colors
-    val resolvePhotoToken = rememberMealPhotoResolver()
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -70,44 +68,7 @@ private fun MealDetailContent(
             .clickable(interactionSource = null, indication = null, onClick = onDismiss)
             .systemBarsPadding(),
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxHeight().padding(bottom = DSSpacing.space12),
-        ) {
-            if (previewPhoto != null) {
-                Image(
-                    painter = previewPhoto,
-                    contentDescription = stringResource(Res.string.day_detail_meal_photo_content_description),
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            } else if (meal.photoToken != null) {
-                AsyncImage(
-                    model = resolvePhotoToken(meal.photoToken),
-                    contentDescription = stringResource(Res.string.day_detail_meal_photo_content_description),
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            } else {
-                LibraryIcon(
-                    tint = colors.textTertiary,
-                    modifier = Modifier
-                        .size(PlaceholderIconSize)
-                        .align(alignment = Alignment.Center),
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier.background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        colors.bg.copy(alpha = 0f),
-                        colors.bg
-                    )
-                )
-            )
-        ) {
+        Column {
             CloseIcon(
                 tint = colors.text,
                 contentDescription = stringResource(Res.string.day_detail_meal_detail_close_content_description),
@@ -122,9 +83,46 @@ private fun MealDetailContent(
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(all = DSSpacing.space7)
+                    .padding(all = DSSpacing.space7),
+                maxLines = 5
             )
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxHeight().padding(bottom = DSSpacing.space10),
+            ) {
+                ImageView(meal = meal, previewPhoto = previewPhoto)
+            }
         }
+    }
+}
+
+@Composable
+private  fun  ImageView(
+    meal: DayDetailContract.MealSummary,
+    previewPhoto: Painter? = null
+) {
+    if (previewPhoto != null) {
+        Image(
+            painter = previewPhoto,
+            contentDescription = stringResource(Res.string.day_detail_meal_photo_content_description),
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    } else if (meal.photoToken != null) {
+        val resolvePhotoToken = rememberMealPhotoResolver()
+        AsyncImage(
+            model = resolvePhotoToken(meal.photoToken),
+            contentDescription = stringResource(Res.string.day_detail_meal_photo_content_description),
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    } else {
+        LibraryIcon(
+            tint = DSTheme.colors.textTertiary,
+            modifier = Modifier
+                .size(PlaceholderIconSize)
+        )
     }
 }
 
