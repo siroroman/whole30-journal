@@ -80,13 +80,13 @@ private fun MealSummaryRow(
                     LibraryIcon(tint = colors.textTertiary, modifier = Modifier.size(PlaceholderIconSize))
                 }
             }
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space2)) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space1)) {
                 Text(
-                    text = meal.label.uppercase(),
+                    text = meal.label,
                     style = DSTheme.typography.textMd,
-                    color = colors.textTertiary,
+                    color = colors.text,
                 )
-                Text(text = meal.description, style = DSTheme.typography.textSm, color = colors.text)
+                Text(text = meal.description, style = DSTheme.typography.textSm, color = colors.textSecondary)
             }
             if (meal.lovedIt) {
                 HeartIcon(
