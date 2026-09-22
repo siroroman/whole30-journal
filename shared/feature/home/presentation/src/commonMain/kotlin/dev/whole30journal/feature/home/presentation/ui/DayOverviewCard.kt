@@ -90,7 +90,7 @@ fun DayOverviewCard(
                     IconCircleButton(onClick = onEditClick) {
                         EditIcon(
                             tint = colors.text,
-                            modifier = Modifier.size(14.dp),
+                            modifier = Modifier.size(20.dp),
                             contentDescription = stringResource(Res.string.home_edit_today_content_description),
                         )
                     }
@@ -98,7 +98,7 @@ fun DayOverviewCard(
                         IconCircleButton(onClick = onViewDetailsClick) {
                             ViewDetailsIcon(
                                 tint = colors.text,
-                                modifier = Modifier.size(14.dp),
+                                modifier = Modifier.size(20.dp),
                                 contentDescription = stringResource(Res.string.home_view_today_details_content_description),
                             )
                         }
@@ -150,7 +150,7 @@ private fun IconCircleButton(onClick: () -> Unit, modifier: Modifier = Modifier,
     Box(
         modifier = modifier
             .minimumInteractiveComponentSize()
-            .size(28.dp)
+            .size(40.dp)
             .clip(CircleShape)
             .border(width = 1.dp, color = colors.divider, shape = CircleShape)
             .clickable(onClick = onClick),
