@@ -26,7 +26,7 @@ private val RingStroke = 4.5.dp
 @Composable
 fun OverallScoreSummaryCard(score: Int?, modifier: Modifier = Modifier) {
     val colors = DSTheme.colors
-    DSCard(highlighted = true, modifier = modifier.fillMaxWidth()) {
+    DSCard(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,

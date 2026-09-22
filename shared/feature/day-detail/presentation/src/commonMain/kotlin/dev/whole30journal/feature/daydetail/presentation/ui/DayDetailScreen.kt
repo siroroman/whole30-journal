@@ -123,9 +123,9 @@ private fun DayDetailContent(
         verticalArrangement = Arrangement.spacedBy(DSSpacing.space12),
     ) {
         if (uiData.hasEntry) {
-            OverallScoreSummaryCard(score = uiData.overallScore)
             Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
                 uiData.metrics.forEach { summary -> MetricSummaryRow(summary = summary) }
+                OverallScoreSummaryCard(score = uiData.overallScore)
             }
             MealsSummarySection(
                 meals = uiData.meals,
