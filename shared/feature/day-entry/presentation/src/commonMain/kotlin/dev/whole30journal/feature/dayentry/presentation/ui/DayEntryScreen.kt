@@ -174,7 +174,7 @@ private fun DayEntryContent(
             .nestedScroll(dismissKeyboardOnDrag)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space8),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space10),
     ) {
         Text(text = stringResource(Res.string.day_entry_section_how_i_felt), style = DSTheme.typography.textXl, color = DSTheme.colors.text)
 
