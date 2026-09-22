@@ -1,5 +1,6 @@
 package dev.whole30journal.android.daydetail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +31,10 @@ fun DayDetailRoute(
                 is DayDetailContract.OutputEvent.EditRequested -> onEdit(event.dayNumber)
             }
         }
+    }
+
+    BackHandler(enabled = state.uiData.selectedMealId != null) {
+        viewModel.onUiAction(DayDetailContract.UiAction.OnMealDetailDismiss)
     }
 
     DayDetailScreen(

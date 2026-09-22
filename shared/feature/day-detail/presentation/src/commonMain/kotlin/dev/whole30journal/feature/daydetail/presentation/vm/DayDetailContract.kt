@@ -32,12 +32,15 @@ object DayDetailContract {
         val meals: List<MealSummary> = emptyList(),
         val achievements: List<String> = emptyList(),
         val notes: String = "",
+        val selectedMealId: String? = null,
     ) : UiStateAware.UiData
 
     sealed interface UiAction : UiActionAware.UiAction {
         data class OnAppear(val dayNumber: Int) : UiAction
         data object OnBackClick : UiAction
         data object OnEditClick : UiAction
+        data class OnMealClick(val mealId: String) : UiAction
+        data object OnMealDetailDismiss : UiAction
     }
 
     /** No cases yet - nothing async, nothing that can fail while reading an entry. */

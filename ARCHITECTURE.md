@@ -38,9 +38,9 @@ screen. A presentation module may depend on **another feature's domain module** 
 module never depends on another feature's `data`.
 
 There is one cross-`presentation` dependency: `day-detail` depends on `day-entry`'s presentation
-module for `rememberMealPhotoResolver` and the shared `HeartIcon`, because both screens render the
-same meal photos. Prefer promoting anything more substantial into `core:design-system` or
-`core:utils` over adding a second such edge.
+module for `rememberMealPhotoResolver` and the shared `HeartIcon`, `CloseIcon` and `LibraryIcon`,
+because both screens render the same meal photos. Prefer promoting anything more substantial into
+`core:design-system` or `core:utils` over adding a second such edge.
 
 ## The shared ViewModel foundation
 

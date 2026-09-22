@@ -47,6 +47,7 @@
     <string name="day_entry_photo_source_title">Přidat fotku jídla</string>
     <string name="day_entry_photo_source_camera">Vyfotit</string>
     <string name="day_entry_photo_source_library">Vybrat z knihovny</string>
+    <string name="day_entry_photo_source_remove">Odebrat fotku</string>
 
     <string name="day_entry_notes_title">Dnešní poznámky</string>
     <string name="day_entry_notes_placeholder">Nad čím dnes přemýšlíš?</string>

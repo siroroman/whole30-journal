@@ -52,6 +52,7 @@ import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_meals_title
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_photo_source_camera
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_photo_source_library
+import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_photo_source_remove
 import dev.whole30journal.feature.dayentry.presentation.generated.resources.day_entry_photo_source_title
 import dev.whole30journal.feature.dayentry.presentation.photo.rememberMealPhotoPicker
 import dev.whole30journal.feature.dayentry.presentation.photo.rememberMealPhotoResolver
@@ -75,6 +76,7 @@ fun MealsSection(
     onLovedToggle: (id: String) -> Unit,
     onAddPhotoClick: (id: String) -> Unit,
     onPhotoPick: (id: String, token: String) -> Unit,
+    onPhotoRemove: (id: String) -> Unit,
     onPhotoSourceDismiss: () -> Unit,
     onAddMealClick: () -> Unit,
     onDeleteMealClick: (id: String) -> Unit,
@@ -125,6 +127,7 @@ fun MealsSection(
     }
 
     if (pendingPhotoMealId != null) {
+        val hasPhoto = meals.any { it.id == pendingPhotoMealId && it.photoToken != null }
         PhotoSourceDialog(
             onCameraClick = {
                 awaitingPhotoMealId = pendingPhotoMealId
@@ -135,6 +138,11 @@ fun MealsSection(
                 awaitingPhotoMealId = pendingPhotoMealId
                 onPhotoSourceDismiss()
                 photoPicker.launchLibrary()
+            },
+            onRemoveClick = if (hasPhoto) {
+                { onPhotoRemove(pendingPhotoMealId) }
+            } else {
+                null
             },
             onDismiss = onPhotoSourceDismiss,
         )
@@ -153,7 +161,12 @@ fun MealsSection(
 }
 
 @Composable
-private fun PhotoSourceDialog(onCameraClick: () -> Unit, onLibraryClick: () -> Unit, onDismiss: () -> Unit) {
+private fun PhotoSourceDialog(
+    onCameraClick: () -> Unit,
+    onLibraryClick: () -> Unit,
+    onRemoveClick: (() -> Unit)?,
+    onDismiss: () -> Unit,
+) {
     val colors = DSTheme.colors
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(modifier = Modifier.fillMaxSize().padding(DSSpacing.space10), contentAlignment = Alignment.Center) {
@@ -183,6 +196,13 @@ private fun PhotoSourceDialog(onCameraClick: () -> Unit, onLibraryClick: () -> U
                     icon = { LibraryIcon(tint = colors.text, modifier = Modifier.size(18.dp)) },
                     onClick = onLibraryClick,
                 )
+                if (onRemoveClick != null) {
+                    PhotoSourceOption(
+                        text = stringResource(Res.string.day_entry_photo_source_remove),
+                        icon = { CloseIcon(tint = colors.text, modifier = Modifier.size(18.dp)) },
+                        onClick = onRemoveClick,
+                    )
+                }
                 Text(
                     text = stringResource(Res.string.day_entry_cancel_button),
                     style = DSTheme.typography.textMd,
@@ -322,6 +342,7 @@ private fun MealsSectionPreviewLight() {
                 onLovedToggle = {},
                 onAddPhotoClick = {},
                 onPhotoPick = { _, _ -> },
+                onPhotoRemove = {},
                 onPhotoSourceDismiss = {},
                 onAddMealClick = {},
                 onDeleteMealClick = {},
@@ -347,6 +368,7 @@ private fun MealsSectionPreviewDark() {
                 onLovedToggle = {},
                 onAddPhotoClick = {},
                 onPhotoPick = { _, _ -> },
+                onPhotoRemove = {},
                 onPhotoSourceDismiss = {},
                 onAddMealClick = {},
                 onDeleteMealClick = {},
@@ -363,7 +385,7 @@ private fun MealsSectionPreviewDark() {
 @Composable
 private fun PhotoSourceDialogPreviewLight() {
     DSTheme(darkTheme = false) {
-        PhotoSourceDialog(onCameraClick = {}, onLibraryClick = {}, onDismiss = {})
+        PhotoSourceDialog(onCameraClick = {}, onLibraryClick = {}, onRemoveClick = null, onDismiss = {})
     }
 }
 
@@ -371,6 +393,14 @@ private fun PhotoSourceDialogPreviewLight() {
 @Composable
 private fun PhotoSourceDialogPreviewDark() {
     DSTheme(darkTheme = true) {
-        PhotoSourceDialog(onCameraClick = {}, onLibraryClick = {}, onDismiss = {})
+        PhotoSourceDialog(onCameraClick = {}, onLibraryClick = {}, onRemoveClick = null, onDismiss = {})
+    }
+}
+
+@Preview
+@Composable
+private fun PhotoSourceDialogWithRemovePreview() {
+    DSTheme(darkTheme = false) {
+        PhotoSourceDialog(onCameraClick = {}, onLibraryClick = {}, onRemoveClick = {}, onDismiss = {})
     }
 }

@@ -21,6 +21,7 @@
     <string name="day_detail_meal_label_numbered">%1$d. jídlo</string>
     <string name="day_detail_meal_photo_content_description">Fotka jídla</string>
     <string name="day_detail_meal_loved_content_description">Nejvíc mi chutnalo</string>
+    <string name="day_detail_meal_detail_close_content_description">Zavřít</string>
 
     <string name="day_detail_notes_title">Poznámky</string>
 
