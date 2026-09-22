@@ -120,7 +120,7 @@ private fun DayDetailContent(
             .verticalScroll(rememberScrollState())
             .padding(contentPadding)
             .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space10),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space12),
     ) {
         if (uiData.hasEntry) {
             OverallScoreSummaryCard(score = uiData.overallScore)
