@@ -160,19 +160,11 @@ private fun SettingsTopBar(isSaving: Boolean, onBackClick: () -> Unit, modifier:
                 contentAlignment = Alignment.CenterStart,
                 enabled = !isSaving,
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(DSShapes.pill)
-                        .clickable(role = Role.Button, enabled = !isSaving, onClick = onBackClick),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    ChevronLeftIcon(
-                        tint = colors.text,
-                        contentDescription = stringResource(Res.string.settings_back_content_description),
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
+                ChevronLeftIcon(
+                    tint = colors.text,
+                    contentDescription = stringResource(Res.string.settings_back_content_description),
+                    modifier = Modifier.size(20.dp),
+                )
             }
             Text(
                 text = stringResource(Res.string.settings_edit_title),
