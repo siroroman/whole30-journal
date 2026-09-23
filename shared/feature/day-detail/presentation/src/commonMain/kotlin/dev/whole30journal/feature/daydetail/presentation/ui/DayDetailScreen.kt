@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import dev.whole30journal.core.designsystem.components.DSTouchTarget
 import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.core.uistate.UiStateAware
@@ -99,12 +100,17 @@ private fun DayDetailTopBar(
                 Text(text = stringResource(Res.string.day_detail_title, dayNumber), style = DSTheme.typography.textXl, color = colors.text)
                 Text(text = dateLabel, style = DSTheme.typography.textXs, color = colors.textTertiary)
             }
-            Text(
-                text = stringResource(Res.string.day_detail_edit_button),
-                style = DSTheme.typography.textLg.copy(fontWeight = FontWeight.Bold),
-                color = colors.accent,
-                modifier = Modifier.align(Alignment.CenterEnd).clickable(onClick = onEditClick),
-            )
+            DSTouchTarget(
+                onClick = onEditClick,
+                modifier = Modifier.align(Alignment.CenterEnd),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                Text(
+                    text = stringResource(Res.string.day_detail_edit_button),
+                    style = DSTheme.typography.textLg.copy(fontWeight = FontWeight.Bold),
+                    color = colors.accent,
+                )
+            }
         }
         HorizontalDivider(color = colors.divider)
     }

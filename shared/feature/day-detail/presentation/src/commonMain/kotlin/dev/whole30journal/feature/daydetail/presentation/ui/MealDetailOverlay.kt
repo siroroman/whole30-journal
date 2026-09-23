@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import dev.whole30journal.core.designsystem.components.DSTouchTarget
 import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
 import dev.whole30journal.feature.daydetail.presentation.generated.resources.Res
@@ -69,13 +70,18 @@ private fun MealDetailContent(
             .systemBarsPadding(),
     ) {
         Column {
-            CloseIcon(
-                tint = colors.text,
-                contentDescription = stringResource(Res.string.day_detail_meal_detail_close_content_description),
+            DSTouchTarget(
+                onClick = onDismiss,
                 modifier = Modifier
                     .align(alignment = Alignment.End)
-                    .padding(top = DSSpacing.space16, end = DSSpacing.space16)
-            )
+                    .padding(top = DSSpacing.space16, end = DSSpacing.space16),
+                contentAlignment = Alignment.TopEnd,
+            ) {
+                CloseIcon(
+                    tint = colors.text,
+                    contentDescription = stringResource(Res.string.day_detail_meal_detail_close_content_description),
+                )
+            }
             Text(
                 text = meal.description.ifBlank { meal.label },
                 style = DSTheme.typography.textLg,
