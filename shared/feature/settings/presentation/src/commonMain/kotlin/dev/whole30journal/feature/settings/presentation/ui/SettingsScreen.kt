@@ -48,6 +48,7 @@ import androidx.compose.ui.window.DialogProperties
 import dev.whole30journal.core.designsystem.components.DSButton
 import dev.whole30journal.core.designsystem.components.DSButtonVariant
 import dev.whole30journal.core.designsystem.components.DSCard
+import dev.whole30journal.core.designsystem.components.DSTouchTarget
 import dev.whole30journal.core.designsystem.theme.DSShapes
 import dev.whole30journal.core.designsystem.theme.DSSpacing
 import dev.whole30journal.core.designsystem.theme.DSTheme
@@ -153,19 +154,25 @@ private fun SettingsTopBar(isSaving: Boolean, onBackClick: () -> Unit, modifier:
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth().background(colors.bg).statusBarsPadding()) {
         Box(modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space14, vertical = DSSpacing.space12)) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .size(32.dp)
-                    .clip(DSShapes.pill)
-                    .clickable(role = Role.Button, enabled = !isSaving, onClick = onBackClick),
-                contentAlignment = Alignment.Center,
+            DSTouchTarget(
+                onClick = onBackClick,
+                modifier = Modifier.align(Alignment.CenterStart),
+                contentAlignment = Alignment.CenterStart,
+                enabled = !isSaving,
             ) {
-                ChevronLeftIcon(
-                    tint = colors.text,
-                    contentDescription = stringResource(Res.string.settings_back_content_description),
-                    modifier = Modifier.size(20.dp),
-                )
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(DSShapes.pill)
+                        .clickable(role = Role.Button, enabled = !isSaving, onClick = onBackClick),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    ChevronLeftIcon(
+                        tint = colors.text,
+                        contentDescription = stringResource(Res.string.settings_back_content_description),
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
             }
             Text(
                 text = stringResource(Res.string.settings_edit_title),

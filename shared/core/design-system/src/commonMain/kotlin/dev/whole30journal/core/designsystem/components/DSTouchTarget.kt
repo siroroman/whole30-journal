@@ -15,12 +15,13 @@ fun DSTouchTarget(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.Center,
+    enabled: Boolean = true,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
         modifier = modifier
             .defaultMinSize(minWidth = DSSpacing.space48, minHeight = DSSpacing.space48)
-            .clickable(onClick = onClick, role = Role.Button),
+            .clickable(onClick = onClick, enabled = enabled, role = Role.Button),
         contentAlignment = contentAlignment,
         content = content,
     )

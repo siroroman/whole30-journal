@@ -1,7 +1,6 @@
 package dev.whole30journal.feature.dayentry.presentation.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -131,11 +130,16 @@ private fun DayEntryTopBar(
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth().background(colors.bg).statusBarsPadding()) {
         Box(modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space20, vertical = DSSpacing.space14)) {
-            ChevronLeftIcon(
-                tint = colors.textSecondary,
-                contentDescription = stringResource(Res.string.day_entry_back_content_description),
-                modifier = Modifier.align(Alignment.CenterStart).clickable(onClick = onCancelClick),
-            )
+            DSTouchTarget(
+                onClick = onCancelClick,
+                modifier = Modifier.align(Alignment.CenterStart),
+                contentAlignment = Alignment.CenterStart,
+            ) {
+                ChevronLeftIcon(
+                    tint = colors.textSecondary,
+                    contentDescription = stringResource(Res.string.day_entry_back_content_description),
+                )
+            }
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.align(Alignment.Center)) {
                 Text(text = stringResource(Res.string.day_entry_day_title, dayNumber), style = DSTheme.typography.textXl, color = colors.text)
                 Text(text = dateLabel, style = DSTheme.typography.textXs, color = colors.textTertiary)
