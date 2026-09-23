@@ -31,7 +31,7 @@ fun AddEntryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modif
             .fillMaxWidth()
             .dashedBorder(colors.divider, DSShapes.lg)
             .clickable(onClick = onClick)
-            .padding(DSSpacing.space6),
+            .padding(DSSpacing.space14),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -40,7 +40,7 @@ fun AddEntryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modif
             text = text,
             style = DSTheme.typography.textBase,
             color = colors.textSecondary,
-            modifier = Modifier.padding(start = DSSpacing.space3),
+            modifier = Modifier.padding(start = DSSpacing.space8),
         )
     }
 }

@@ -30,7 +30,7 @@ fun MetricSummaryRow(summary: DayDetailContract.MetricSummary, modifier: Modifie
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space1)) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space4)) {
                 Text(text = summary.title, style = DSTheme.typography.textMd, color = colors.text)
                 if (summary.note.isNotBlank()) {
                     Text(text = summary.note, style = DSTheme.typography.textSm, color = colors.textSecondary)
@@ -46,7 +46,7 @@ fun MetricSummaryRow(summary: DayDetailContract.MetricSummary, modifier: Modifie
 private fun MetricSummaryRowPreviewLight() {
     DSTheme(darkTheme = false) {
         Surface(color = DSTheme.colors.bg) {
-            Column(modifier = Modifier.padding(DSSpacing.space7), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+            Column(modifier = Modifier.padding(DSSpacing.space16), verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
                 MetricSummaryRow(
                     summary = DayDetailContract.MetricSummary(
                         title = "Energy",
@@ -65,7 +65,7 @@ private fun MetricSummaryRowPreviewLight() {
 private fun MetricSummaryRowPreviewDark() {
     DSTheme(darkTheme = true) {
         Surface(color = DSTheme.colors.bg) {
-            Column(modifier = Modifier.padding(DSSpacing.space7)) {
+            Column(modifier = Modifier.padding(DSSpacing.space16)) {
                 MetricSummaryRow(
                     summary = DayDetailContract.MetricSummary(title = "Sleep quality", note = "Fell asleep faster.", score = 8),
                 )

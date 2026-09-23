@@ -24,11 +24,11 @@ private const val CHECKMARK = "✓"
 fun AchievementsSummaryList(achievements: List<String>, modifier: Modifier = Modifier) {
     if (achievements.isEmpty()) return
     val colors = DSTheme.colors
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
         Text(text = stringResource(Res.string.day_detail_nsv_title), style = DSTheme.typography.textXl, color = colors.text)
-        DSCard(modifier = Modifier.fillMaxWidth(), contentPadding = DSSpacing.space6) {
+        DSCard(modifier = Modifier.fillMaxWidth(), contentPadding = DSSpacing.space14) {
             achievements.forEachIndexed { index, text ->
-                Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space8)) {
                     Text(text = CHECKMARK, style = DSTheme.typography.textMd, color = colors.accent)
                     Text(text = text, style = DSTheme.typography.textMd, color = colors.text)
                 }
@@ -49,7 +49,7 @@ private fun AchievementsSummaryListPreviewLight() {
                     "Read every ingredient label at the store",
                     "Didn't quit on day one",
                 ),
-                modifier = Modifier.padding(DSSpacing.space7),
+                modifier = Modifier.padding(DSSpacing.space16),
             )
         }
     }
@@ -62,7 +62,7 @@ private fun AchievementsSummaryListPreviewDark() {
         Surface(color = DSTheme.colors.bg) {
             AchievementsSummaryList(
                 achievements = listOf("Cooked a full dinner from scratch"),
-                modifier = Modifier.padding(DSSpacing.space7),
+                modifier = Modifier.padding(DSSpacing.space16),
             )
         }
     }

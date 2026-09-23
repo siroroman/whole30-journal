@@ -28,7 +28,7 @@ fun DayEntryFooter(
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth().background(colors.bg).navigationBarsPadding()) {
         HorizontalDivider(color = colors.divider)
-        Column(modifier = Modifier.padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space6)) {
+        Column(modifier = Modifier.padding(horizontal = DSSpacing.space20, vertical = DSSpacing.space14)) {
             DSButton(onClick = onSaveClick, fullWidth = true, enabled = !isSaving) {
                 Text(stringResource(Res.string.day_entry_save_button, dayNumber))
             }

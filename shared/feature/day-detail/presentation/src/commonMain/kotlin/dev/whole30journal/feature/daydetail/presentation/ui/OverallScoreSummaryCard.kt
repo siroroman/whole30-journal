@@ -45,7 +45,7 @@ fun OverallScoreSummaryCard(score: Int?, modifier: Modifier = Modifier) {
 private fun OverallScoreSummaryCardPreviewLight() {
     DSTheme(darkTheme = false) {
         Surface(color = DSTheme.colors.bg) {
-            OverallScoreSummaryCard(score = 8, modifier = Modifier.padding(DSSpacing.space7))
+            OverallScoreSummaryCard(score = 8, modifier = Modifier.padding(DSSpacing.space16))
         }
     }
 }
@@ -55,7 +55,7 @@ private fun OverallScoreSummaryCardPreviewLight() {
 private fun OverallScoreSummaryCardPreviewDark() {
     DSTheme(darkTheme = true) {
         Surface(color = DSTheme.colors.bg) {
-            OverallScoreSummaryCard(score = null, modifier = Modifier.padding(DSSpacing.space7))
+            OverallScoreSummaryCard(score = null, modifier = Modifier.padding(DSSpacing.space16))
         }
     }
 }

@@ -58,7 +58,7 @@ fun DayOverviewCard(
     DSCard(modifier = modifier.fillMaxWidth(), onClick = onClick) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
+            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space8),
         ) {
             Text(
                 text = selectedDayLabel,
@@ -72,12 +72,12 @@ fun DayOverviewCard(
                 modifier = Modifier
                     .clip(DSShapes.pill)
                     .background(colors.accent)
-                    .padding(horizontal = DSSpacing.space3, vertical = DSSpacing.space1),
+                    .padding(horizontal = DSSpacing.space8, vertical = DSSpacing.space4),
             )
         }
         if (metrics != null) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = DSSpacing.space3),
+                modifier = Modifier.fillMaxWidth().padding(top = DSSpacing.space8),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -109,7 +109,7 @@ private fun DayEmptyState(isFuture: Boolean, modifier: Modifier = Modifier) {
         textAlign = TextAlign.Center,
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = DSSpacing.space8),
+            .padding(vertical = DSSpacing.space18),
     )
 }
 
@@ -119,9 +119,9 @@ private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Mo
 
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10),
+        horizontalArrangement = Arrangement.spacedBy(DSSpacing.space24),
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
             DSProgressRing(
                 score = metrics.energy,
                 size = METRIC_RING_SIZE,
@@ -137,7 +137,7 @@ private fun MetricGrid(metrics: HomeContract.DayMetrics, modifier: Modifier = Mo
                 icon = { SleepIcon(tint = colors.iconSleep, modifier = Modifier.size(METRIC_ICON_SIZE)) },
             )
         }
-        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
             DSProgressRing(
                 score = metrics.mood,
                 size = METRIC_RING_SIZE,

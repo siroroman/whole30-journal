@@ -129,7 +129,7 @@ private fun DayEntryTopBar(
 ) {
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth().background(colors.bg).statusBarsPadding()) {
-        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space6)) {
+        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space20, vertical = DSSpacing.space14)) {
             ChevronLeftIcon(
                 tint = colors.textSecondary,
                 contentDescription = stringResource(Res.string.day_entry_back_content_description),
@@ -171,8 +171,8 @@ private fun DayEntryContent(
             .padding(contentPadding)
             .nestedScroll(dismissKeyboardOnDrag)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space10),
+            .padding(horizontal = DSSpacing.space16, vertical = DSSpacing.space16),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space24),
     ) {
         Text(text = stringResource(Res.string.day_entry_section_how_i_felt), style = DSTheme.typography.textXl, color = DSTheme.colors.text)
 
@@ -223,7 +223,7 @@ private fun DayEntryContent(
             onReorderAchievement = { from, to -> onUiAction(DayEntryContract.UiAction.OnAchievementReorder(from, to)) },
         )
 
-        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space8)) {
             Text(text = stringResource(Res.string.day_entry_notes_title), style = DSTheme.typography.textXl, color = DSTheme.colors.text)
             DSTextField(
                 value = uiData.notes,

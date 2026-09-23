@@ -45,15 +45,15 @@ fun DSButton(
     val textStyle = (if (size == DSButtonSize.Small) DSTheme.typography.textSm else DSTheme.typography.textMd)
         .copy(fontWeight = FontWeight.Bold)
     val contentPadding = if (size == DSButtonSize.Small) {
-        PaddingValues(horizontal = DSSpacing.space7, vertical = DSSpacing.space4)
+        PaddingValues(horizontal = DSSpacing.space16, vertical = DSSpacing.space10)
     } else {
-        PaddingValues(DSSpacing.space6)
+        PaddingValues(DSSpacing.space14)
     }
     val buttonModifier = if (fullWidth) modifier.fillMaxWidth() else modifier
     val label: @Composable RowScope.() -> Unit = {
         if (icon != null) {
             icon()
-            Spacer(modifier = Modifier.width(DSSpacing.space3))
+            Spacer(modifier = Modifier.width(DSSpacing.space8))
         }
         ProvideTextStyle(textStyle) { content() }
     }
@@ -123,8 +123,8 @@ private fun DSButtonPreviewLight() {
     DSTheme(darkTheme = false) {
         Surface(color = DSTheme.colors.bg) {
             Column(
-                modifier = Modifier.padding(DSSpacing.space7),
-                verticalArrangement = Arrangement.spacedBy(DSSpacing.space5),
+                modifier = Modifier.padding(DSSpacing.space16),
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space12),
             ) {
                 DSButton(onClick = {}, fullWidth = true) { Text("Save Day 12") }
                 DSButton(onClick = {}, variant = DSButtonVariant.Secondary) { Text("Cancel") }
@@ -141,8 +141,8 @@ private fun DSButtonPreviewDark() {
     DSTheme(darkTheme = true) {
         Surface(color = DSTheme.colors.bg) {
             Column(
-                modifier = Modifier.padding(DSSpacing.space7),
-                verticalArrangement = Arrangement.spacedBy(DSSpacing.space5),
+                modifier = Modifier.padding(DSSpacing.space16),
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space12),
             ) {
                 DSButton(onClick = {}, fullWidth = true) { Text("Save Day 12") }
                 DSButton(onClick = {}, variant = DSButtonVariant.Secondary) { Text("Cancel") }

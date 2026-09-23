@@ -20,7 +20,7 @@ import org.jetbrains.compose.resources.stringResource
 fun NotesSummaryCard(notes: String, modifier: Modifier = Modifier) {
     if (notes.isBlank()) return
     val colors = DSTheme.colors
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
         Text(text = stringResource(Res.string.day_detail_notes_title), style = DSTheme.typography.textXl, color = colors.text)
         DSCard(modifier = Modifier.fillMaxWidth()) {
             Text(text = notes, style = DSTheme.typography.textMd, color = colors.text)
@@ -35,7 +35,7 @@ private fun NotesSummaryCardPreviewLight() {
         Surface(color = DSTheme.colors.bg) {
             NotesSummaryCard(
                 notes = "Twelve days in and this finally feels like a routine, not a restriction.",
-                modifier = Modifier.padding(DSSpacing.space7),
+                modifier = Modifier.padding(DSSpacing.space16),
             )
         }
     }
@@ -48,7 +48,7 @@ private fun NotesSummaryCardPreviewDark() {
         Surface(color = DSTheme.colors.bg) {
             NotesSummaryCard(
                 notes = "Twelve days in and this finally feels like a routine, not a restriction.",
-                modifier = Modifier.padding(DSSpacing.space7),
+                modifier = Modifier.padding(DSSpacing.space16),
             )
         }
     }

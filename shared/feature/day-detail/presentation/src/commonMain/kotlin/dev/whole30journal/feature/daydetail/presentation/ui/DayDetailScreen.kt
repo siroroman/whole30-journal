@@ -89,7 +89,7 @@ private fun DayDetailTopBar(
 ) {
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth().background(colors.bg).statusBarsPadding()) {
-        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space6)) {
+        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space20, vertical = DSSpacing.space14)) {
             ChevronLeftIcon(
                 tint = colors.textSecondary,
                 contentDescription = stringResource(Res.string.day_detail_back_content_description),
@@ -121,11 +121,11 @@ private fun DayDetailContent(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .padding(contentPadding)
-            .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space12),
+            .padding(horizontal = DSSpacing.space16, vertical = DSSpacing.space16),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space32),
     ) {
         if (uiData.hasEntry) {
-            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
                 uiData.metrics.forEach { summary -> MetricSummaryRow(summary = summary) }
                 OverallScoreSummaryCard(score = uiData.overallScore)
             }

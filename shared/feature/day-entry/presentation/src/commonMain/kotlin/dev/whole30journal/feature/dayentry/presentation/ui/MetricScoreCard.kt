@@ -64,7 +64,7 @@ fun MetricScoreCard(
 private fun MetricScoreCardPreviewLight() {
     DSTheme(darkTheme = false) {
         Surface(color = DSTheme.colors.bg) {
-            Column(modifier = Modifier.padding(DSSpacing.space7), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+            Column(modifier = Modifier.padding(DSSpacing.space16), verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
                 MetricScoreCard(
                     title = "Energy",
                     lowLabel = "Worst",
@@ -95,7 +95,7 @@ private fun MetricScoreCardPreviewLight() {
 private fun MetricScoreCardPreviewDark() {
     DSTheme(darkTheme = true) {
         Surface(color = DSTheme.colors.bg) {
-            Column(modifier = Modifier.padding(DSSpacing.space7), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+            Column(modifier = Modifier.padding(DSSpacing.space16), verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
                 MetricScoreCard(
                     title = "Energy",
                     lowLabel = "Worst",

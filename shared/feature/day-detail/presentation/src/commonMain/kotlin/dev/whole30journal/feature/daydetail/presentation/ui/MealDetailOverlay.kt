@@ -74,7 +74,7 @@ private fun MealDetailContent(
                 contentDescription = stringResource(Res.string.day_detail_meal_detail_close_content_description),
                 modifier = Modifier
                     .align(alignment = Alignment.End)
-                    .padding(top = DSSpacing.space7, end = DSSpacing.space7)
+                    .padding(top = DSSpacing.space16, end = DSSpacing.space16)
             )
             Text(
                 text = meal.description.ifBlank { meal.label },
@@ -83,13 +83,13 @@ private fun MealDetailContent(
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(all = DSSpacing.space7),
+                    .padding(all = DSSpacing.space16),
                 maxLines = 5
             )
 
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(bottom = DSSpacing.space10),
+                modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(bottom = DSSpacing.space24),
             ) {
                 ImageView(meal = meal, previewPhoto = previewPhoto)
             }

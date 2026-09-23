@@ -47,7 +47,7 @@ fun MealsSummarySection(meals: List<DayDetailContract.MealSummary>, onMealClick:
     if (meals.isEmpty()) return
     val resolvePhotoToken = rememberMealPhotoResolver()
     val colors = DSTheme.colors
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
         Text(text = stringResource(Res.string.day_detail_meals_title), style = DSTheme.typography.textXl, color = colors.text)
         meals.forEach { meal ->
             MealSummaryRow(meal = meal, resolvePhotoToken = resolvePhotoToken, onClick = { onMealClick(meal.id) })
@@ -63,8 +63,8 @@ private fun MealSummaryRow(
     modifier: Modifier = Modifier,
 ) {
     val colors = DSTheme.colors
-    DSCard(modifier = modifier.fillMaxWidth(), contentPadding = DSSpacing.space6, onClick = onClick) {
-        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space5), verticalAlignment = Alignment.CenterVertically) {
+    DSCard(modifier = modifier.fillMaxWidth(), contentPadding = DSSpacing.space14, onClick = onClick) {
+        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space12), verticalAlignment = Alignment.CenterVertically) {
             if (meal.photoToken != null) {
                 AsyncImage(
                     model = resolvePhotoToken(meal.photoToken),
@@ -80,7 +80,7 @@ private fun MealSummaryRow(
                     LibraryIcon(tint = colors.textTertiary, modifier = Modifier.size(PlaceholderIconSize))
                 }
             }
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space1)) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space4)) {
                 Text(
                     text = meal.label,
                     style = DSTheme.typography.textMd,
@@ -132,7 +132,7 @@ private fun MealsSummarySectionPreviewLight() {
                     ),
                 ),
                 onMealClick = {},
-                modifier = Modifier.padding(DSSpacing.space7),
+                modifier = Modifier.padding(DSSpacing.space16),
             )
         }
     }
@@ -154,7 +154,7 @@ private fun MealsSummarySectionPreviewDark() {
                     ),
                 ),
                 onMealClick = {},
-                modifier = Modifier.padding(DSSpacing.space7),
+                modifier = Modifier.padding(DSSpacing.space16),
             )
         }
     }
