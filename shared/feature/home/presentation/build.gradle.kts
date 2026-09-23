@@ -37,6 +37,9 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.androidx.lifecycle.runtime.compose)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }
 

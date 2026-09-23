@@ -41,14 +41,13 @@ fun DayStrip(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
-    var hasScrolledToToday by remember { mutableStateOf(false) }
+    var hasScrolledToSelectedDay by remember { mutableStateOf(false) }
 
     LaunchedEffect(days) {
-        if (hasScrolledToToday || days.isEmpty()) return@LaunchedEffect
-        val todayIndex = days.indexOfFirst { it.isToday }
-        if (todayIndex >= 0) {
-            hasScrolledToToday = true
-            listState.scrollToItem((todayIndex - LEADING_DAYS_BEFORE_TODAY).coerceAtLeast(0))
+        if (hasScrolledToSelectedDay || days.isEmpty()) return@LaunchedEffect
+        scrollTargetIndex(days, selectedDay)?.let { index ->
+            hasScrolledToSelectedDay = true
+            listState.scrollToItem(index)
         }
     }
 
@@ -74,7 +73,12 @@ fun DayStrip(
     }
 }
 
-private const val LEADING_DAYS_BEFORE_TODAY = 2
+private const val LEADING_DAYS_BEFORE_SELECTED = 2
+
+internal fun scrollTargetIndex(days: List<HomeContract.DayCell>, selectedDay: Int): Int? {
+    val index = days.indexOfFirst { it.dayNumber == selectedDay }
+    return if (index >= 0) (index - LEADING_DAYS_BEFORE_SELECTED).coerceAtLeast(0) else null
+}
 
 @Composable
 private fun DayCellItem(day: HomeContract.DayCell, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
@@ -102,7 +106,7 @@ private fun DayCellItem(day: HomeContract.DayCell, isSelected: Boolean, onClick:
         verticalArrangement = Arrangement.spacedBy(DSSpacing.space4),
     ) {
         Text(text = day.weekdayAbbreviation, style = DSTheme.typography.text2xs, color = weekdayColor)
-        Text(text = "${day.dayNumber}", style = DSTheme.typography.textXl, color = numberColor)
+        Text(text = "${day.dayOfMonth}", style = DSTheme.typography.textXl, color = numberColor)
     }
 }
 
@@ -111,6 +115,7 @@ private fun previewDays(): List<HomeContract.DayCell> {
     return (1..7).map { day ->
         HomeContract.DayCell(
             dayNumber = day,
+            dayOfMonth = day,
             weekdayAbbreviation = weekdays[(day - 1) % weekdays.size],
             isFilled = day <= 4,
             isToday = day == 4,
