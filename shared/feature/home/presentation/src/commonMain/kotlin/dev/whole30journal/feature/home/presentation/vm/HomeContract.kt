@@ -12,6 +12,7 @@ object HomeContract {
     @Immutable
     data class DayCell(
         val dayNumber: Int,
+        val dayOfMonth: Int,
         val weekdayAbbreviation: String,
         val isFilled: Boolean,
         val isToday: Boolean,

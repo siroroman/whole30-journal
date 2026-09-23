@@ -102,7 +102,7 @@ private fun DayCellItem(day: HomeContract.DayCell, isSelected: Boolean, onClick:
         verticalArrangement = Arrangement.spacedBy(DSSpacing.space4),
     ) {
         Text(text = day.weekdayAbbreviation, style = DSTheme.typography.text2xs, color = weekdayColor)
-        Text(text = "${day.dayNumber}", style = DSTheme.typography.textXl, color = numberColor)
+        Text(text = "${day.dayOfMonth}", style = DSTheme.typography.textXl, color = numberColor)
     }
 }
 
@@ -111,6 +111,7 @@ private fun previewDays(): List<HomeContract.DayCell> {
     return (1..7).map { day ->
         HomeContract.DayCell(
             dayNumber = day,
+            dayOfMonth = day,
             weekdayAbbreviation = weekdays[(day - 1) % weekdays.size],
             isFilled = day <= 4,
             isToday = day == 4,

@@ -104,6 +104,7 @@ private fun previewUiData(): HomeContract.UiData {
         days = (1..totalDays).map { day ->
             HomeContract.DayCell(
                 dayNumber = day,
+                dayOfMonth = day,
                 weekdayAbbreviation = weekdays[(day - 1) % weekdays.size],
                 isFilled = day <= currentDay,
                 isToday = day == currentDay,

@@ -79,9 +79,11 @@ class HomeViewModel(
         val resolvedSelectedDay = (currentUiData.selectedDay.takeIf { it != 0 } ?: currentDay).coerceIn(1, totalDays)
 
         val days = (1..totalDays).map { day ->
+            val date = dateForDay(day, startDate)
             HomeContract.DayCell(
                 dayNumber = day,
-                weekdayAbbreviation = dateFormatter.weekdayAbbreviation(dateForDay(day, startDate).dayOfWeek),
+                dayOfMonth = date.day,
+                weekdayAbbreviation = dateFormatter.weekdayAbbreviation(date.dayOfWeek),
                 isFilled = metricsByDay.containsKey(day),
                 isToday = day == currentDay,
             )
