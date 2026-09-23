@@ -58,12 +58,16 @@ class DayDetailViewModel(
     private suspend fun observeDay(dayNumber: Int) {
         isObserving = true
         val startDate = getProgram().getOrNull()?.startDate
-        val dateLabel = startDate
-            ?.let { dateFormatter(dateForDay(dayNumber, it), today(), DateFormatter.Style.Short) }
-            .orEmpty()
+        val date = startDate?.let { dateForDay(dayNumber, it) }
+        val dateLabel = date?.let { dateFormatter(it, today(), DateFormatter.Style.Short) }.orEmpty()
         val metricTitles = metricTitleLabels()
 
-        observeDayEntry(dayNumber.toLong()).collectLatest { result ->
+        if (date == null) {
+            updateUiData(isLoading = false) { copy(dayNumber = dayNumber, dateLabel = dateLabel) }
+            return
+        }
+
+        observeDayEntry(date).collectLatest { result ->
             val entry = result.getOrNull()
             val mealSummaries = entry?.meals.orEmpty()
                 .filter { it.mealDescription.isNotBlank() || it.photoToken != null || it.lovedIt }

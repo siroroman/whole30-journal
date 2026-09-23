@@ -57,15 +57,17 @@ class HomeViewModel(
                 updateUiData(isLoading = false) { copy(needsSetup = true) }
                 return@collectLatest
             }
-            observeEntriesByDay(program.currentDayNumber.toInt()).collect { entriesByDay ->
+            observeEntriesByDay(program.currentDayNumber.toInt(), program.startDate).collect { entriesByDay ->
                 applyHomeData(program, entriesByDay)
             }
         }
     }
 
-    private fun observeEntriesByDay(currentDay: Int): Flow<Map<Int, DayEntry?>> {
+    private fun observeEntriesByDay(currentDay: Int, startDate: LocalDate): Flow<Map<Int, DayEntry?>> {
         if (currentDay <= 0) return flowOf(emptyMap())
-        val entryFlows = (1..currentDay).map { day -> observeDayEntry(day.toLong()).map { day to it.getOrNull() } }
+        val entryFlows = (1..currentDay).map { day ->
+            observeDayEntry(dateForDay(day, startDate)).map { day to it.getOrNull() }
+        }
         return combine(entryFlows) { pairs -> pairs.toMap() }
     }
 

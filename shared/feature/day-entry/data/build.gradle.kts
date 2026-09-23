@@ -27,6 +27,7 @@ kotlin {
             implementation(projects.shared.feature.dayEntry.domain)
             implementation(projects.shared.core.database)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.koin.core)
         }

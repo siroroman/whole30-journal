@@ -60,14 +60,8 @@ internal class ProgramRepositoryImpl(
 
                     for (dayNumber in 1..durationDays) {
                         val date = startDate.plus(dayNumber - 1, DateTimeUnit.DAY).toString()
-                        database.dayEntryQueries.updateDate(date = date, dayNumber = dayNumber)
-                        database.dayEntryQueries.insertIfAbsent(dayNumber = dayNumber, date = date)
+                        database.dayEntryQueries.insertIfAbsent(date = date)
                     }
-
-                    database.metricQueries.deleteAfterDayNumber(durationDays)
-                    database.mealQueries.deleteAfterDayNumber(durationDays)
-                    database.achievementQueries.deleteAfterDayNumber(durationDays)
-                    database.dayEntryQueries.deleteAfterDayNumber(durationDays)
                 }
             }
             buildProgram(startDate, durationDays, today = clock.todayIn(TimeZone.currentSystemDefault()))
