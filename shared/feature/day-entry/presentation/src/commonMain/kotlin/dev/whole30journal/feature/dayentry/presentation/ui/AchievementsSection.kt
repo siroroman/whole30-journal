@@ -101,9 +101,9 @@ private fun AchievementRow(
     modifier: Modifier = Modifier,
 ) {
     val colors = DSTheme.colors
-    DSCard(modifier = modifier.fillMaxWidth(), contentPadding = DSSpacing.space6) {
+    DSCard(modifier = modifier.fillMaxWidth(), contentPadding = DSSpacing.space14) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
+            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space8),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             DSTextField(
@@ -147,7 +147,7 @@ private fun AchievementsSectionPreviewLight() {
                 onDeleteAchievementConfirm = {},
                 onDeleteAchievementDismiss = {},
                 onReorderAchievement = { _, _ -> },
-                modifier = Modifier.padding(DSSpacing.space7),
+                modifier = Modifier.padding(DSSpacing.space16),
             )
         }
     }
@@ -169,7 +169,7 @@ private fun AchievementsSectionPreviewDark() {
                 onDeleteAchievementConfirm = {},
                 onDeleteAchievementDismiss = {},
                 onReorderAchievement = { _, _ -> },
-                modifier = Modifier.padding(DSSpacing.space7),
+                modifier = Modifier.padding(DSSpacing.space16),
             )
         }
     }

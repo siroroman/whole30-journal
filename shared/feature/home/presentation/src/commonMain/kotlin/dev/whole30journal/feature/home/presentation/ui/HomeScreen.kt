@@ -57,8 +57,8 @@ private fun HomeContent(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .padding(contentPadding)
-            .padding(horizontal = DSSpacing.space7, vertical = DSSpacing.space7),
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space8),
+            .padding(horizontal = DSSpacing.space16, vertical = DSSpacing.space16),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space18),
     ) {
         HomeProgressHeader(
             currentDay = uiData.currentDay,

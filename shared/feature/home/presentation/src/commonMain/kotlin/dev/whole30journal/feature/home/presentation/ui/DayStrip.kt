@@ -52,7 +52,7 @@ fun DayStrip(
         }
     }
 
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
         Text(
             text = stringResource(Res.string.home_days_title),
             style = DSTheme.typography.textXl,
@@ -61,7 +61,7 @@ fun DayStrip(
         LazyRow(
             state = listState,
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space3),
+            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space8),
         ) {
             items(items = days, key = { it.dayNumber }) { day ->
                 DayCellItem(
@@ -97,9 +97,9 @@ private fun DayCellItem(day: HomeContract.DayCell, isSelected: Boolean, onClick:
             .background(backgroundColor)
             .then(todayBorderModifier)
             .clickable(onClick = onClick)
-            .padding(vertical = DSSpacing.space3),
+            .padding(vertical = DSSpacing.space8),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space1),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space4),
     ) {
         Text(text = day.weekdayAbbreviation, style = DSTheme.typography.text2xs, color = weekdayColor)
         Text(text = "${day.dayNumber}", style = DSTheme.typography.textXl, color = numberColor)

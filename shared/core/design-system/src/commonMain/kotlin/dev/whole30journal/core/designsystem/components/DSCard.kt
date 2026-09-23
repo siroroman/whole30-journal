@@ -23,7 +23,7 @@ import dev.whole30journal.core.designsystem.theme.DSTheme
 fun DSCard(
     modifier: Modifier = Modifier,
     highlighted: Boolean = false,
-    contentPadding: Dp = DSSpacing.space7,
+    contentPadding: Dp = DSSpacing.space16,
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -39,7 +39,7 @@ fun DSCard(
     ) {
         Column(
             modifier = Modifier.padding(contentPadding),
-            verticalArrangement = Arrangement.spacedBy(DSSpacing.space5),
+            verticalArrangement = Arrangement.spacedBy(DSSpacing.space12),
             content = content,
         )
     }
@@ -51,8 +51,8 @@ private fun DSCardPreviewLight() {
     DSTheme(darkTheme = false) {
         Surface(color = DSTheme.colors.bg) {
             Column(
-                modifier = Modifier.padding(DSSpacing.space7),
-                verticalArrangement = Arrangement.spacedBy(DSSpacing.space5),
+                modifier = Modifier.padding(DSSpacing.space16),
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space12),
             ) {
                 DSCard { Text("Today", style = DSTheme.typography.textMd) }
                 DSCard(highlighted = true) { Text("Overall score", style = DSTheme.typography.textMd) }
@@ -67,8 +67,8 @@ private fun DSCardPreviewDark() {
     DSTheme(darkTheme = true) {
         Surface(color = DSTheme.colors.bg) {
             Column(
-                modifier = Modifier.padding(DSSpacing.space7),
-                verticalArrangement = Arrangement.spacedBy(DSSpacing.space5),
+                modifier = Modifier.padding(DSSpacing.space16),
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space12),
             ) {
                 DSCard { Text("Today", style = DSTheme.typography.textMd) }
                 DSCard(highlighted = true) { Text("Overall score", style = DSTheme.typography.textMd) }

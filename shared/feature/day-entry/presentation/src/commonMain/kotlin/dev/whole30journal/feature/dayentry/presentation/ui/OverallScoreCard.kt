@@ -31,7 +31,7 @@ fun OverallScoreCard(score: Int?, onScoreChange: (Int) -> Unit, modifier: Modifi
 private fun OverallScoreCardPreviewLight() {
     DSTheme(darkTheme = false) {
         Surface(color = DSTheme.colors.bg) {
-            OverallScoreCard(score = 6, onScoreChange = {}, modifier = Modifier.padding(DSSpacing.space7))
+            OverallScoreCard(score = 6, onScoreChange = {}, modifier = Modifier.padding(DSSpacing.space16))
         }
     }
 }
@@ -41,7 +41,7 @@ private fun OverallScoreCardPreviewLight() {
 private fun OverallScoreCardPreviewDark() {
     DSTheme(darkTheme = true) {
         Surface(color = DSTheme.colors.bg) {
-            OverallScoreCard(score = null, onScoreChange = {}, modifier = Modifier.padding(DSSpacing.space7))
+            OverallScoreCard(score = null, onScoreChange = {}, modifier = Modifier.padding(DSSpacing.space16))
         }
     }
 }

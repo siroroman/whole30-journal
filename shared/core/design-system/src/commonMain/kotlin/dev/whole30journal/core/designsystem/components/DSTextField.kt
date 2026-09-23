@@ -83,8 +83,8 @@ private fun DSTextFieldPreviewLight() {
     DSTheme(darkTheme = false) {
         Surface(color = DSTheme.colors.bg) {
             Column(
-                modifier = Modifier.padding(DSSpacing.space7),
-                verticalArrangement = Arrangement.spacedBy(DSSpacing.space5),
+                modifier = Modifier.padding(DSSpacing.space16),
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space12),
             ) {
                 DSTextField(value = "", onValueChange = {}, placeholder = "Note")
                 DSTextField(
@@ -106,8 +106,8 @@ private fun DSTextFieldPreviewDark() {
     DSTheme(darkTheme = true) {
         Surface(color = DSTheme.colors.bg) {
             Column(
-                modifier = Modifier.padding(DSSpacing.space7),
-                verticalArrangement = Arrangement.spacedBy(DSSpacing.space5),
+                modifier = Modifier.padding(DSSpacing.space16),
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space12),
             ) {
                 DSTextField(value = "", onValueChange = {}, placeholder = "Note")
                 DSTextField(

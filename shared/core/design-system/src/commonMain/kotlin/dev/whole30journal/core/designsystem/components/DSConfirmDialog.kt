@@ -37,16 +37,16 @@ fun DSConfirmDialog(
 ) {
     val colors = DSTheme.colors
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        Box(modifier = modifier.fillMaxSize().padding(DSSpacing.space10), contentAlignment = Alignment.Center) {
+        Box(modifier = modifier.fillMaxSize().padding(DSSpacing.space24), contentAlignment = Alignment.Center) {
             Column(
                 modifier = Modifier
                     .widthIn(max = 280.dp)
                     .fillMaxWidth()
                     .clip(DSShapes.xxl)
                     .background(colors.surface)
-                    .padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space10),
+                    .padding(horizontal = DSSpacing.space20, vertical = DSSpacing.space24),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(DSSpacing.space6),
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space14),
             ) {
                 Text(
                     text = title,
@@ -77,7 +77,7 @@ fun DSConfirmDialog(
                         .fillMaxWidth()
                         .clip(DSShapes.md)
                         .clickable(onClick = onDismiss)
-                        .padding(DSSpacing.space6),
+                        .padding(DSSpacing.space14),
                 )
             }
         }

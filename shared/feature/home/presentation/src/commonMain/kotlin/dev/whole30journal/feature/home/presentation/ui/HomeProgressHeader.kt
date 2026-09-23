@@ -41,7 +41,7 @@ fun HomeProgressHeader(
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space8)) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space18)) {
         HomeHeader(currentDay = currentDay, totalDays = totalDays, onSettingsClick = onSettingsClick)
         DSProgressBar(
             value = currentDay,
@@ -64,7 +64,7 @@ private fun HomeHeader(currentDay: Int, totalDays: Int, onSettingsClick: () -> U
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space4),
+            horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10),
         ) {
             Box(
                 modifier = Modifier.size(28.dp).clip(DSShapes.sm).background(colors.accent),
@@ -74,12 +74,12 @@ private fun HomeHeader(currentDay: Int, totalDays: Int, onSettingsClick: () -> U
             }
             Text(text = stringResource(Res.string.home_wordmark), style = DSTheme.typography.textXl, color = colors.text)
         }
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
             Row(
                 modifier = Modifier
                     .clip(DSShapes.pill)
                     .background(colors.surface)
-                    .padding(horizontal = DSSpacing.space5, vertical = DSSpacing.space3),
+                    .padding(horizontal = DSSpacing.space12, vertical = DSSpacing.space8),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(

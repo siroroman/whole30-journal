@@ -55,7 +55,7 @@ fun TrendsSection(
     onMetricSelect: (HomeContract.TrendMetric) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
         Text(
             text = stringResource(Res.string.home_trends_title),
             style = DSTheme.typography.textXl,
@@ -88,7 +88,7 @@ private fun TrendMetricSelector(
             .fillMaxWidth()
             .clip(DSShapes.pill)
             .background(colors.surface2)
-            .padding(DSSpacing.space1)
+            .padding(DSSpacing.space4)
             .drawBehind {
                 val segmentWidth = size.width / entries.size
                 drawRoundRect(
@@ -121,7 +121,7 @@ private fun TrendMetricSelector(
                     .weight(1f)
                     .clip(DSShapes.pill)
                     .clickable { onSelect(metric) }
-                    .padding(vertical = DSSpacing.space3),
+                    .padding(vertical = DSSpacing.space8),
             )
         }
     }
@@ -153,7 +153,7 @@ private fun TrendBarChart(
         }
     }
 
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(DSSpacing.space1)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(DSSpacing.space4)) {
         Canvas(modifier = Modifier.fillMaxWidth().height(132.dp)) {
             val gutterWidth = textMeasurer.measure(text = "10", style = labelStyle).size.width.toFloat() + 4.dp.toPx()
             listOf(0, 5, 10).forEach { gridValue ->

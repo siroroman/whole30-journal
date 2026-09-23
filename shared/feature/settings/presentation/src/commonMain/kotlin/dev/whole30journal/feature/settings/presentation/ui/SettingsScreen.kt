@@ -152,7 +152,7 @@ private fun HandleUiEvents(
 private fun SettingsTopBar(isSaving: Boolean, onBackClick: () -> Unit, modifier: Modifier = Modifier) {
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth().background(colors.bg).statusBarsPadding()) {
-        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space6, vertical = DSSpacing.space5)) {
+        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = DSSpacing.space14, vertical = DSSpacing.space12)) {
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
@@ -192,17 +192,17 @@ private fun SettingsContent(
             .padding(contentPadding)
             .let { if (isSetupMode) it.statusBarsPadding() else it }
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space7),
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space9),
+            .padding(horizontal = DSSpacing.space20, vertical = DSSpacing.space16),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space20),
     ) {
         if (isSetupMode) {
-            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space3)) {
+            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space8)) {
                 Text(text = stringResource(Res.string.settings_setup_title), style = DSTheme.typography.text3xl, color = colors.text)
                 Text(text = stringResource(Res.string.settings_setup_subtitle), style = DSTheme.typography.textBase, color = colors.textSecondary)
             }
         }
 
-        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
             SectionHeader(text = stringResource(Res.string.settings_section_program))
             ProgramSettingsCard(
                 startDateLabel = uiData.startDateLabel,
@@ -214,7 +214,7 @@ private fun SettingsContent(
         }
 
         if (!isSetupMode) {
-            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space5)) {
+            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space12)) {
                 SectionHeader(text = stringResource(Res.string.settings_section_danger_zone))
                 DSButton(
                     onClick = { onUiAction(SettingsContract.UiAction.OnDeleteAllDataClick) },
@@ -251,7 +251,7 @@ private fun SectionHeader(text: String, modifier: Modifier = Modifier) {
         text = text,
         style = DSTheme.typography.textXs.copy(letterSpacing = 0.8.sp),
         color = DSTheme.colors.textTertiary,
-        modifier = modifier.padding(start = DSSpacing.space3),
+        modifier = modifier.padding(start = DSSpacing.space8),
     )
 }
 
@@ -287,11 +287,11 @@ private fun ProgramSettingsCard(
 private fun SettingsRow(title: String, subtitle: String, modifier: Modifier = Modifier, trailing: @Composable () -> Unit) {
     val colors = DSTheme.colors
     Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space1), modifier = Modifier.weight(1f)) {
+        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.space4), modifier = Modifier.weight(1f)) {
             Text(text = title, style = DSTheme.typography.textLg, color = colors.text)
             Text(text = subtitle, style = DSTheme.typography.textSm, color = colors.textSecondary)
         }
-        Spacer(modifier = Modifier.width(DSSpacing.space6))
+        Spacer(modifier = Modifier.width(DSSpacing.space14))
         trailing()
     }
 }
@@ -304,7 +304,7 @@ private fun DateValueChip(label: String, onClick: () -> Unit, modifier: Modifier
             .clip(DSShapes.md)
             .background(colors.surface2)
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(horizontal = DSSpacing.space6, vertical = DSSpacing.space5),
+            .padding(horizontal = DSSpacing.space14, vertical = DSSpacing.space12),
     ) {
         Text(text = label, style = DSTheme.typography.textBase, color = colors.text)
     }
@@ -313,7 +313,7 @@ private fun DateValueChip(label: String, onClick: () -> Unit, modifier: Modifier
 @Composable
 private fun DurationStepper(value: Int, onDecrement: () -> Unit, onIncrement: () -> Unit, modifier: Modifier = Modifier) {
     val colors = DSTheme.colors
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpacing.space6)) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpacing.space14)) {
         StepperButton(onClick = onDecrement, enabled = value > MIN_DURATION_DAYS) { tint ->
             MinusIcon(
                 tint = tint,
@@ -359,7 +359,7 @@ private fun SettingsFooter(isSaving: Boolean, isLoading: Boolean, onConfirmClick
     val colors = DSTheme.colors
     Column(modifier = modifier.fillMaxWidth().background(colors.bg).navigationBarsPadding()) {
         HorizontalDivider(color = colors.divider)
-        Box(modifier = Modifier.padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space6)) {
+        Box(modifier = Modifier.padding(horizontal = DSSpacing.space20, vertical = DSSpacing.space14)) {
             DSButton(onClick = onConfirmClick, fullWidth = true, enabled = !isSaving && !isLoading) {
                 Text(stringResource(Res.string.settings_start_button))
             }
@@ -442,16 +442,16 @@ private fun StartDateDialog(startDate: LocalDate?, onDateSelect: (LocalDate) -> 
 private fun DeleteAllDataDialog(isDeleting: Boolean, onConfirm: () -> Unit, onDismiss: () -> Unit) {
     val colors = DSTheme.colors
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        Box(modifier = Modifier.fillMaxSize().padding(DSSpacing.space10), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.fillMaxSize().padding(DSSpacing.space24), contentAlignment = Alignment.Center) {
             Column(
                 modifier = Modifier
                     .widthIn(max = 280.dp)
                     .fillMaxWidth()
                     .clip(DSShapes.xxl)
                     .background(colors.surface)
-                    .padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space10),
+                    .padding(horizontal = DSSpacing.space20, vertical = DSSpacing.space24),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(DSSpacing.space6),
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space14),
             ) {
                 Text(
                     text = stringResource(Res.string.settings_delete_all_data_dialog_title),
@@ -482,7 +482,7 @@ private fun DeleteAllDataDialog(isDeleting: Boolean, onConfirm: () -> Unit, onDi
                         .fillMaxWidth()
                         .clip(DSShapes.md)
                         .clickable(onClick = onDismiss)
-                        .padding(DSSpacing.space6),
+                        .padding(DSSpacing.space14),
                 )
             }
         }

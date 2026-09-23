@@ -26,7 +26,7 @@ import dev.whole30journal.feature.dayentry.presentation.ui.icons.DragHandleIcon
 import kotlin.math.abs
 import kotlin.math.sign
 
-internal val EntryListSpacing: Dp = DSSpacing.space5
+internal val EntryListSpacing: Dp = DSSpacing.space12
 
 @Stable
 internal class ReorderState(

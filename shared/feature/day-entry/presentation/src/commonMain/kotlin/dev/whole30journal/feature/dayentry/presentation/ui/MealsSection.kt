@@ -169,22 +169,22 @@ private fun PhotoSourceDialog(
 ) {
     val colors = DSTheme.colors
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        Box(modifier = Modifier.fillMaxSize().padding(DSSpacing.space10), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.fillMaxSize().padding(DSSpacing.space24), contentAlignment = Alignment.Center) {
             Column(
                 modifier = Modifier
                     .widthIn(max = 280.dp)
                     .fillMaxWidth()
                     .clip(DSShapes.xxl)
                     .background(colors.surface)
-                    .padding(horizontal = DSSpacing.space9, vertical = DSSpacing.space10),
+                    .padding(horizontal = DSSpacing.space20, vertical = DSSpacing.space24),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(DSSpacing.space6),
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.space14),
             ) {
                 Text(
                     text = stringResource(Res.string.day_entry_photo_source_title),
                     style = DSTheme.typography.textXl,
                     color = colors.text,
-                    modifier = Modifier.padding(bottom = DSSpacing.space3),
+                    modifier = Modifier.padding(bottom = DSSpacing.space8),
                 )
                 PhotoSourceOption(
                     text = stringResource(Res.string.day_entry_photo_source_camera),
@@ -212,7 +212,7 @@ private fun PhotoSourceDialog(
                         .fillMaxWidth()
                         .clip(DSShapes.md)
                         .clickable(onClick = onDismiss)
-                        .padding(DSSpacing.space6),
+                        .padding(DSSpacing.space14),
                 )
             }
         }
@@ -228,12 +228,12 @@ private fun PhotoSourceOption(text: String, icon: @Composable () -> Unit, onClic
             .clip(DSShapes.md)
             .background(colors.surface2)
             .clickable(onClick = onClick)
-            .padding(DSSpacing.space6),
+            .padding(DSSpacing.space14),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         icon()
-        Text(text = text, style = DSTheme.typography.textMd, color = colors.text, modifier = Modifier.padding(start = DSSpacing.space4))
+        Text(text = text, style = DSTheme.typography.textMd, color = colors.text, modifier = Modifier.padding(start = DSSpacing.space10))
     }
 }
 
@@ -250,8 +250,8 @@ private fun MealRow(
     modifier: Modifier = Modifier,
 ) {
     val colors = DSTheme.colors
-    DSCard(modifier = modifier.fillMaxWidth(), contentPadding = DSSpacing.space6) {
-        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space5), verticalAlignment = Alignment.CenterVertically) {
+    DSCard(modifier = modifier.fillMaxWidth(), contentPadding = DSSpacing.space14) {
+        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space12), verticalAlignment = Alignment.CenterVertically) {
             if (meal.photoToken != null) {
                 AsyncImage(
                     model = resolvePhotoToken(meal.photoToken),
@@ -278,7 +278,7 @@ private fun MealRow(
                     )
                 }
             }
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space2)) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(DSSpacing.space6)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -289,7 +289,7 @@ private fun MealRow(
                         style = DSTheme.typography.textMd.copy(fontWeight = FontWeight.Bold),
                         color = colors.textTertiary,
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space4), verticalAlignment = Alignment.CenterVertically) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.space10), verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier.clickable { onLovedToggle(meal.id) },
                             contentAlignment = Alignment.Center,
@@ -349,7 +349,7 @@ private fun MealsSectionPreviewLight() {
                 onDeleteMealConfirm = {},
                 onDeleteMealDismiss = {},
                 onReorderMeal = { _, _ -> },
-                modifier = Modifier.padding(DSSpacing.space7),
+                modifier = Modifier.padding(DSSpacing.space16),
             )
         }
     }
@@ -375,7 +375,7 @@ private fun MealsSectionPreviewDark() {
                 onDeleteMealConfirm = {},
                 onDeleteMealDismiss = {},
                 onReorderMeal = { _, _ -> },
-                modifier = Modifier.padding(DSSpacing.space7),
+                modifier = Modifier.padding(DSSpacing.space16),
             )
         }
     }

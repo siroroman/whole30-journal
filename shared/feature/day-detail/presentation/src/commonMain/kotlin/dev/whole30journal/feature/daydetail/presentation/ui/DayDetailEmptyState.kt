@@ -25,9 +25,9 @@ import org.jetbrains.compose.resources.stringResource
 fun DayDetailEmptyState(dayNumber: Int, onLogClick: () -> Unit, modifier: Modifier = Modifier) {
     val colors = DSTheme.colors
     Column(
-        modifier = modifier.fillMaxWidth().padding(vertical = DSSpacing.space12),
+        modifier = modifier.fillMaxWidth().padding(vertical = DSSpacing.space32),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(DSSpacing.space6),
+        verticalArrangement = Arrangement.spacedBy(DSSpacing.space14),
     ) {
         Text(
             text = stringResource(Res.string.day_detail_empty_title),
@@ -52,7 +52,7 @@ fun DayDetailEmptyState(dayNumber: Int, onLogClick: () -> Unit, modifier: Modifi
 private fun DayDetailEmptyStatePreviewLight() {
     DSTheme(darkTheme = false) {
         Surface(color = DSTheme.colors.bg) {
-            DayDetailEmptyState(dayNumber = 18, onLogClick = {}, modifier = Modifier.padding(DSSpacing.space7))
+            DayDetailEmptyState(dayNumber = 18, onLogClick = {}, modifier = Modifier.padding(DSSpacing.space16))
         }
     }
 }
@@ -62,7 +62,7 @@ private fun DayDetailEmptyStatePreviewLight() {
 private fun DayDetailEmptyStatePreviewDark() {
     DSTheme(darkTheme = true) {
         Surface(color = DSTheme.colors.bg) {
-            DayDetailEmptyState(dayNumber = 18, onLogClick = {}, modifier = Modifier.padding(DSSpacing.space7))
+            DayDetailEmptyState(dayNumber = 18, onLogClick = {}, modifier = Modifier.padding(DSSpacing.space16))
         }
     }
 }
